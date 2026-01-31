@@ -277,11 +277,11 @@ object DesignSchemeFormatter {
                 minHeightCm.toDouble(),
                 maxHeightCm.toDouble()
             )
-            
+
             // 格式化年龄段：0-12岁（40-150cm）
             val ageRange = if (intervals.isNotEmpty()) {
                 val ageRanges = intervals.map { it.ageRange }.distinct()
-                ageRanges.joinToString("、") { it.displayName }
+                ageRanges.joinToString("、")
             } else {
                 idea.ageGroup.displayName
             }
