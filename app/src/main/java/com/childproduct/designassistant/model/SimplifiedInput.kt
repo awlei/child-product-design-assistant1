@@ -30,6 +30,12 @@ data class SimplifiedInput(
     val weightRange: WeightRange? = null,
 
     /**
+     * 年龄范围（月）
+     * 用于安全座椅或婴儿推车
+     */
+    val ageRange: AgeRange? = null,
+
+    /**
      * 产品细分（可选）
      */
     val safetySeatSubtype: SafetySeatSubtype? = null,
@@ -188,6 +194,85 @@ data class WeightRange(
                 maxWeight = maxWeight * unit.toKgFactor,
                 unit = WeightUnit.KG
             )
+        }
+    }
+}
+
+/**
+ * 年龄范围
+ */
+data class AgeRange(
+    val minAge: Int,  // 月
+    val maxAge: Int   // 月
+) {
+    /**
+     * 校验输入范围是否有效
+     */
+    fun isValid(productType: ProductType): Boolean {
+        return minAge > 0 &&
+                maxAge > minAge &&
+                maxAge <= when (productType) {
+                    ProductType.CHILD_SAFETY_SEAT -> 144  // 12岁
+                    ProductType.BABY_STROLLER -> 48  // 4岁
+                    else -> 144
+                }
+    }
+
+    /**
+     * 获取提示信息
+     */
+    fun getValidationHint(productType: ProductType): String? {
+        val maxLimit = when (productType) {
+            ProductType.CHILD_SAFETY_SEAT -> 144
+            ProductType.BABY_STROLLER -> 48
+            else -> 144
+        }
+
+        return when {
+            minAge <= 0 -> "最小年龄必须大于0"
+            maxAge <= minAge -> "最小年龄必须小于最大年龄"
+            maxAge > maxLimit -> "最大年龄超过${productType.displayName}常规范围（${maxLimit / 12}岁）"
+            minAge < 0 -> "年龄必须为正数"
+            else -> null
+        }
+    }
+
+    /**
+     * 推荐标准
+     */
+    fun getRecommendedStandard(productType: ProductType): InternationalStandard? {
+        return when (productType) {
+            ProductType.CHILD_SAFETY_SEAT -> {
+                when {
+                    maxAge <= 9 -> InternationalStandard.ECE_R129  // Group 0+
+                    maxAge <= 18 -> InternationalStandard.ECE_R129  // Group 0/1
+                    else -> InternationalStandard.ECE_R129  // Group 2/3
+                }
+            }
+            ProductType.BABY_STROLLER -> InternationalStandard.EN_1888
+            else -> null
+        }
+    }
+
+    /**
+     * 推荐类型
+     */
+    fun getRecommendedType(productType: ProductType): String {
+        return when (productType) {
+            ProductType.CHILD_SAFETY_SEAT -> {
+                when {
+                    maxAge <= 9 -> "Group 0+（后向强制）"
+                    maxAge <= 18 -> "Group 0/1"
+                    else -> "Group 2/3"
+                }
+            }
+            ProductType.BABY_STROLLER -> {
+                when {
+                    maxAge <= 6 -> "婴儿推车"
+                    else -> "幼儿推车"
+                }
+            }
+            else -> ""
         }
     }
 }
