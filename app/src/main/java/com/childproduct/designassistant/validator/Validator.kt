@@ -3,6 +3,7 @@ package com.childproduct.designassistant.validator
 import com.childproduct.designassistant.config.StandardConfig
 import com.childproduct.designassistant.helper.SchemeOptimizer
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 
 /**
