@@ -18,7 +18,8 @@ class CreativeService {
     private val productTypeFeatures = mapOf(
         ProductType.CHILD_SAFETY_SEAT to listOf("安全性", "舒适性", "易安装性", "材质环保"),
         ProductType.BABY_STROLLER to listOf("折叠便携", "避震系统", "稳固性", "储物功能"),
-        ProductType.CHILD_HOUSEHOLD_GOODS to listOf("安全设计", "易清洁", "耐久性", "适龄性")
+        ProductType.CHILD_HOUSEHOLD_GOODS to listOf("安全设计", "易清洁", "耐久性", "适龄性"),
+        ProductType.CHILD_HIGH_CHAIR to listOf("稳定性", "可调节高度", "安全带系统", "易清洁")
     )
 
     private val colorPalettes = mapOf(
@@ -54,8 +55,11 @@ class CreativeService {
         val description = generateDescription(ageGroup, productType, finalTheme, selectedFeatures)
         val safetyNotes = generateSafetyNotes(ageGroup, productType)
 
-        // 生成专业合规参数（自动关联标准）
-        val complianceParameters = ComplianceParameters.getDefaultForAgeGroup(ageGroup)
+        // 获取对应的假人类型
+        val dummyType = CrashTestDummy.getByAgeGroup(ageGroup)
+
+        // 生成专业合规参数（基于假人类型）
+        val complianceParameters = ComplianceParameters.getByDummy(dummyType)
 
         // 生成标准关联（根据产品类型）
         val standardsReference = StandardsReference.getDefaultForProductType(productType)
@@ -77,6 +81,85 @@ class CreativeService {
             complianceParameters = complianceParameters,
             standardsReference = standardsReference,
             materialSpecs = materialSpecs
+        )
+    }
+
+    /**
+     * 基于身高范围生成创意（新增）
+     */
+    suspend fun generateCreativeIdeaByHeight(
+        minHeightCm: Int,
+        maxHeightCm: Int,
+        productType: ProductType,
+        customTheme: String = ""
+    ): CreativeIdeaResult = withContext(Dispatchers.IO) {
+        // 验证身高范围
+        val validation = CrashTestMapping.validateHeightRange(minHeightCm, maxHeightCm)
+        
+        if (!validation.isValid) {
+            return@withContext CreativeIdeaResult(
+                success = false,
+                error = validation.errors.joinToString("; "),
+                idea = null,
+                validation = validation
+            )
+        }
+
+        // 获取对应的假人类型
+        val dummyType = CrashTestMapping.getDummyByHeight((minHeightCm + maxHeightCm) / 2)
+        
+        // 根据假人类型确定年龄段
+        val ageGroup = when {
+            dummyType == CrashTestDummy.Q0 || dummyType == CrashTestDummy.Q0_PLUS -> AgeGroup.INFANT
+            dummyType == CrashTestDummy.Q1 || dummyType == CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
+            dummyType == CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
+            dummyType == CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
+            else -> AgeGroup.TEEN
+        }
+
+        val themes = ageGroupThemes[ageGroup] ?: emptyList()
+        val features = productTypeFeatures[productType] ?: emptyList()
+        val colors = colorPalettes[ageGroup] ?: emptyList()
+        val materials = materialSuggestions[productType] ?: listOf("塑料", "木质", "金属", "布料")
+
+        val finalTheme = if (customTheme.isNotEmpty()) customTheme else themes.random()
+        val selectedFeatures = features.shuffled().take(4)
+        val selectedColors = colors.shuffled().take(4)
+
+        val title = generateTitle(ageGroup, productType, finalTheme)
+        val description = generateDescription(ageGroup, productType, finalTheme, selectedFeatures)
+        val safetyNotes = generateSafetyNotes(ageGroup, productType)
+
+        // 生成专业合规参数（基于假人类型）
+        val complianceParameters = ComplianceParameters.getByDummy(dummyType)
+
+        // 生成标准关联（根据产品类型）
+        val standardsReference = StandardsReference.getDefaultForProductType(productType)
+
+        // 生成材质规格（根据产品类型）
+        val materialSpecs = MaterialSpecs.getDefaultForProductType(productType)
+
+        val idea = CreativeIdea(
+            id = UUID.randomUUID().toString(),
+            title = title,
+            description = description,
+            ageGroup = ageGroup,
+            productType = productType,
+            theme = finalTheme,
+            features = selectedFeatures,
+            materials = materials,
+            colorPalette = selectedColors,
+            safetyNotes = safetyNotes,
+            complianceParameters = complianceParameters,
+            standardsReference = standardsReference,
+            materialSpecs = materialSpecs
+        )
+
+        CreativeIdeaResult(
+            success = true,
+            error = null,
+            idea = idea,
+            validation = validation
         )
     }
 
@@ -103,16 +186,22 @@ class CreativeService {
         // 根据产品类型添加专业性描述
         val professionalDescription = when (productType) {
             ProductType.CHILD_SAFETY_SEAT -> {
-                val complianceText = when (ageGroup) {
-                    AgeGroup.INFANT -> "符合UN R129 i-Size婴儿标准，HIC极限值≤ 390，"
-                    AgeGroup.TODDLER -> "符合UN R129 i-Size幼儿标准，HIC极限值≤ 570，"
-                    AgeGroup.PRESCHOOL -> "符合UN R129 i-Size儿童标准，HIC极限值≤ 1000，"
-                    else -> ""
+                val dummyType = CrashTestDummy.getByAgeGroup(ageGroup)
+                val complianceText = when (dummyType) {
+                    CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 ->
+                        "符合UN R129 i-Size婴儿标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
+                    CrashTestDummy.Q1_5 ->
+                        "符合UN R129 i-Size幼儿标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
+                    else ->
+                        "符合UN R129 i-Size儿童标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
                 }
                 "$baseDescription $complianceText 满足FMVSS 302燃烧性能要求，通过ISOFIX连接实现快速安装。"
             }
             ProductType.BABY_STROLLER -> {
                 "$baseDescription 符合EN 1888 + GB 14748-2020标准，制动系统可靠，折叠机构安全防夹，危险点圆角处理R≥ 2.5mm。"
+            }
+            ProductType.CHILD_HIGH_CHAIR -> {
+                "$baseDescription 符合EN 14988 + GB 22793.1-2008标准，五点式安全带，防滑脚垫，稳固结构设计。"
             }
             else -> {
                 "$baseDescription 产品设计充分考虑儿童发展特点，注重安全性、教育性和趣味性。"
@@ -146,3 +235,13 @@ class CreativeService {
         return notes
     }
 }
+
+/**
+ * 创意生成结果（带校验信息）
+ */
+data class CreativeIdeaResult(
+    val success: Boolean,
+    val error: String?,
+    val idea: CreativeIdea?,
+    val validation: CrashTestMapping.ValidationResult
+)

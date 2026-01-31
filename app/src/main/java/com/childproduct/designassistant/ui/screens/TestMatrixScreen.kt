@@ -11,11 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.childproduct.designassistant.model.CrashTestDummy
+import com.childproduct.designassistant.model.CrashTestMapping
 import com.childproduct.designassistant.ui.MainViewModel
 
 /**
  * 测试矩阵屏幕
- * 功能：展示ECE R129动态测试矩阵，包含17项测试用例
+ * 功能：展示ECE R129动态测试矩阵，基于UN R129/GB 27887-2024标准自动生成测试用例
  */
 @Composable
 fun TestMatrixScreen(
@@ -23,6 +25,9 @@ fun TestMatrixScreen(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    // 获取所有假人类型的映射信息
+    val dummyMappings = remember { CrashTestMapping.getAllDummyMappings() }
 
     LazyColumn(
         modifier = modifier
@@ -60,7 +65,7 @@ fun TestMatrixScreen(
                         )
                     }
                     Text(
-                        text = "基于身高40-150cm（Group 0+/1/2/3）自动生成的17项动态测试用例",
+                        text = "基于身高40-150cm（Group 0+/1/2/3）自动生成的动态测试用例",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
@@ -68,7 +73,7 @@ fun TestMatrixScreen(
             }
         }
 
-        // 测试参数说明
+        // 假人类型映射表
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -88,6 +93,42 @@ fun TestMatrixScreen(
                             modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
+                            text = "假人类型映射表（基于UN R129标准）",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Divider()
+
+                    // 假人类型列表
+                    dummyMappings.forEach { mapping ->
+                        DummyTypeMappingItem(mapping = mapping)
+                    }
+                }
+            }
+        }
+
+        // 测试参数说明
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Text(
                             text = "测试参数说明",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
@@ -96,7 +137,7 @@ fun TestMatrixScreen(
 
                     Divider()
 
-                    // 输入参数（14个）
+                    // 输入参数
                     Text(
                         text = "输入参数（14个）：",
                         style = MaterialTheme.typography.titleSmall,
@@ -104,7 +145,7 @@ fun TestMatrixScreen(
                     )
                     ParameterItem("脉冲类型", "FRONTAL/REAR/SIDE")
                     ParameterItem("撞击类型", "FRONTAL_RIGID/FRONTAL_OFFSET/REAR")
-                    ParameterItem("假人类型", "Q0/Q1/Q1.5/Q3/Q6/Q10")
+                    ParameterItem("假人类型", "Q0/Q0+/Q1/Q1.5/Q3/Q3s/Q6/Q10")
                     ParameterItem("座椅方向", "REARWARD_FACING/FORWARD_FACING")
                     ParameterItem("安装方式", "ISOFIX_3_PTS/SEAT_BELT")
                     ParameterItem("产品配置", "UPRIGHT/RECLINED")
@@ -123,24 +164,114 @@ fun TestMatrixScreen(
                     ParameterItem("大腿伤害指标", "Femur Axial Force (Left/Right)")
                     ParameterItem("骨盆伤害指标", "Pelvis Acceleration")
                     ParameterItem("位移指标", "Head Excursion, Knee Excursion")
-                    ParameterItem("合格标准", "HIC36 ≤ 324, 胸部加速度 ≤ 55g, Nij ≤ 1.0")
+                    ParameterItem("合格标准", "根据假人类型动态调整")
                 }
             }
         }
 
-        // 测试矩阵列表
-        items(17) { index ->
-            TestMatrixScreenTestMatrixItemCard(testIndex = index + 1)
+        // 动态生成的测试矩阵
+        items(dummyMappings) { mapping ->
+            TestMatrixCard(mapping = mapping)
         }
     }
 }
 
 /**
- * 测试矩阵项卡片
+ * 假人类型映射项组件
  */
 @Composable
-fun TestMatrixScreenTestMatrixItemCard(testIndex: Int) {
+fun DummyTypeMappingItem(
+    mapping: CrashTestMapping.DummyDetails
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            // 假人名称
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = mapping.dummyType.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = mapping.productGroup,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            // 身高范围
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "身高:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = mapping.heightRange,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+                Text(
+                    text = "体重:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${mapping.weight}kg",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            // HIC极限值
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "HIC极限值:",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "${mapping.hicLimit}",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Bold,
+                    color = if (mapping.hicLimit <= 390) MaterialTheme.colorScheme.error 
+                           else if (mapping.hicLimit <= 570) MaterialTheme.colorScheme.tertiary 
+                           else MaterialTheme.colorScheme.primary
+                )
+            }
+        }
+    }
+}
+
+/**
+ * 测试矩阵卡片组件
+ */
+@Composable
+fun TestMatrixCard(
+    mapping: CrashTestMapping.DummyDetails
+) {
     var expanded by remember { mutableStateOf(false) }
+    val dummyType = mapping.dummyType
+    val complianceParams = mapping.complianceParams
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -156,30 +287,30 @@ fun TestMatrixScreenTestMatrixItemCard(testIndex: Int) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "测试 #$testIndex",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "ECE_R129_$testIndex",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(end = 8.dp)
+                        text = "${dummyType.name} 测试矩阵",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                    IconButton(
-                        onClick = { expanded = !expanded },
-                        modifier = Modifier.size(32.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                            contentDescription = if (expanded) "折叠" else "展开",
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+                    Text(
+                        text = "(${mapping.description})",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 4.dp)
+                    )
+                }
+                IconButton(
+                    onClick = { expanded = !expanded },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                        contentDescription = if (expanded) "折叠" else "展开",
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
 
@@ -191,17 +322,23 @@ fun TestMatrixScreenTestMatrixItemCard(testIndex: Int) {
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier.padding(vertical = 4.dp)
                 ) {
-                    TestMatrixTestParameterRow("脉冲类型", "FRONTAL")
-                    TestMatrixTestParameterRow("撞击类型", "FRONTAL_RIGID")
-                    TestMatrixTestParameterRow("假人类型", if (testIndex <= 3) "Q0（新生儿）" else if (testIndex <= 6) "Q1（1岁）" else "Q3（3岁）")
-                    TestMatrixTestParameterRow("座椅方向", if (testIndex <= 8) "REARWARD_FACING" else "FORWARD_FACING")
-                    TestMatrixTestParameterRow("安装方式", "ISOFIX_3_PTS")
-                    TestMatrixTestParameterRow("产品配置", "UPRIGHT")
-                    TestMatrixTestParameterRow("速度", "50 km/h")
+                    TestMatrixParameterRow("假人类型", dummyType.name)
+                    TestMatrixParameterRow("身高范围", mapping.heightRange)
+                    TestMatrixParameterRow("体重", "${mapping.weight}kg")
+                    TestMatrixParameterRow("产品分组", mapping.productGroup)
+                    TestMatrixParameterRow("座椅方向", 
+                        if (dummyType in listOf(CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1)) {
+                            "REARWARD_FACING (反向)"
+                        } else {
+                            "FORWARD_FACING (正向)"
+                        }
+                    )
+                    TestMatrixParameterRow("撞击类型", "FRONTAL_RIGID")
+                    TestMatrixParameterRow("测试速度", "50 km/h")
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // 合格标准
+                    // 合格标准（基于假人类型动态调整）
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(
@@ -222,23 +359,41 @@ fun TestMatrixScreenTestMatrixItemCard(testIndex: Int) {
                                     modifier = Modifier.padding(end = 4.dp)
                                 )
                                 Text(
-                                    text = "合格标准",
+                                    text = "合格标准（基于${dummyType.name}假人）",
                                     style = MaterialTheme.typography.titleSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary
                                 )
                             }
-                            Text(
-                                text = "• HIC36 ≤ 324",
-                                style = MaterialTheme.typography.bodySmall
+                            StandardCheckItem(
+                                "HIC36", 
+                                "≤ ${complianceParams.hicLimit}", 
+                                complianceParams.hicLimit <= 390
                             )
-                            Text(
-                                text = "• 胸部加速度 ≤ 55g",
-                                style = MaterialTheme.typography.bodySmall
+                            StandardCheckItem(
+                                "胸部加速度", 
+                                "≤ ${complianceParams.chestAccelerationLimit}g", 
+                                complianceParams.chestAccelerationLimit == 55
                             )
-                            Text(
-                                text = "• Nij ≤ 1.0",
-                                style = MaterialTheme.typography.bodySmall
+                            StandardCheckItem(
+                                "颈部张力", 
+                                "≤ ${complianceParams.neckTensionLimit}N", 
+                                complianceParams.neckTensionLimit == 1800
+                            )
+                            StandardCheckItem(
+                                "颈部压缩", 
+                                "≤ ${complianceParams.neckCompressionLimit}N", 
+                                complianceParams.neckCompressionLimit == 2200
+                            )
+                            StandardCheckItem(
+                                "头部位移", 
+                                "≤ ${complianceParams.headExcursionLimit}mm", 
+                                true
+                            )
+                            StandardCheckItem(
+                                "膝部位移", 
+                                "≤ ${complianceParams.kneeExcursionLimit}mm", 
+                                true
                             )
                         }
                     }
@@ -255,13 +410,40 @@ fun TestMatrixScreenTestMatrixItemCard(testIndex: Int) {
                         modifier = Modifier.padding(end = 4.dp)
                     )
                     Text(
-                        text = "合格标准: HIC36 ≤ 324，胸部加速度 ≤ 55g",
+                        text = "HIC36 ≤ ${complianceParams.hicLimit}，胸部加速度 ≤ ${complianceParams.chestAccelerationLimit}g",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
             }
         }
+    }
+}
+
+/**
+ * 标准检查项组件
+ */
+@Composable
+fun StandardCheckItem(
+    label: String,
+    value: String,
+    isCritical: Boolean
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = if (isCritical) Icons.Default.PriorityHigh else Icons.Default.Check,
+            contentDescription = null,
+            tint = if (isCritical) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(16.dp)
+        )
+        Text(
+            text = "$label $value",
+            style = MaterialTheme.typography.bodySmall,
+            color = if (isCritical) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -298,7 +480,7 @@ fun ParameterItem(name: String, description: String) {
  * 测试参数行组件
  */
 @Composable
-fun TestMatrixTestParameterRow(label: String, value: String) {
+fun TestMatrixParameterRow(label: String, value: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
