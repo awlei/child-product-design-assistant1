@@ -153,11 +153,13 @@ object OutputComplianceChecker {
             heightRange = inputHeight,
             ageRange = correctAge,
             designTheme = designTheme,
+            installMethodDesc = "ISOFIX快速连接（兼容多种安装方式）",
             coreFeatures = coreFeatures,
             recommendMaterials = recommendMaterials,
             complianceStandards = complianceStandards,
             dummyType = correctDummy,
             safetyThresholds = STANDARD_SAFETY_THRESHOLDS,
+            testMatrix = emptyList(),  // 旧版本兼容，实际使用 SchemeOptimizer
             safetyNotes = safetyNotes
         )
     }
