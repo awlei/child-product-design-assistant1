@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
+import com.childproduct.designassistant.utils.DesignSchemeFormatter
 
 /**
  * 整合报告界面
@@ -89,6 +90,7 @@ fun SchemeDetailTab(
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val creativeIdea by viewModel.creativeIdea.collectAsState()
     
     LazyColumn(
         modifier = modifier
@@ -131,6 +133,14 @@ fun SchemeDetailTab(
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
+            }
+        }
+        
+        // 结构化设计方案展示（新增）
+        creativeIdea?.let { idea ->
+            item {
+                val cardData = DesignSchemeFormatter.formatToCardData(idea)
+                StructuredDesignSchemeCard(cardData = cardData)
             }
         }
         
@@ -946,6 +956,200 @@ fun ConfigurationItem(
             text = "安装要求：$requirement",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+    }
+}
+
+/**
+ * 结构化设计方案展示卡片
+ * 使用新的格式化工具，展示结构化、无冗余、易读的设计方案
+ */
+@Composable
+fun StructuredDesignSchemeCard(
+    cardData: DesignSchemeFormatter.SchemeCardData,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 【基本信息】
+            SectionCard(
+                title = "基本信息",
+                icon = Icons.Default.Info,
+                iconColor = MaterialTheme.colorScheme.primary
+            ) {
+                cardData.basicInfo.forEach { (label, value) ->
+                    InfoRow(label = label, value = value)
+                }
+            }
+
+            // 【核心设计特点】
+            SectionCard(
+                title = "核心设计特点",
+                icon = Icons.Default.AutoAwesome,
+                iconColor = MaterialTheme.colorScheme.secondary
+            ) {
+                cardData.coreFeatures.forEach { feature ->
+                    ListItem(
+                        headlineContent = { Text(feature) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    )
+                }
+            }
+
+            // 【推荐材料】
+            SectionCard(
+                title = "推荐材料",
+                icon = Icons.Default.Category,
+                iconColor = MaterialTheme.colorScheme.tertiary
+            ) {
+                cardData.recommendedMaterials.forEach { material ->
+                    ListItem(
+                        headlineContent = { Text(material) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Default.Build,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.tertiary,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    )
+                }
+            }
+
+            // 【合规参数】
+            cardData.complianceParams?.let { params ->
+                SectionCard(
+                    title = "合规参数",
+                    icon = Icons.Default.Verified,
+                    iconColor = MaterialTheme.colorScheme.primary
+                ) {
+                    InfoRow(label = "对应标准", value = params.standards)
+                    InfoRow(label = "适配假人", value = params.dummyType)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "安全阈值",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    params.thresholds.forEach { (name, value) ->
+                        InfoRow(
+                            label = "  • $name",
+                            value = value
+                        )
+                    }
+                }
+            }
+
+            // 【安全注意事项】
+            SectionCard(
+                title = "安全注意事项",
+                icon = Icons.Default.Warning,
+                iconColor = MaterialTheme.colorScheme.error
+            ) {
+                cardData.safetyNotes.forEach { note ->
+                    ListItem(
+                        headlineContent = { Text(note) },
+                        leadingContent = {
+                            Icon(
+                                imageVector = Icons.Default.PriorityHigh,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 分区卡片组件
+ */
+@Composable
+private fun SectionCard(
+    title: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    iconColor: androidx.compose.ui.graphics.Color,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        // 标题行
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = iconColor,
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = "【$title】",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = iconColor
+            )
+        }
+
+        Divider()
+
+        // 内容
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            content()
+        }
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+}
+
+/**
+ * 信息行组件
+ */
+@Composable
+private fun InfoRow(
+    label: String,
+    value: String
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        )
+        Text(
+            text = value,
+            modifier = Modifier.weight(1f),
+            style = MaterialTheme.typography.bodySmall,
+            fontWeight = FontWeight.Bold
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.model.*
+import com.childproduct.designassistant.utils.DesignSchemeFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -272,4 +273,31 @@ data class CreativeIdeaResult(
     val validation: CrashTestMapping.ValidationResult,
     val ageCorrectionHint: String? = null,  // 年龄修正提示
     val standardComplianceText: String? = null  // 标准合规性说明
-)
+) {
+    /**
+     * 获取格式化的设计方案文本
+     * 返回结构化、无冗余、易读的文本格式
+     */
+    fun getFormattedScheme(): String {
+        if (idea == null) return ""
+
+        return DesignSchemeFormatter.formatCreativeIdea(idea)
+    }
+
+    /**
+     * 获取格式化的设计方案文本（带身高范围）
+     */
+    fun getFormattedSchemeWithHeight(minHeightCm: Int, maxHeightCm: Int): String {
+        if (idea == null) return ""
+
+        return DesignSchemeFormatter.formatCreativeIdeaByHeight(minHeightCm, maxHeightCm, idea)
+    }
+
+    /**
+     * 获取卡片数据（用于UI展示）
+     */
+    fun getCardData(): DesignSchemeFormatter.SchemeCardData? {
+        return idea?.let { DesignSchemeFormatter.formatToCardData(it) }
+    }
+}
+
