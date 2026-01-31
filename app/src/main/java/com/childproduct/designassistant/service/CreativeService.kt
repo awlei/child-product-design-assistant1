@@ -3,6 +3,7 @@ package com.childproduct.designassistant.service
 import com.childproduct.designassistant.model.*
 import com.childproduct.designassistant.utils.ComplianceParamsData
 import com.childproduct.designassistant.utils.DesignSchemeFormatter
+import com.childproduct.designassistant.utils.OutputComplianceChecker
 import com.childproduct.designassistant.utils.SchemeCardData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -283,7 +284,15 @@ data class CreativeIdeaResult(
     fun getFormattedScheme(): String {
         if (idea == null) return ""
 
-        return DesignSchemeFormatter.formatCreativeIdea(idea)
+        // 先获取格式化文本
+        val formattedText = DesignSchemeFormatter.formatCreativeIdea(idea)
+
+        // 应用输出合规校验工具，自动修正乱码、参数错误、排版杂乱等问题
+        return OutputComplianceChecker.checkAndFixOutput(
+            rawOutput = formattedText,
+            inputHeightRange = "40-150",  // 默认全范围
+            productType = idea!!.productType.displayName
+        )
     }
 
     /**
@@ -292,7 +301,16 @@ data class CreativeIdeaResult(
     fun getFormattedSchemeWithHeight(minHeightCm: Int, maxHeightCm: Int): String {
         if (idea == null) return ""
 
-        return DesignSchemeFormatter.formatCreativeIdeaByHeight(minHeightCm, maxHeightCm, idea)
+        // 先获取格式化文本
+        val formattedText = DesignSchemeFormatter.formatCreativeIdeaByHeight(minHeightCm, maxHeightCm, idea)
+
+        // 应用输出合规校验工具，自动修正乱码、参数错误、排版杂乱等问题
+        val heightRange = "$minHeightCm-$maxHeightCm"
+        return OutputComplianceChecker.checkAndFixOutput(
+            rawOutput = formattedText,
+            inputHeightRange = heightRange,
+            productType = idea!!.productType.displayName
+        )
     }
 
     /**
