@@ -82,25 +82,66 @@ data class HeightRange(
 
     /**
      * 推荐标准
+     * 强制规则：身高40-150cm → UN R129 i-Size（适配Q0-Q10）
      */
     fun getRecommendedStandard(): InternationalStandard? {
-        return when {
-            minHeight < 75 -> InternationalStandard.ECE_R129  // Group 0+
-            minHeight < 100 -> InternationalStandard.ECE_R129  // Group 0/1
-            maxHeight > 100 -> InternationalStandard.ECE_R129  // Group 2/3
-            else -> InternationalStandard.ECE_R129
-        }
+        return InternationalStandard.ECE_R129
     }
 
     /**
      * 推荐分组
+     * 根据身高区间返回对应的年龄段分组
      */
     fun getRecommendedGroup(): String {
-        return when {
-            minHeight < 75 -> "Group 0+（后向强制）"
-            maxHeight < 105 -> "Group 0/1"
-            else -> "Group 2/3"
-        }
+        return HeightAgeMappingConfig.getAgeRangeInfo(minHeight, maxHeight).ageRange
+    }
+
+    /**
+     * 获取详细年龄段信息
+     */
+    fun getAgeRangeDetail(): HeightAgeMappingConfig.AgeRangeInfo {
+        return HeightAgeMappingConfig.getAgeRangeInfo(minHeight, maxHeight)
+    }
+
+    /**
+     * 获取实时输入反馈
+     */
+    fun getRealtimeFeedback(): String {
+        return HeightAgeMappingConfig.getRealtimeFeedback(minHeight, maxHeight)
+    }
+
+    /**
+     * 获取匹配的Dummy类型
+     */
+    fun getMatchedDummy(): CrashTestDummy? {
+        val middleHeight = (minHeight + maxHeight) / 2
+        return HeightAgeMappingConfig.getIntervalByHeight(middleHeight)?.dummyType
+    }
+
+    /**
+     * 获取匹配的所有Dummy类型（针对范围）
+     */
+    fun getMatchedDummies(): List<CrashTestDummy> {
+        return HeightAgeMappingConfig.getIntervalsByHeightRange(minHeight, maxHeight)
+            .map { it.dummyType }
+            .distinct()
+    }
+
+    /**
+     * 获取安装方向
+     */
+    fun getInstallDirection(): InstallDirection {
+        val middleHeight = (minHeight + maxHeight) / 2
+        return HeightAgeMappingConfig.getIntervalByHeight(middleHeight)?.installDirection
+            ?: InstallDirection.REARWARD
+    }
+
+    /**
+     * 获取标准要求
+     */
+    fun getStandardRequirement(): String {
+        val middleHeight = (minHeight + maxHeight) / 2
+        return HeightAgeMappingConfig.getStandardRequirementByHeight(middleHeight)
     }
 }
 

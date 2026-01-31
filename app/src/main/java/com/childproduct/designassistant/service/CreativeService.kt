@@ -93,9 +93,25 @@ class CreativeService {
         productType: ProductType,
         customTheme: String = ""
     ): CreativeIdeaResult = withContext(Dispatchers.IO) {
+        // 强制规则：身高40-150cm → 0-12岁（AgeGroup.ALL）
+        val ageGroup = if (minHeightCm >= 40 && maxHeightCm <= 150) {
+            AgeGroup.ALL  // 强制映射到0-12岁
+        } else {
+            // 如果范围超出，根据中间高度映射
+            val middleHeight = (minHeightCm + maxHeightCm) / 2
+            val dummyType = CrashTestMapping.getDummyByHeight(middleHeight)
+            when {
+                dummyType == CrashTestDummy.Q0 || dummyType == CrashTestDummy.Q0_PLUS -> AgeGroup.INFANT
+                dummyType == CrashTestDummy.Q1 || dummyType == CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
+                dummyType == CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
+                dummyType == CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
+                else -> AgeGroup.TEEN
+            }
+        }
+
         // 验证身高范围
         val validation = CrashTestMapping.validateHeightRange(minHeightCm, maxHeightCm)
-        
+
         if (!validation.isValid) {
             return@withContext CreativeIdeaResult(
                 success = false,
@@ -105,17 +121,15 @@ class CreativeService {
             )
         }
 
-        // 获取对应的假人类型
-        val dummyType = CrashTestMapping.getDummyByHeight((minHeightCm + maxHeightCm) / 2)
-        
-        // 根据假人类型确定年龄段
-        val ageGroup = when {
-            dummyType == CrashTestDummy.Q0 || dummyType == CrashTestDummy.Q0_PLUS -> AgeGroup.INFANT
-            dummyType == CrashTestDummy.Q1 || dummyType == CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
-            dummyType == CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
-            dummyType == CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
-            else -> AgeGroup.TEEN
-        }
+        // 获取所有涉及的假人类型
+        val dummyTypes = HeightAgeMappingConfig.getIntervalsByHeightRange(
+            minHeightCm.toDouble(),
+            maxHeightCm.toDouble()
+        ).map { it.dummyType }.distinct()
+
+        // 使用中间假人类型作为主要参考
+        val mainDummyType = CrashTestMapping.getDummyByHeight((minHeightCm + maxHeightCm) / 2)
+        val dummyType = mainDummyType  // 用于后续生成
 
         val themes = ageGroupThemes[ageGroup] ?: emptyList()
         val features = productTypeFeatures[productType] ?: emptyList()
@@ -139,6 +153,16 @@ class CreativeService {
         // 生成材质规格（根据产品类型）
         val materialSpecs = MaterialSpecs.getDefaultForProductType(productType)
 
+        // 生成年龄修正提示（如果需要）
+        val ageCorrectionHint = if (ageGroup == AgeGroup.ALL) {
+            HeightAgeMappingConfig.getCorrectionHint()
+        } else {
+            null
+        }
+
+        // 生成标准合规性说明
+        val standardComplianceText = HeightAgeMappingConfig.getStandardComplianceText()
+
         val idea = CreativeIdea(
             id = UUID.randomUUID().toString(),
             title = title,
@@ -159,7 +183,9 @@ class CreativeService {
             success = true,
             error = null,
             idea = idea,
-            validation = validation
+            validation = validation,
+            ageCorrectionHint = ageCorrectionHint,
+            standardComplianceText = standardComplianceText
         )
     }
 
@@ -243,5 +269,7 @@ data class CreativeIdeaResult(
     val success: Boolean,
     val error: String?,
     val idea: CreativeIdea?,
-    val validation: CrashTestMapping.ValidationResult
+    val validation: CrashTestMapping.ValidationResult,
+    val ageCorrectionHint: String? = null,  // 年龄修正提示
+    val standardComplianceText: String? = null  // 标准合规性说明
 )

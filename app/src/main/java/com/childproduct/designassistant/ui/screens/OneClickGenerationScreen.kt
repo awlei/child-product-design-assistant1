@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.childproduct.designassistant.model.HeightAgeMappingConfig
 import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
 import kotlinx.coroutines.delay
@@ -303,6 +304,86 @@ fun OneClickGenerationScreen(
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.error
                                 )
+                            }
+                        }
+                    }
+                    
+                    // 实时身高-年龄映射反馈
+                    if (minHeight.isNotEmpty() && maxHeight.isNotEmpty()) {
+                        val minHeightValue = minHeight.toIntOrNull()
+                        val maxHeightValue = maxHeight.toIntOrNull()
+                        
+                        if (minHeightValue != null && maxHeightValue != null && isValidInput) {
+                            // 使用 HeightAgeMappingConfig 获取映射信息
+                            val mappings = listOfNotNull(
+                                HeightAgeMappingConfig.getMappingByHeightRange(minHeightValue, maxHeightValue)
+                            )
+                            
+                            if (mappings.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Card(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                                    )
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Info,
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.tertiary,
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(4.dp))
+                                            Text(
+                                                text = "实时映射结果",
+                                                style = MaterialTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.tertiary
+                                            )
+                                        }
+                                        
+                                        mappings.forEach { mapping ->
+                                            Text(
+                                                text = "• 身高 ${mapping.minHeight}-${mapping.maxHeight}cm → 年龄 ${mapping.ageGroup}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                                            )
+                                            Text(
+                                                text = "  分组: ${mapping.productGroup} | 假人: ${mapping.dummyType}",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
+                                            )
+                                        }
+                                        
+                                        // 标准合规提示
+                                        if (minHeightValue >= 40 && maxHeightValue <= 150) {
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Verified,
+                                                    contentDescription = null,
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier.size(14.dp)
+                                                )
+                                                Spacer(modifier = Modifier.width(4.dp))
+                                                Text(
+                                                    text = "符合 ECE R129 国际标准",
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

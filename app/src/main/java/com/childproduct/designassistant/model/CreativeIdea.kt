@@ -291,13 +291,16 @@ enum class CrashTestDummy(val displayName: String, val heightRange: String, val 
     }
 }
 
-enum class AgeGroup(val displayName: String, val heightRange: String, val weightRange: String) {
-    INFANT("0-3岁", "50-87cm", "2.5-11kg"),
-    TODDLER("3-6岁", "87-105cm", "11-15kg"),
-    PRESCHOOL("6-9岁", "105-125cm", "15-21kg"),
-    SCHOOL_AGE("9-12岁", "125-145cm", "21-33kg"),
-    TEEN("12岁以上", "145-150cm", "33-38kg"),
-    ALL("全年龄段", "50-150cm", "2.5-38kg")
+enum class AgeGroup(val displayName: String, val heightRange: String, val weightRange: String, val ageRangeMonths: String) {
+    INFANT("0-3岁", "50-87cm", "2.5-11kg", "0-36个月"),
+    TODDLER("3-6岁", "87-105cm", "11-15kg", "36-72个月"),
+    PRESCHOOL("6-9岁", "105-125cm", "15-21kg", "72-108个月"),
+    SCHOOL_AGE("9-12岁", "125-145cm", "21-33kg", "108-144个月"),
+    TEEN("12岁以上", "145-150cm", "33-38kg", "144个月以上"),
+    /**
+     * 全年龄段（强制映射：身高40-150cm → 0-12岁）
+     */
+    ALL("0-12岁", "40-150cm", "2.5-38kg", "0-144个月")
 }
 
 enum class ProductType(val displayName: String, val standardAbbr: String, val mainStandards: String) {
