@@ -328,6 +328,92 @@ object InputMatchingEngine {
                     validationErrors = emptyList()
                 )
             }
+            InputType.AGE_RANGE -> {
+                // 年龄范围输入
+                val ageRange = input.ageRange
+                if (ageRange == null) {
+                    return InputMatchingResult(
+                        success = false,
+                        productType = input.productType ?: ProductType.CHILD_SAFETY_SEAT,
+                        standard = null,
+                        recommendedGroup = null,
+                        recommendedType = null,
+                        installDirection = null,
+                        validationErrors = listOf("请输入年龄范围")
+                    )
+                }
+
+                val productType = input.productType
+                if (productType == null) {
+                    return InputMatchingResult(
+                        success = false,
+                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        standard = null,
+                        recommendedGroup = null,
+                        recommendedType = null,
+                        installDirection = null,
+                        validationErrors = listOf("请选择产品品类")
+                    )
+                }
+
+                // 校验年龄范围
+                val hint = ageRange.getValidationHint(productType)
+                if (hint != null) {
+                    validationErrors.add(hint)
+                }
+
+                if (!ageRange.isValid(productType)) {
+                    return InputMatchingResult(
+                        success = false,
+                        productType = productType,
+                        standard = null,
+                        recommendedGroup = null,
+                        recommendedType = null,
+                        installDirection = null,
+                        validationErrors = validationErrors
+                    )
+                }
+
+                // 匹配成功
+                return InputMatchingResult(
+                    success = true,
+                    productType = productType,
+                    standard = ageRange.getRecommendedStandard(productType),
+                    recommendedGroup = if (productType == ProductType.CHILD_SAFETY_SEAT) {
+                        ageRange.getRecommendedType(productType)
+                    } else {
+                        null
+                    },
+                    recommendedType = ageRange.getRecommendedType(productType),
+                    installDirection = null,
+                    validationErrors = emptyList()
+                )
+            }
+            InputType.CUSTOM -> {
+                // 自定义参数输入
+                if (input.productType == null) {
+                    return InputMatchingResult(
+                        success = false,
+                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        standard = null,
+                        recommendedGroup = null,
+                        recommendedType = null,
+                        installDirection = null,
+                        validationErrors = listOf("请选择产品品类")
+                    )
+                }
+
+                // 自定义参数暂时返回基本成功状态
+                return InputMatchingResult(
+                    success = true,
+                    productType = input.productType!!,
+                    standard = null,
+                    recommendedGroup = null,
+                    recommendedType = null,
+                    installDirection = null,
+                    validationErrors = emptyList()
+                )
+            }
         }
     }
 

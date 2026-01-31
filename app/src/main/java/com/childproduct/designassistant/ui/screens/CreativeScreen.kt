@@ -272,25 +272,26 @@ fun CreativeScreen(
                                     ) {
                                         Text("kg")
                                     }
-                            }
-                            
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            ParameterInputRow(
-                                label = standard.inputItem.inputLabel,
-                                unit = weightUnit,
-                                placeholder = standard.inputItem.placeholder,
-                                minValue = minWeight,
-                                maxValue = maxWeight,
-                                onMinValueChange = {
-                                    minWeight = it
-                                    validateAndSetResult()
-                                },
-                                onMaxValueChange = {
-                                    maxWeight = it
-                                    validateAndSetResult()
                                 }
-                            )
+                                
+                                Spacer(modifier = Modifier.height(8.dp))
+                                
+                                ParameterInputRow(
+                                    label = standard.inputItem.inputLabel,
+                                    unit = weightUnit,
+                                    placeholder = standard.inputItem.placeholder,
+                                    minValue = minWeight,
+                                    maxValue = maxWeight,
+                                    onMinValueChange = {
+                                        minWeight = it
+                                        validateAndSetResult()
+                                    },
+                                    onMaxValueChange = {
+                                        maxWeight = it
+                                        validateAndSetResult()
+                                    }
+                                )
+                            }
                         }
                         InputType.AGE_RANGE -> {
                             // 年龄范围输入
@@ -300,11 +301,11 @@ fun CreativeScreen(
                                 placeholder = standard.inputItem.placeholder,
                                 minValue = minAge,
                                 maxValue = maxAge,
-                                onMinValueChange = { 
+                                onMinValueChange = {
                                     minAge = it
                                     validateAndSetResult()
                                 },
-                                onMaxValueChange = { 
+                                onMaxValueChange = {
                                     maxAge = it
                                     validateAndSetResult()
                                 }
@@ -669,6 +670,120 @@ fun ComplianceCombinationCard(combination: ComplianceCombination) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
+        }
+    }
+}
+
+/**
+ * 创意展示卡片
+ */
+@Composable
+fun CreativeIdeaCard(idea: CreativeIdea) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // 标题
+            Text(
+                text = idea.title,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // 描述
+            Text(
+                text = idea.description,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            // 年龄组
+            Text(
+                text = "年龄段: ${idea.ageGroup.displayName}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+            )
+            
+            // 产品类型
+            Text(
+                text = "产品类型: ${idea.productType.displayName}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+            )
+            
+            // 设计主题
+            if (idea.theme.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "主题: $idea.theme",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                )
+            }
+            
+            // 特性
+            if (idea.features.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "特性:",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                idea.features.forEach { feature ->
+                    Text(
+                        text = "• $feature",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
+                    )
+                }
+            }
+            
+            // 材料
+            if (idea.materials.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "材料:",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+                idea.materials.forEach { material ->
+                    Text(
+                        text = "• $material",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.9f)
+                    )
+                }
+            }
+            
+            // 安全提示
+            if (idea.safetyNotes.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "安全提示:",
+                    style = MaterialTheme.typography.labelMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error
+                )
+                idea.safetyNotes.forEach { note ->
+                    Text(
+                        text = "⚠ $note",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
         }
     }
 }
