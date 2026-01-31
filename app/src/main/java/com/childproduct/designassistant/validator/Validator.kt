@@ -22,8 +22,8 @@ interface Validator<T> {
      */
     data class ValidationResult(
         val isValid: Boolean,
-        val errors: ImmutableList<String> = emptyList(),
-        val warnings: ImmutableList<String> = emptyList()
+        val errors: ImmutableList<String> = persistentListOf(),
+        val warnings: ImmutableList<String> = persistentListOf()
     ) {
         /**
          * 创建成功的验证结果
@@ -31,20 +31,20 @@ interface Validator<T> {
         companion object {
             fun success() = ValidationResult(
                 isValid = true,
-                errors = emptyList(),
-                warnings = emptyList()
+                errors = persistentListOf(),
+                warnings = persistentListOf()
             )
 
             fun success(warnings: List<String>) = ValidationResult(
                 isValid = true,
-                errors = emptyList(),
+                errors = persistentListOf(),
                 warnings = warnings.toImmutableList()
             )
 
             fun failure(errors: List<String>) = ValidationResult(
                 isValid = false,
                 errors = errors.toImmutableList(),
-                warnings = emptyList()
+                warnings = persistentListOf()
             )
 
             fun failure(errors: List<String>, warnings: List<String>) = ValidationResult(
@@ -166,7 +166,7 @@ class ThemeKeywordValidator : Validator<String> {
         // 非空校验
         if (target.isBlank()) {
             errors.add("设计主题不能为空")
-            return ValidationResult.failure(errors, warnings)
+            return Validator.ValidationResult.failure(errors, warnings)
         }
 
         // 长度校验
