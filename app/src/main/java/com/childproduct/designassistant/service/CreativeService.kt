@@ -1,7 +1,9 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.model.*
+import com.childproduct.designassistant.utils.ComplianceParamsData
 import com.childproduct.designassistant.utils.DesignSchemeFormatter
+import com.childproduct.designassistant.utils.SchemeCardData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
@@ -296,7 +298,7 @@ data class CreativeIdeaResult(
     /**
      * 获取卡片数据（用于UI展示）
      */
-    fun getCardData(): DesignSchemeFormatter.SchemeCardData? {
+    fun getCardData(): SchemeCardData? {
         return idea?.let { DesignSchemeFormatter.formatToCardData(it) }
     }
 }

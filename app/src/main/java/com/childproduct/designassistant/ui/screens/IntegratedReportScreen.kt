@@ -13,7 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
+import com.childproduct.designassistant.utils.ComplianceParamsData
 import com.childproduct.designassistant.utils.DesignSchemeFormatter
+import com.childproduct.designassistant.utils.SchemeCardData
 
 /**
  * 整合报告界面
@@ -966,7 +968,7 @@ fun ConfigurationItem(
  */
 @Composable
 fun StructuredDesignSchemeCard(
-    cardData: DesignSchemeFormatter.SchemeCardData,
+    cardData: SchemeCardData,
     modifier: Modifier = Modifier
 ) {
     Card(

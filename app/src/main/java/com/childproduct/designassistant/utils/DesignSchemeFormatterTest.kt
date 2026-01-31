@@ -76,7 +76,7 @@ object DesignSchemeFormatterTest {
     /**
      * 测试卡片数据格式化
      */
-    fun testFormatToCardData(): DesignSchemeFormatter.SchemeCardData? {
+    fun testFormatToCardData(): SchemeCardData? {
         val complianceParams = ComplianceParameters(
             dummyType = CrashTestDummy.Q1,
             hicLimit = 390,
