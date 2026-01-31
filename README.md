@@ -70,18 +70,36 @@
 
 #### 2. 推送代码到 GitHub
 ```bash
+# 初始化 git 仓库（如果还没有）
 git init
-git add .
-git commit -m "Initial commit: Child Product Design Assistant"
-git branch -M main
+
+# 添加远程仓库（替换为你的仓库地址）
 git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+
+# 添加所有文件
+git add .
+
+# 提交更改
+git commit -m "Initial commit: Child Product Design Assistant"
+
+# 推送到 GitHub
 git push -u origin main
+```
+
+或者使用提供的脚本：
+```bash
+# 1. 添加远程仓库
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+
+# 2. 运行推送脚本
+chmod +x push-to-github.sh
+./push-to-github.sh
 ```
 
 #### 3. 触发自动构建
 推送代码后，GitHub Actions 会自动开始构建 APK：
 - 进入仓库的 **Actions** 标签
-- 等待 "Build Android APK" workflow 完成
+- 等待 "Build APK" workflow 完成
 - 在 workflow 运行结果中下载 APK 文件
 
 #### 4. 下载并安装 APK
