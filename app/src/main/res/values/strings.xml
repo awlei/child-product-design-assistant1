@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">儿童产品设计助手</string>
+    <string name="creativity_tab">创意生成</string>
+    <string name="safety_tab">安全检查</string>
+    <string name="documents_tab">设计文档</string>
+    <string name="technical_tab">技术建议</string>
+    <string name="generate_creativity">生成创意</string>
+    <string name="check_safety">安全检查</string>
+    <string name="generate_document">生成文档</string>
+    <string name="generate_technical">生成技术建议</string>
+    <string name="age_group">年龄段</string>
+    <string name="product_type">产品类型</string>
+    <string name="design_theme">设计主题</string>
+    <string name="small_parts_warning">小零件警告</string>
+    <string name="sharp_edges_warning">尖锐边缘警告</string>
+    <string name="material_safety">材料安全性</string>
+    <string name="size_recommendation">尺寸建议</string>
+    <string name="loading">加载中…</string>
+    <string name="error_occurred">发生错误</string>
+    <string name="success">操作成功</string>
+    <string name="height_range">身高范围</string>
+    <string name="weight_range">重量范围</string>
+    <string name="technical_question">技术问题</string>
+    <string name="standard_matching">标准匹配</string>
+    <string name="brand_comparison">品牌对比</string>
+    <string name="suggested_specs">建议规格</string>
+    <string name="dvp_matrix">DVP测试矩阵</string>
+</resources>
