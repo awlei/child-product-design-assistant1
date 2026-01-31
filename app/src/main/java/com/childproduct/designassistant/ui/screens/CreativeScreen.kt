@@ -54,6 +54,51 @@ fun CreativeScreen(
     var paramValidationResult by remember { mutableStateOf<ParamInputResult?>(null) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
+    // 参数验证函数
+    fun validateAndSetResult() {
+        selectedStandard?.let { standard ->
+            when (standard.inputItem.inputType) {
+                InputType.HEIGHT_RANGE -> {
+                    val minH = minHeight.toDoubleOrNull()
+                    val maxH = maxHeight.toDoubleOrNull()
+                    if (minH != null && maxH != null) {
+                        val result = ProductTypeConfigManager.validateHeightRange(minH, maxH, standard)
+                        paramValidationResult = result
+                        validationError = if (!result.isValid) result.errorMessage else null
+                    } else {
+                        paramValidationResult = null
+                        validationError = null
+                    }
+                }
+                InputType.WEIGHT_RANGE -> {
+                    val minW = minWeight.toDoubleOrNull()
+                    val maxW = maxWeight.toDoubleOrNull()
+                    if (minW != null && maxW != null) {
+                        val result = ProductTypeConfigManager.validateWeightRange(minW, maxW, weightUnit == "lb", standard)
+                        paramValidationResult = result
+                        validationError = if (!result.isValid) result.errorMessage else null
+                    } else {
+                        paramValidationResult = null
+                        validationError = null
+                    }
+                }
+                InputType.AGE_RANGE -> {
+                    val minA = minAge.toDoubleOrNull()
+                    val maxA = maxAge.toDoubleOrNull()
+                    if (minA != null && maxA != null) {
+                        val result = ProductTypeConfigManager.validateAgeRange(minA, maxA, standard)
+                        paramValidationResult = result
+                        validationError = if (!result.isValid) result.errorMessage else null
+                    } else {
+                        paramValidationResult = null
+                        validationError = null
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
     // 获取当前产品类型配置
     val productConfig = selectedProductType?.let { ProductTypeConfigManager.getConfigByProductType(it) }
 
@@ -65,19 +110,23 @@ fun CreativeScreen(
 
     // 合规组合显示
     val complianceCombination = remember(selectedProductType, selectedStandard, paramValidationResult) {
-        if (selectedProductType != null && selectedStandard != null && paramValidationResult?.isValid == true) {
-            val paramValue = when (selectedStandard.inputItem.inputType) {
+        val productType = selectedProductType
+        val standard = selectedStandard
+        val validationResult = paramValidationResult
+
+        if (productType != null && standard != null && validationResult?.isValid == true) {
+            val paramValue = when (standard.inputItem.inputType) {
                 InputType.HEIGHT_RANGE -> "${minHeight}-${maxHeight}cm"
                 InputType.WEIGHT_RANGE -> "${minWeight}-${maxWeight}${weightUnit}"
                 InputType.AGE_RANGE -> "${minAge}-${maxAge}岁"
                 else -> ""
             }
             ComplianceCombination(
-                productType = selectedProductType,
-                standardName = selectedStandard.standardName,
+                productType = productType,
+                standardName = standard.standardName,
                 paramValue = paramValue,
-                matchedDummy = paramValidationResult.matchedDummy,
-                coreRequirements = selectedStandard.coreRequirements,
+                matchedDummy = validationResult.matchedDummy,
+                coreRequirements = standard.coreRequirements,
                 isValid = true
             )
         } else {
@@ -163,7 +212,7 @@ fun CreativeScreen(
                 }
 
                 // ========== 3. 参数输入（仅在选中标准后显示） ==========
-                if (selectedStandard != null) {
+                selectedStandard?.let { standard ->
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "3. 参数输入",
@@ -171,20 +220,20 @@ fun CreativeScreen(
                         fontWeight = FontWeight.Bold
                     )
 
-                    when (selectedStandard.inputItem.inputType) {
+                    when (standard.inputItem.inputType) {
                         InputType.HEIGHT_RANGE -> {
                             // 身高范围输入
                             ParameterInputRow(
-                                label = selectedStandard.inputItem.inputLabel,
-                                unit = selectedStandard.inputItem.unit,
-                                placeholder = selectedStandard.inputItem.placeholder,
+                                label = standard.inputItem.inputLabel,
+                                unit = standard.inputItem.unit,
+                                placeholder = standard.inputItem.placeholder,
                                 minValue = minHeight,
                                 maxValue = maxHeight,
-                                onMinValueChange = { 
+                                onMinValueChange = {
                                     minHeight = it
                                     validateAndSetResult()
                                 },
-                                onMaxValueChange = { 
+                                onMaxValueChange = {
                                     maxHeight = it
                                     validateAndSetResult()
                                 }
@@ -200,35 +249,44 @@ fun CreativeScreen(
                                     text = "单位：",
                                     style = MaterialTheme.typography.bodyMedium
                                 )
-                                SegmentedButton(
-                                    selected = weightUnit == "lb",
-                                    onClick = { weightUnit = "lb" },
-                                    modifier = Modifier.padding(horizontal = 4.dp)
-                                ) {
-                                    Text("lb")
-                                }
-                                SegmentedButton(
-                                    selected = weightUnit == "kg",
-                                    onClick = { weightUnit = "kg" },
-                                    modifier = Modifier.padding(horizontal = 4.dp)
-                                ) {
-                                    Text("kg")
-                                }
+                                SingleChoiceSegmentedButtonRow {
+                                    SegmentedButton(
+                                        selected = weightUnit == "lb",
+                                        onClick = { weightUnit = "lb" },
+                                        shape = SegmentedButtonDefaults.itemShape(
+                                            index = 0,
+                                            count = 2
+                                        ),
+                                        modifier = Modifier.padding(horizontal = 4.dp)
+                                    ) {
+                                        Text("lb")
+                                    }
+                                    SegmentedButton(
+                                        selected = weightUnit == "kg",
+                                        onClick = { weightUnit = "kg" },
+                                        shape = SegmentedButtonDefaults.itemShape(
+                                            index = 1,
+                                            count = 2
+                                        ),
+                                        modifier = Modifier.padding(horizontal = 4.dp)
+                                    ) {
+                                        Text("kg")
+                                    }
                             }
                             
                             Spacer(modifier = Modifier.height(8.dp))
                             
                             ParameterInputRow(
-                                label = selectedStandard.inputItem.inputLabel,
+                                label = standard.inputItem.inputLabel,
                                 unit = weightUnit,
-                                placeholder = selectedStandard.inputItem.placeholder,
+                                placeholder = standard.inputItem.placeholder,
                                 minValue = minWeight,
                                 maxValue = maxWeight,
-                                onMinValueChange = { 
+                                onMinValueChange = {
                                     minWeight = it
                                     validateAndSetResult()
                                 },
-                                onMaxValueChange = { 
+                                onMaxValueChange = {
                                     maxWeight = it
                                     validateAndSetResult()
                                 }
@@ -237,9 +295,9 @@ fun CreativeScreen(
                         InputType.AGE_RANGE -> {
                             // 年龄范围输入
                             ParameterInputRow(
-                                label = selectedStandard.inputItem.inputLabel,
-                                unit = selectedStandard.inputItem.unit,
-                                placeholder = selectedStandard.inputItem.placeholder,
+                                label = standard.inputItem.inputLabel,
+                                unit = standard.inputItem.unit,
+                                placeholder = standard.inputItem.placeholder,
                                 minValue = minAge,
                                 maxValue = maxAge,
                                 onMinValueChange = { 
@@ -377,51 +435,6 @@ fun CreativeScreen(
         // 显示生成的创意
         creativeIdea?.let { idea ->
             CreativeIdeaCard(idea = idea)
-        }
-    }
-
-    // 参数验证函数（在remember作用域外定义）
-    fun validateAndSetResult() {
-        selectedStandard?.let { standard ->
-            when (standard.inputItem.inputType) {
-                InputType.HEIGHT_RANGE -> {
-                    val minH = minHeight.toDoubleOrNull()
-                    val maxH = maxHeight.toDoubleOrNull()
-                    if (minH != null && maxH != null) {
-                        val result = ProductTypeConfigManager.validateHeightRange(minH, maxH, standard)
-                        paramValidationResult = result
-                        validationError = if (!result.isValid) result.errorMessage else null
-                    } else {
-                        paramValidationResult = null
-                        validationError = null
-                    }
-                }
-                InputType.WEIGHT_RANGE -> {
-                    val minW = minWeight.toDoubleOrNull()
-                    val maxW = maxWeight.toDoubleOrNull()
-                    if (minW != null && maxW != null) {
-                        val result = ProductTypeConfigManager.validateWeightRange(minW, maxW, weightUnit == "lb", standard)
-                        paramValidationResult = result
-                        validationError = if (!result.isValid) result.errorMessage else null
-                    } else {
-                        paramValidationResult = null
-                        validationError = null
-                    }
-                }
-                InputType.AGE_RANGE -> {
-                    val minA = minAge.toDoubleOrNull()
-                    val maxA = maxAge.toDoubleOrNull()
-                    if (minA != null && maxA != null) {
-                        val result = ProductTypeConfigManager.validateAgeRange(minA, maxA, standard)
-                        paramValidationResult = result
-                        validationError = if (!result.isValid) result.errorMessage else null
-                    } else {
-                        paramValidationResult = null
-                        validationError = null
-                    }
-                }
-                else -> {}
-            }
         }
     }
 }

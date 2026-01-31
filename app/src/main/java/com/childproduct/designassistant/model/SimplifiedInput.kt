@@ -12,8 +12,8 @@ data class SimplifiedInput(
 
     /**
      * 品类：儿童安全座椅或婴儿推车
-     * 如果输入Type是HEIGHT，系统自动识别为安全座椅
-     * 如果输入Type是WEIGHT，需要用户选择品类
+     * 如果输入Type是HEIGHT_RANGE，系统自动识别为安全座椅
+     * 如果输入Type是WEIGHT_RANGE，需要用户选择品类
      */
     val productType: ProductType? = null,
 
@@ -46,14 +46,6 @@ data class SimplifiedInput(
      */
     val specialRequirements: List<String> = emptyList()
 )
-
-/**
- * 输入类型
- */
-enum class InputType(val displayName: String) {
-    HEIGHT("身高范围"),
-    WEIGHT("重量范围")
-}
 
 /**
  * 身高范围
@@ -226,7 +218,7 @@ object InputMatchingEngine {
 
         // 根据输入类型进行匹配
         when (input.inputType) {
-            InputType.HEIGHT -> {
+            InputType.HEIGHT_RANGE -> {
                 // 身高输入：自动识别为安全座椅
                 val heightRange = input.heightRange
                 if (heightRange == null) {
@@ -275,7 +267,7 @@ object InputMatchingEngine {
                 )
             }
 
-            InputType.WEIGHT -> {
+            InputType.WEIGHT_RANGE -> {
                 // 重量输入：需要用户选择品类
                 val weightRange = input.weightRange
                 if (weightRange == null) {
