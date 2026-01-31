@@ -1,6 +1,8 @@
 package com.childproduct.designassistant.utils
 
 import com.childproduct.designassistant.model.ChildProductDesignScheme
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 
 /**
  * 核心优化工具类：清理乱码+修正参数+结构化输出
@@ -46,7 +48,7 @@ object OutputComplianceChecker {
         "颈部张力极限" to "≤1800N（Q3-Q10）",
         "头部位移极限" to "≤550mm（全假人）",
         "阻燃性能" to "符合FMVSS 302（燃烧速度≤4英寸/分钟）"
-    )
+    ).toImmutableMap()
 
     /**
      * 标准合规标准（去重后）
@@ -154,13 +156,13 @@ object OutputComplianceChecker {
             ageRange = correctAge,
             designTheme = designTheme,
             installMethodDesc = "ISOFIX快速连接（兼容多种安装方式）",
-            coreFeatures = coreFeatures,
-            recommendMaterials = recommendMaterials,
-            complianceStandards = complianceStandards,
+            coreFeatures = coreFeatures.toImmutableList(),
+            recommendMaterials = recommendMaterials.toImmutableList(),
+            complianceStandards = complianceStandards.toImmutableList(),
             dummyType = correctDummy,
             safetyThresholds = STANDARD_SAFETY_THRESHOLDS,
-            testMatrix = emptyList(),  // 旧版本兼容，实际使用 SchemeOptimizer
-            safetyNotes = safetyNotes
+            testMatrix = emptyList<TestMatrixItem>().toImmutableList(),  // 旧版本兼容，实际使用 SchemeOptimizer
+            safetyNotes = safetyNotes.toImmutableList()
         )
     }
 

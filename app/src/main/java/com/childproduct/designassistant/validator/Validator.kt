@@ -114,9 +114,9 @@ class HeightValidator : Validator<String> {
         }
 
         return when {
-            errors.isNotEmpty() -> ValidationResult.failure(errors, warnings)
-            warnings.isNotEmpty() -> ValidationResult.success(warnings)
-            else -> ValidationResult.success()
+            errors.isNotEmpty() -> Validator.ValidationResult.failure(errors, warnings)
+            warnings.isNotEmpty() -> Validator.ValidationResult.success(warnings)
+            else -> Validator.ValidationResult.success()
         }
     }
 }
@@ -148,9 +148,9 @@ class ProductInputValidator : Validator<SchemeOptimizer.UserInput> {
         allWarnings.addAll(heightResult.warnings)
 
         return when {
-            allErrors.isNotEmpty() -> ValidationResult.failure(allErrors, allWarnings)
-            allWarnings.isNotEmpty() -> ValidationResult.success(allWarnings)
-            else -> ValidationResult.success()
+            allErrors.isNotEmpty() -> Validator.ValidationResult.failure(allErrors, allWarnings)
+            allWarnings.isNotEmpty() -> Validator.ValidationResult.success(allWarnings)
+            else -> Validator.ValidationResult.success()
         }
     }
 }
@@ -181,9 +181,9 @@ class ThemeKeywordValidator : Validator<String> {
         }
 
         return when {
-            errors.isNotEmpty() -> ValidationResult.failure(errors, warnings)
-            warnings.isNotEmpty() -> ValidationResult.success(warnings)
-            else -> ValidationResult.success()
+            errors.isNotEmpty() -> Validator.ValidationResult.failure(errors, warnings)
+            warnings.isNotEmpty() -> Validator.ValidationResult.success(warnings)
+            else -> Validator.ValidationResult.success()
         }
     }
 }
@@ -219,9 +219,9 @@ class DesignSchemeValidator : Validator<com.childproduct.designassistant.model.C
         }
 
         return when {
-            errors.isNotEmpty() -> ValidationResult.failure(errors, warnings)
-            warnings.isNotEmpty() -> ValidationResult.success(warnings)
-            else -> ValidationResult.success()
+            errors.isNotEmpty() -> Validator.ValidationResult.failure(errors, warnings)
+            warnings.isNotEmpty() -> Validator.ValidationResult.success(warnings)
+            else -> Validator.ValidationResult.success()
         }
     }
 }
