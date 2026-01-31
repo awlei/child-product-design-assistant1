@@ -7,6 +7,7 @@ package com.childproduct.designassistant.model
  * - 使用结构化字段替代代码式字符串
  * - 强制使用标准值（如年龄段、假人类型）
  * - 所有列表字段自动去重
+ * - 新增安装方式和测试矩阵字段
  */
 data class ChildProductDesignScheme(
     // ========== 基本信息 ==========
@@ -16,6 +17,7 @@ data class ChildProductDesignScheme(
     val designTheme: String,                   // 设计主题（如：拼图游戏）
 
     // ========== 核心设计 ==========
+    val installMethodDesc: String,             // 安装方式描述（联动InstallMethod）
     val coreFeatures: List<String>,            // 核心特点（去重后）
     val recommendMaterials: List<String>,      // 推荐材料（去重后）
 
@@ -23,6 +25,7 @@ data class ChildProductDesignScheme(
     val complianceStandards: List<String>,     // 合规标准（去重后）
     val dummyType: String,                     // 适配假人类型（标准值）
     val safetyThresholds: Map<String, String>, // 安全阈值（无重复）
+    val testMatrix: List<TestMatrixItem>,      // 测试矩阵（结构化）
 
     // ========== 安全提示 ==========
     val safetyNotes: List<String>              // 安全注意事项（去重后）

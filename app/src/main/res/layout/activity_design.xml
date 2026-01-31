@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 产品类型输入 -->
+        <EditText
+            android:id="@+id/et_product_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="请输入产品类型（如：儿童安全座椅）" />
+
+        <!-- 身高范围输入 -->
+        <EditText
+            android:id="@+id/et_height_range"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="请输入身高范围（如：40-150cm）"
+            android:layout_marginTop="16dp" />
+
+        <!-- 安装方式单选组 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="选择安装方式："
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_install_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp" />
+
+        <!-- 设计主题关键词输入 -->
+        <EditText
+            android:id="@+id/et_theme_keyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="请输入设计主题关键词（如：拼图游戏）"
+            android:layout_marginTop="16dp" />
+
+        <!-- 生成按钮 -->
+        <Button
+            android:id="@+id/btn_generate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="生成设计方案"
+            android:layout_marginTop="16dp" />
+
+        <!-- 结果展示 -->
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginTop="16dp"
+            android:text="设计方案将在这里显示..." />
+
+    </LinearLayout>
+
+</ScrollView>
