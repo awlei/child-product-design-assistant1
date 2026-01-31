@@ -314,12 +314,13 @@ fun OneClickGenerationScreen(
                         val maxHeightValue = maxHeight.toIntOrNull()
                         
                         if (minHeightValue != null && maxHeightValue != null && isValidInput) {
-                            // 使用 HeightAgeMappingConfig 获取映射信息
-                            val mappings = listOfNotNull(
-                                HeightAgeMappingConfig.getMappingByHeightRange(minHeightValue, maxHeightValue)
+                            // 使用 HeightAgeMappingConfig 获取所有涉及的区间
+                            val intervals = HeightAgeMappingConfig.getIntervalsByHeightRange(
+                                minHeightValue.toDouble(),
+                                maxHeightValue.toDouble()
                             )
                             
-                            if (mappings.isNotEmpty()) {
+                            if (intervals.isNotEmpty()) {
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Card(
                                     modifier = Modifier.fillMaxWidth(),
@@ -349,14 +350,20 @@ fun OneClickGenerationScreen(
                                             )
                                         }
                                         
-                                        mappings.forEach { mapping ->
+                                        // 直接在Column中渲染每个区间
+                                        intervals.forEach { interval ->
                                             Text(
-                                                text = "• 身高 ${mapping.minHeight}-${mapping.maxHeight}cm → 年龄 ${mapping.ageGroup}",
+                                                text = "• 身高 ${interval.minHeight.toInt()}-${interval.maxHeight.toInt()}cm → 年龄 ${interval.ageRange}",
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onTertiaryContainer
                                             )
+                                            val directionText = when (interval.installDirection) {
+                                                com.childproduct.designassistant.model.InstallDirection.REARWARD -> "后向"
+                                                com.childproduct.designassistant.model.InstallDirection.FORWARD -> "前向"
+                                                else -> "双向"
+                                            }
                                             Text(
-                                                text = "  分组: ${mapping.productGroup} | 假人: ${mapping.dummyType}",
+                                                text = "  方向: $directionText | 假人: ${interval.dummyType.displayName}",
                                                 style = MaterialTheme.typography.bodySmall,
                                                 color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f)
                                             )
