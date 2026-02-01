@@ -7,6 +7,15 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toImmutableMap
 
 /**
+ * Tether 类型枚举（根据 ECE R129 §6.1.2）
+ */
+enum class TetherType(val displayName: String, val description: String) {
+    SUPPORT_LEG("Support leg", "支撑腿（适用于40-105cm后向安装）"),
+    TOP_TETHER("Top Tether", "上拉带（适用于105-150cm前向安装）"),
+    BOTH("Support leg + Top Tether", "双模式（根据身高范围自动切换）")
+}
+
+/**
  * ROADMATE 360测试矩阵输出生成器（ECE R129单一标准 · 40-150cm全范围）
  * 严格遵循ECE R129 Annex 19标准，不混用GB 27887-2024/FMVSS 213
  * 假人映射：Q0(40-50cm) → Q0+(50-60cm) → Q1(60-75cm) → Q1.5(75-87cm) → Q3(87-105cm) → Q3s(105-125cm) → Q6(125-145cm) → Q10(145-150cm)
@@ -85,14 +94,33 @@ object Roadmate360OutputGenerator {
     )
 
     // ========== 核心方法：生成完整输出 ==========
+    /**
+     * 生成完整输出
+     * @param minHeightCm 最小身高
+     * @param maxHeightCm 最大身高
+     * @param productType 产品类型
+     * @param designTheme 设计主题
+     * @param tetherType Tether类型（Support leg / Top Tether / Both）
+     */
     fun generateOutput(
         minHeightCm: Int,
         maxHeightCm: Int,
         productType: String = "儿童安全座椅",
-        designTheme: String = "全阶段成长型"
+        designTheme: String = "全阶段成长型",
+        tetherType: TetherType = TetherType.BOTH
     ): String {
         require(minHeightCm in 40..150 && maxHeightCm in 40..150 && minHeightCm < maxHeightCm) {
             "身高范围必须在40-150cm之间，且最小值小于最大值"
+        }
+
+        // 根据 tetherType 生成安装方式描述
+        val installMethodDesc = when (tetherType) {
+            TetherType.SUPPORT_LEG -> "- 40-105cm：ISOFIX 3点连接 + 支撑腿（后向安装，ECE R129 §5.1.3强制要求）"
+            TetherType.TOP_TETHER -> "- 105-150cm：ISOFIX 3点连接 + Top-tether上拉带（前向安装，ECE R129 §6.1.2强制要求）"
+            TetherType.BOTH -> """
+                |- 40-105cm：ISOFIX 3点连接 + 支撑腿（后向安装，ECE R129 §5.1.3强制要求）
+                |- 105-150cm：ISOFIX 3点连接 + Top-tether上拉带（前向安装，ECE R129 §6.1.2强制要求）
+            """.trimMargin()
         }
 
         return buildString {
@@ -102,9 +130,9 @@ object Roadmate360OutputGenerator {
             appendLine("身高范围：${minHeightCm}-${maxHeightCm}cm")
             appendLine("适配年龄段：0-12岁（全年龄段）")
             appendLine("设计主题：${designTheme}安全座椅")
+            appendLine("Tether类型：${tetherType.displayName} - ${tetherType.description}")
             appendLine("安装方式：")
-            appendLine("- 40-105cm：ISOFIX 3点连接 + 支撑腿（后向安装，ECE R129 §5.1.3强制要求）")
-            appendLine("- 105-150cm：ISOFIX 3点连接 + Top-tether上拉带（前向安装，ECE R129 §6.1.2强制要求）")
+            installMethodDesc.lines().forEach { appendLine(it) }
             appendLine()
             appendLine("【标准说明】")
             appendLine("本方案严格遵循单一标准ECE R129 (i-Size)，不混用GB 27887-2024或FMVSS 213")
@@ -126,7 +154,7 @@ object Roadmate360OutputGenerator {
             // ========== 测试矩阵 ==========
             appendLine("【测试矩阵】（ROADMATE 360格式 · ECE R129 Annex 19）")
             appendLine()
-            appendLine(generateRoadmate360Table(minHeightCm, maxHeightCm))
+            appendLine(generateRoadmate360Table(minHeightCm, maxHeightCm, tetherType))
             appendLine()
 
             // ========== 安全阈值 ==========
@@ -159,8 +187,8 @@ object Roadmate360OutputGenerator {
     }
 
     // ========== 私有方法：生成ROADMATE 360表格 ==========
-    private fun generateRoadmate360Table(minHeightCm: Int, maxHeightCm: Int): String {
-        val testItems = generateTestMatrix(minHeightCm, maxHeightCm)
+    private fun generateRoadmate360Table(minHeightCm: Int, maxHeightCm: Int, tetherType: TetherType): String {
+        val testItems = generateTestMatrix(minHeightCm, maxHeightCm, tetherType)
 
         return buildString {
             // 表头（20列）
@@ -182,8 +210,19 @@ object Roadmate360OutputGenerator {
     }
 
     // ========== 私有方法：生成测试矩阵项 ==========
-    private fun generateTestMatrix(minHeightCm: Int, maxHeightCm: Int): List<Roadmate360TestItem> {
+    private fun generateTestMatrix(minHeightCm: Int, maxHeightCm: Int, tetherType: TetherType): List<Roadmate360TestItem> {
         val items = mutableListOf<Roadmate360TestItem>()
+        
+        // 根据 tetherType 确定 topTetherSupportLeg 的值
+        val rearwardTetherValue = when (tetherType) {
+            TetherType.SUPPORT_LEG, TetherType.BOTH -> "With"  // 后向安装使用 Support leg
+            TetherType.TOP_TETHER -> "no"                    // 不使用 Support leg
+        }
+        
+        val forwardTetherValue = when (tetherType) {
+            TetherType.TOP_TETHER, TetherType.BOTH -> "With"  // 前向安装使用 Top Tether
+            TetherType.SUPPORT_LEG -> "With"                  // 前向安装也显示 With（可能是双模式）
+        }
 
         // 后向安装测试（40-105cm）：Q0, Q0+, Q1, Q1.5, Q3
         if (minHeightCm < 105) {
@@ -193,24 +232,24 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q0", dummy = "Q0", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
                         comments = "if contact repeat the test without dashboard"
                     ),
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q0", dummy = "Q0", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Reclined",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
                         comments = "if contact repeat the test without dashboard"
                     ),
                     Roadmate360TestItem(
                         pulse = "Rear", impact = "Q0", dummy = "Q0", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With"
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Lateral", impact = "Q0", dummy = "Q0", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "no"
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "no"
                     )
                 ))
             }
@@ -221,19 +260,19 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q1", dummy = "Q1", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
                         comments = "if contact repeat the test without dashboard"
                     ),
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q1", dummy = "Q1", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Reclined",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
                         comments = "if contact repeat the test without dashboard"
                     ),
                     Roadmate360TestItem(
                         pulse = "Rear", impact = "Q1", dummy = "Q1", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With"
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With"
                     )
                 ))
             }
@@ -244,13 +283,13 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q3", dummy = "Q3", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
                         comments = "if contact repeat the test without dashboard"
                     ),
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q3", dummy = "Q3", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Reclined",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
                         comments = "if contact repeat the test without dashboard"
                     ),
                     Roadmate360TestItem(
@@ -261,12 +300,12 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Rear", impact = "Q3", dummy = "Q3", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "With"
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Lateral", impact = "Q3", dummy = "Q3", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "no", dashboard = "no"
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "no"
                     )
                 ))
             }
@@ -280,12 +319,12 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q3s", dummy = "Q3s", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q3s", dummy = "Q3s", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Reclined",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Lateral", impact = "Q3s", dummy = "Q3s", position = "Forward facing",
@@ -301,17 +340,17 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q6", dummy = "Q6", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q6", dummy = "Q6", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Reclined",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Rear", impact = "Q6", dummy = "Q6", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Lateral", impact = "Q6", dummy = "Q6", position = "Forward facing",
@@ -327,17 +366,17 @@ object Roadmate360OutputGenerator {
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q10", dummy = "Q10", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Frontal", impact = "Q10", dummy = "Q10", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Reclined",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Rear", impact = "Q10", dummy = "Q10", position = "Forward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
-                        topTetherSupportLeg = "With", tt = "yes", dashboard = "With"
+                        topTetherSupportLeg = forwardTetherValue, tt = "yes", dashboard = "With"
                     ),
                     Roadmate360TestItem(
                         pulse = "Lateral", impact = "Q10", dummy = "Q10", position = "Forward facing",
@@ -368,20 +407,40 @@ object Roadmate360OutputGenerator {
     // ========== 与现有架构集成 ==========
     /**
      * 生成标准化方案（兼容ChildProductDesignScheme）
+     * @param minHeightCm 最小身高
+     * @param maxHeightCm 最大身高
+     * @param productType 产品类型
+     * @param designTheme 设计主题
+     * @param tetherType Tether类型（Support leg / Top Tether / Both）
      */
     fun generateStandardizedScheme(
         minHeightCm: Int,
         maxHeightCm: Int,
         productType: String = "儿童安全座椅",
-        designTheme: String = "全阶段成长型"
+        designTheme: String = "全阶段成长型",
+        tetherType: TetherType = TetherType.BOTH
     ): com.childproduct.designassistant.model.ChildProductDesignScheme {
-        // 构建核心特点
-        val coreFeatures = listOf(
-            "易安装性：ISOFIX 3点连接 + 支撑腿/上拉带双重防旋转（40-105cm后向/105-150cm前向）",
-            "安全性：符合ECE R129标准（Q0-Q10全假人覆盖，分段安全阈值）",
-            "舒适性：高回弹海绵填充（密度30kg/m³，适配0-12岁儿童体型变化）",
-            "材质环保：食品级PP塑料（无甲醛/重金属，符合EN 71-3有害元素标准）"
-        ).toImmutableList()
+        // 根据 tetherType 生成安装方式描述
+        val installMethodDesc = when (tetherType) {
+            TetherType.SUPPORT_LEG -> "40-105cm：ISOFIX+支撑腿（后向）"
+            TetherType.TOP_TETHER -> "105-150cm：ISOFIX+Top-tether（前向）"
+            TetherType.BOTH -> "40-105cm：ISOFIX+支撑腿（后向）；105-150cm：ISOFIX+Top-tether（前向）"
+        }
+
+        // 构建核心特点（根据 tetherType 动态生成）
+        val coreFeatures = buildList {
+            add("易安装性：ISOFIX 3点连接 + ${tetherType.displayName}双重防旋转")
+            add("安全性：符合ECE R129标准（Q0-Q10全假人覆盖，分段安全阈值）")
+            add("舒适性：高回弹海绵填充（密度30kg/m³，适配0-12岁儿童体型变化）")
+            add("材质环保：食品级PP塑料（无甲醛/重金属，符合EN 71-3有害元素标准）")
+            
+            // 根据 tetherType 添加额外特点
+            when (tetherType) {
+                TetherType.SUPPORT_LEG -> add("稳固性：支撑腿触地设计，防止前倾（符合ECE R129 §6.1.2）")
+                TetherType.TOP_TETHER -> add("防翻滚：上拉带锚固设计，防止后翻（符合ECE R129 §6.1.3）")
+                TetherType.BOTH -> add("双模式：支撑腿+上拉带智能切换，全阶段防护")
+            }
+        }.toImmutableList()
 
         // 构建推荐材料
         val recommendMaterials = listOf(
@@ -392,23 +451,29 @@ object Roadmate360OutputGenerator {
             "面料：阻燃聚酯纤维（符合FMVSS 302，燃烧速度≤4英寸/分钟）"
         ).toImmutableList()
 
-        // 构建安全注意事项
-        val safetyNotes = listOf(
-            "防吞咽风险：所有可拆卸部件尺寸≥3.5cm（ISO 8124-2要求）",
-            "材质安全：使用食品级PP塑料，无甲醛/重金属残留（EN 71-3）",
-            "边缘安全：产品边缘做圆角处理（R≥2mm），无尖锐突出物",
-            "防火阻燃：面料通过FMVSS 302认证（燃烧速度≤4英寸/分钟）",
-            "安装警示：40-105cm必须后向安装；105-150cm前向安装必须使用Top-tether（ECE R129 §8.1）"
-        ).toImmutableList()
+        // 构建安全注意事项（根据 tetherType 动态生成）
+        val safetyNotes = buildList {
+            add("防吞咽风险：所有可拆卸部件尺寸≥3.5cm（ISO 8124-2要求）")
+            add("材质安全：使用食品级PP塑料，无甲醛/重金属残留（EN 71-3）")
+            add("边缘安全：产品边缘做圆角处理（R≥2mm），无尖锐突出物")
+            add("防火阻燃：面料通过FMVSS 302认证（燃烧速度≤4英寸/分钟）")
+            
+            // 根据 tetherType 添加安装警示
+            when (tetherType) {
+                TetherType.SUPPORT_LEG -> add("安装警示：支撑腿必须与地面紧密接触，确保最大防护（ECE R129 §8.1）")
+                TetherType.TOP_TETHER -> add("安装警示：上拉带必须正确锚固至车辆锚点，拉力≥400N（ECE R129 §8.1）")
+                TetherType.BOTH -> add("安装警示：40-105cm必须后向安装；105-150cm前向安装必须使用Top-tether（ECE R129 §8.1）")
+            }
+        }.toImmutableList()
 
-        // 构建测试矩阵项
-        val testMatrixItems = SAFETY_THRESHOLDS.map {
+        // 构建测试矩阵项（添加 tetherType 信息）
+        val testMatrixItems = SAFETY_THRESHOLDS.map { threshold ->
             com.childproduct.designassistant.model.TestMatrixItem(
-                testItem = it.testItem,
-                standardRequirement = it.standardRequirement,
-                applicableDummy = it.applicableDummy,
-                unit = it.unit,
-                standardSource = it.standardSource
+                testItem = threshold.testItem,
+                standardRequirement = threshold.standardRequirement,
+                applicableDummy = threshold.applicableDummy,
+                unit = threshold.unit,
+                standardSource = threshold.standardSource + " [${tetherType.displayName}]" // 在标准来源中标注 tether 类型
             )
         }.toImmutableList()
 
@@ -417,7 +482,7 @@ object Roadmate360OutputGenerator {
             heightRange = "${minHeightCm}-${maxHeightCm}cm",
             ageRange = "0-12岁",
             designTheme = "${designTheme}安全座椅",
-            installMethodDesc = "40-105cm：ISOFIX+支撑腿（后向）；105-150cm：ISOFIX+Top-tether（前向）",
+            installMethodDesc = installMethodDesc,
             coreFeatures = coreFeatures,
             recommendMaterials = recommendMaterials,
             complianceStandards = listOf("ECE R129 (i-Size)").toImmutableList(),
