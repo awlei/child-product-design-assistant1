@@ -31,7 +31,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
+          cache: 'none'  # Disable Java/Gradle caching
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -39,21 +39,22 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Force clean build - remove all caches
+        run: |
+          echo "=== Force Clean: Remove ALL caches to fix KAPT compatibility ==="
+          rm -rf ~/.gradle/
+          rm -rf ~/.kotlin/
+          rm -rf .gradle/
+          rm -rf build/
+          rm -rf app/build/
+          rm -rf local.properties
+          echo "=== All caches removed ==="
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew clean assembleDebug --stacktrace --info -Pkapt.verbose=true --no-daemon
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace
+        run: ./gradlew assembleRelease --stacktrace --info -Pkapt.verbose=true --no-daemon
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
