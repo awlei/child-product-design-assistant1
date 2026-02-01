@@ -1,0 +1,204 @@
+name: Build and Release APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - 'debug'
+          - 'release'
+      create_release:
+        description: 'Create GitHub Release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Decode keystore
+        if: github.event.inputs.release_type == 'release'
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/keystore.jks
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Build Release APK
+        if: github.event.inputs.release_type == 'release'
+        run: ./gradlew assembleRelease --stacktrace
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Rename APKs
+        run: |
+          VERSION=$(grep 'versionName' app/build.gradle | awk '{print $2}' | tr -d '"')
+          BUILD_NUMBER=${{ github.run_number }}
+          
+          # Rename Debug APK
+          mv app/build/outputs/apk/debug/app-debug.apk \
+             app/build/outputs/apk/debug/child-product-design-assistant-debug-v${VERSION}-build${BUILD_NUMBER}.apk
+          
+          # Rename Release APK (if built)
+          if [ -f app/build/outputs/apk/release/app-release-unsigned.apk ]; then
+            mv app/build/outputs/apk/release/app-release-unsigned.apk \
+               app/build/outputs/apk/release/child-product-design-assistant-release-v${VERSION}-build${BUILD_NUMBER}.apk
+          fi
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 90
+
+      - name: Upload Release APK
+        if: github.event.inputs.release_type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/*.apk
+          retention-days: 90
+
+      - name: Get version info
+        id: version
+        run: |
+          VERSION_NAME=$(grep 'versionName' app/build.gradle | awk '{print $2}' | tr -d '"')
+          VERSION_CODE=$(grep 'versionCode' app/build.gradle | awk '{print $2}')
+          BUILD_NUMBER=${{ github.run_number }}
+          echo "versionName=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "versionCode=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "buildNumber=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "Full Version: v${VERSION_NAME}-build${BUILD_NUMBER}"
+
+      - name: Create GitHub Release
+        if: github.event.inputs.create_release == 'true' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.versionName }}-build${{ steps.version.outputs.buildNumber }}
+          name: Release v${{ steps.version.outputs.versionName }}
+          body: |
+            ## 🎉 儿童产品设计助手 APK
+            
+            ### 📦 版本信息
+            - **版本**: ${{ steps.version.outputs.versionName }}
+            - **构建号**: ${{ steps.version.outputs.buildNumber }}
+            - **提交**: ${{ github.sha }}
+            - **分支**: ${{ github.ref_name }}
+            
+            ### 📥 下载
+            
+            #### Debug版本（测试用）
+            - `child-product-design-assistant-debug-v${{ steps.version.outputs.versionName }}-build${{ steps.version.outputs.buildNumber }}.apk`
+            - 适合日常开发和测试
+            - 包含调试功能
+            
+            #### Release版本（正式发布）
+            - `child-product-design-assistant-release-v${{ steps.version.outputs.versionName }}-build${{ steps.version.outputs.buildNumber }}.apk`
+            - 经过优化，适合正式发布
+            - 如果未签名，需要自行签名或安装到测试设备
+            
+            ### 🔧 功能特性
+            - ✅ 标准隔离机制（防止参数混用）
+            - ✅ 假人映射修正（8种假人类型：Q0/Q0+/Q1/Q1.5/Q3/Q3s/Q6/Q10）
+            - ✅ ROADMATE 360格式测试矩阵（20列）
+            - ✅ 输入合规性验证（40-105cm强制后向，105cm+强制Top-tether）
+            - ✅ ISOFIX Envelope尺寸要求
+            - ✅ 标准版本追踪和版本水印
+            
+            ### 📱 系统要求
+            - Android 7.0 (API 24) 及以上
+            - 目标SDK: Android 14 (API 34)
+            
+            ### 📚 使用说明
+            1. 下载对应的APK文件
+            2. 在Android设备上启用"未知来源应用"权限
+            3. 点击APK文件进行安装
+            4. 安装完成后即可使用
+            
+            ### 🐛 问题反馈
+            如遇到问题，请在GitHub上提交Issue
+            
+            ### 📄 许可证
+            本项目遵循相关开源许可证
+            
+            ---
+            **构建时间**: ${{ github.event.head_commit.timestamp }}
+            **触发者**: ${{ github.actor }}
+          
+          files: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+          fail_on_unmatched_files: false
+          draft: false
+          prerelease: startsWith(github.ref, 'refs/tags/v') && contains(github.ref, 'beta')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build summary
+        run: |
+          echo "## 📦 构建结果" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **构建成功**" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 APK文件" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| 类型 | 文件名 | 大小 |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Debug | $(basename app/build/outputs/apk/debug/*.apk) | $(du -h app/build/outputs/apk/debug/*.apk | cut -f1) |" >> $GITHUB_STEP_SUMMARY
+          if [ -d app/build/outputs/apk/release ]; then
+            echo "| Release | $(basename app/build/outputs/apk/release/*.apk 2>/dev/null || echo "N/A") | $(du -h app/build/outputs/apk/release/*.apk 2>/dev/null | cut -f1 || echo "N/A") |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 构建信息" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **版本**: v${{ steps.version.outputs.versionName }}-build${{ steps.version.outputs.buildNumber }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **分支**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **提交**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **触发者**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **构建时间**: $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📥 下载APK" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "APK文件已上传到Artifacts，点击工作流页面底部的Artifacts即可下载。" >> $GITHUB_STEP_SUMMARY
