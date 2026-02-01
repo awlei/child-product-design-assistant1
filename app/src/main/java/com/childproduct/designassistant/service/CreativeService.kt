@@ -218,7 +218,7 @@ class CreativeService {
     ): String {
         val baseDescription = if (ageGroup == AgeGroup.ALL) {
             "全年龄段（0-12岁）通用${productType.displayName}，" +
-                    "融入$theme设计理念。主要特点包括：${features.joinToString("、")}。"
+                    "融入${theme}设计理念。主要特点包括：${features.joinToString("、")}。"
         } else {
             "专为${ageGroup.displayName}儿童设计的${productType.displayName}，" +
                     "融入${theme}设计理念。主要特点包括：${features.joinToString("、")}。"

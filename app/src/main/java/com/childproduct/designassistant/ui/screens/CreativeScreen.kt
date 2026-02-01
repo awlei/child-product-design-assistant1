@@ -55,7 +55,7 @@ fun CreativeScreen(
     var validationError by remember { mutableStateOf<String?>(null) }
 
     // 格式化输出（用于显示）
-    var formattedOutput by remember { mutableStateOf<String?>(null)
+    var formattedOutput by remember { mutableStateOf<String?>(null) }
 
     // 参数验证函数
     fun validateAndSetResult() {
