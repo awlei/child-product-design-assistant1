@@ -74,12 +74,12 @@ object CrashTestMapping {
             dummyType = dummyType,
             displayName = dummyType.displayName,
             heightRange = dummyType.heightRange,
-            weight = dummyType.weight,
+            weight = dummyType.weight.toFloatOrNull() ?: 0f,
             age = dummyType.age,
             productGroup = mapping?.productGroup ?: "Unknown",
             description = mapping?.description ?: "Unknown",
             hicLimit = dummyType.hicLimit,
-            complianceParams = ComplianceParameters.getByDummy(dummyType)
+            complianceParams = ComplianceParameters.getByDummy(CrashTestDummy.toComplianceDummy(dummyType))
         )
     }
 

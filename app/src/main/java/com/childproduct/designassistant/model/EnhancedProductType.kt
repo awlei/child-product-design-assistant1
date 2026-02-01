@@ -112,8 +112,23 @@ enum class CrashTestDummy(
                 AgeGroup.TODDLER -> Q1_5       // 18-36个月（学步儿童）
                 AgeGroup.PRESCHOOL -> Q3       // 3-4岁（学前儿童）
                 AgeGroup.SCHOOL_AGE -> Q3_S    // 4-7岁（学龄儿童）
-                AgeGroup.PRETEEN -> Q6         // 7-10岁（青春期前）
                 AgeGroup.TEEN -> Q10           // 10岁以上（青少年）
+            }
+        }
+
+        /**
+         * 将 CrashTestDummy 转换为 ComplianceDummy
+         */
+        fun toComplianceDummy(crashTestDummy: CrashTestDummy): ComplianceDummy {
+            return when (crashTestDummy) {
+                Q0 -> ComplianceDummy.Q0
+                Q0_PLUS -> ComplianceDummy.Q0_PLUS
+                Q1 -> ComplianceDummy.Q1
+                Q1_5 -> ComplianceDummy.Q1_5
+                Q3 -> ComplianceDummy.Q3
+                Q3_S -> ComplianceDummy.Q3_S
+                Q6 -> ComplianceDummy.Q6
+                Q10 -> ComplianceDummy.Q10
             }
         }
     }

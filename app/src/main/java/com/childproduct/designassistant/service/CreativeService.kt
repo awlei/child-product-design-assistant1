@@ -65,7 +65,7 @@ class CreativeService {
         val dummyType = CrashTestDummy.getByAgeGroup(ageGroup)
 
         // 生成专业合规参数（基于假人类型）
-        val complianceParameters = ComplianceParameters.getByDummy(dummyType)
+        val complianceParameters = ComplianceParameters.getByDummy(CrashTestDummy.toComplianceDummy(dummyType))
 
         // 生成标准关联（根据产品类型）
         val standardsReference = StandardsReference.getDefaultForProductType(productType)
@@ -151,7 +151,7 @@ class CreativeService {
         val safetyNotes = generateSafetyNotes(ageGroup, productType)
 
         // 生成专业合规参数（基于假人类型）
-        val complianceParameters = ComplianceParameters.getByDummy(dummyType)
+        val complianceParameters = ComplianceParameters.getByDummy(CrashTestDummy.toComplianceDummy(dummyType))
 
         // 生成标准关联（根据产品类型）
         val standardsReference = StandardsReference.getDefaultForProductType(productType)

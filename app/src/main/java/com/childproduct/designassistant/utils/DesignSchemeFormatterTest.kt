@@ -14,7 +14,7 @@ object DesignSchemeFormatterTest {
     fun testFormatCreativeIdea(): String {
         // 创建测试数据
         val complianceParams = ComplianceParameters(
-            dummyType = CrashTestDummy.Q1,
+            dummyType = CrashTestDummy.toComplianceDummy(CrashTestDummy.Q1),
             hicLimit = 390,
             chestAccelerationLimit = 55,
             neckTensionLimit = 1800,
@@ -79,7 +79,7 @@ object DesignSchemeFormatterTest {
     fun testFormatCreativeIdeaByHeight(): String {
         // 创建测试数据
         val complianceParams = ComplianceParameters(
-            dummyType = CrashTestDummy.Q0,
+            dummyType = CrashTestDummy.toComplianceDummy(CrashTestDummy.Q0),
             hicLimit = 750,
             chestAccelerationLimit = 55,
             neckTensionLimit = 1500,
@@ -142,7 +142,7 @@ object DesignSchemeFormatterTest {
      */
     fun testFormatToCardData(): SchemeCardData? {
         val complianceParams = ComplianceParameters(
-            dummyType = CrashTestDummy.Q1,
+            dummyType = CrashTestDummy.toComplianceDummy(CrashTestDummy.Q1),
             hicLimit = 390,
             chestAccelerationLimit = 55,
             neckTensionLimit = 1800,
