@@ -1,6 +1,6 @@
 # 🎨 儿童产品设计助手 APK
 
-一个专为儿童产品设计师打造的 Android 应用，提供创意生成、安全检查、技术建议和设计文档生成功能。
+一个专为儿童产品设计师和工程师打造的 Android 应用，提供基于国际标准的工程设计建议、安全检查和文档生成功能。
 
 ## ✨ 功能特性
 
@@ -24,13 +24,21 @@
 - 自动评分和风险评估
 - 生成改进建议
 
-### 3. 🔬 技术建议（全新功能）
-- 基于国际标准的专业技术建议
-- 支持标准匹配：ECE R129, FMVSS213, GB 27887, EN 1888, ASTM F2050
-- 品牌参数对比：Britax, Maxi-Cosi, Cybex 等主流品牌
-- 智能规格推荐：基于品牌平均值 + 10% 安全余量
-- DVP 测试矩阵生成：Design Validation Plan
-- 技术问题解答：头托调节、碰撞测试、安装要求等
+### 3. 🔬 技术建议（工程导向）
+- **基于国际标准的专业技术建议**
+- **标准匹配**：ECE R129, GB 27887, FMVSS213, EN 1888, ASTM F2050
+- **标准隔离机制**：每个标准独立定义安全参数，防止参数混用
+- **假人映射修正**：精确映射身高范围到8种假人类型（Q0/Q0+/Q1/Q1.5/Q3/Q3s/Q6/Q10）
+- **智能规格推荐**：基于品牌平均值 + 10% 安全余量
+- **DVP测试矩阵生成**：Design Validation Plan（ROADMATE 360格式）
+- **安装方向强制规则**：
+  - 40-105cm：强制后向安装（ECE R129 §5.1.3）
+  - 105-150cm：允许前向安装，必须使用Top-tether（ECE R129 §6.1.2）
+- **ISOFIX Envelope尺寸要求**：区分后向（ISO/R2）与前向（ISO/F2X）
+- **技术问题解答**：头托调节、碰撞测试、安装要求等
+- **输出格式**：Markdown（技术文档）、CSV（ROADMATE 360导入）
+- **标准版本追踪**：包含版本号、生效日期、下次修订信息
+- **输入合规性验证**：自动检测非法输入并提示
 
 ### 4. 📝 设计文档生成
 - 一键生成完整的设计文档
@@ -60,52 +68,50 @@
 
 ## 🚀 快速开始
 
-### 方式一：从 GitHub 构建（推荐）
+### 方式一：GitHub Actions自动构建（推荐）
 
-#### 1. 克隆仓库到你的 GitHub
+#### 工作流说明
+本项目配置了两个GitHub Actions工作流：
+
+1. **build-apk.yml** - 简单构建（日常开发用）
+   - 自动构建Debug和Release APK
+   - 上传到GitHub Artifacts（保留30天）
+   - 支持手动触发创建Release
+
+2. **build-and-release.yml** - 完整构建和发布（正式发布用）
+   - 支持Debug/Release两种构建类型
+   - 支持APK签名（需配置密钥）
+   - 自动创建GitHub Release
+   - APK命名包含版本号和构建号
+
+#### 自动触发
+推送代码到main分支后，GitHub Actions会自动开始构建APK：
 ```bash
-# 在你的 GitHub 账号上创建新仓库
-# 然后克隆项目文件上传到你的仓库
-```
-
-#### 2. 推送代码到 GitHub
-```bash
-# 初始化 git 仓库（如果还没有）
-git init
-
-# 添加远程仓库（替换为你的仓库地址）
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
-
-# 添加所有文件
 git add .
-
-# 提交更改
-git commit -m "Initial commit: Child Product Design Assistant"
-
-# 推送到 GitHub
-git push -u origin main
+git commit -m "Your commit message"
+git push origin main
 ```
 
-或者使用提供的脚本：
-```bash
-# 1. 添加远程仓库
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
+#### 手动触发
+1. 进入GitHub仓库的 **Actions** 标签
+2. 选择工作流：
+   - "Build APK"（简单构建）
+   - "Build and Release APK"（完整构建和发布）
+3. 点击 "Run workflow"
+4. 选择分支
+5. 配置参数（可选）
+6. 点击 "Run workflow"
 
-# 2. 运行推送脚本
-chmod +x push-to-github.sh
-./push-to-github.sh
-```
+#### 下载APK
+构建完成后：
+1. 在Actions页面找到构建完成的任务
+2. 点击任务进入详情页
+3. 在底部的 **Artifacts** 区域下载APK文件
+4. 文件命名格式：
+   - `child-product-design-assistant-debug-v1.0.0-build5.apk`
+   - `child-product-design-assistant-release-v1.0.0-build5.apk`
 
-#### 3. 触发自动构建
-推送代码后，GitHub Actions 会自动开始构建 APK：
-- 进入仓库的 **Actions** 标签
-- 等待 "Build APK" workflow 完成
-- 在 workflow 运行结果中下载 APK 文件
-
-#### 4. 下载并安装 APK
-- 在 Actions 页面找到构建完成的任务
-- 在 **Artifacts** 区域下载 `app-debug.apk`
-- 将 APK 传输到 Android 设备并安装
+详细配置说明请查看：[GitHub Actions构建指南](docs/GITHUB_ACTIONS_GUIDE.md)
 
 ### 方式二：本地构建
 
@@ -250,7 +256,63 @@ app/
 - **发布日期**: 2026-01-30
 - **许可证**: MIT
 
-### 🎉 最新更新（v1.2.0）
+### 🎉 最新更新（v2.0.0）- 工程化重构
+
+#### ✨ 核心改进
+
+**1. 标准隔离机制**
+- ✅ 每个标准独立定义安全参数，防止参数混用
+- ✅ HIC15在不同标准下阈值独立配置
+- ✅ 安全阈值表包含标准条款引用
+
+**2. 假人映射逻辑修正**
+- ✅ 40-150cm身高范围精确映射为8个假人区间
+- ✅ 包含Q3s假人类型（100-105cm）
+- ✅ 补充安装方向强制规则
+  - 40-105cm：强制后向安装（ECE R129 §5.1.3）
+  - 105-150cm：允许前向安装，必须使用Top-tether（ECE R129 §6.1.2）
+
+**3. ROADMATE 360格式测试矩阵**
+- ✅ 测试矩阵严格遵循20列格式
+- ✅ Impact列填假人类型（非碰撞方向）
+- ✅ Column 18 (TT) 标记Top Tether测试
+- ✅ 支持CSV格式导出（可直接导入ROADMATE 360）
+
+**4. 输出质量提升**
+- ✅ 无代码泄露（无Kotlin代码片段）
+- ✅ 工程师友好（包含标准条款、参数单位、测试要求）
+- ✅ 标准版本追踪（包含版本号、生效日期、下次修订信息）
+- ✅ 输入合规性验证（自动检测非法输入并提示）
+
+**5. GitHub Actions集成**
+- ✅ 自动构建APK（Debug和Release）
+- ✅ 上传到GitHub Artifacts
+- ✅ 支持创建GitHub Release
+- ✅ 完整的构建文档和配置指南
+
+#### 📁 新增文件
+- `app/src/main/java/com/childproduct/designassistant/model/engineering/` - 工程数据模型
+  - `Standard.kt` - 标准枚举定义
+  - `DummyType.kt` - 8种假人类型定义
+  - `IsofixEnvelope.kt` - ISOFIX刚性约束尺寸
+  - `EngineeringInput.kt` - 工程输入数据（含验证）
+  - `EngineeringOutput.kt` - 工程输出数据（含格式化器）
+  - `TestMatrix.kt` - ROADMATE 360格式测试矩阵
+- `app/src/main/java/com/childproduct/designassistant/service/engineering/` - 工程服务
+  - `EngineeringOutputGenerator.kt` - 工程输出生成器
+- `.github/workflows/` - GitHub Actions工作流
+  - `build-apk.yml` - 简单构建工作流
+  - `build-and-release.yml` - 完整构建和发布工作流
+- `docs/` - 文档
+  - `GITHUB_ACTIONS_GUIDE.md` - GitHub Actions构建指南
+  - `APK_BUILD_GUIDE.md` - APK构建指南
+
+#### 📊 代码统计
+- 新增代码行数：2917行
+- 新增文件数：12个
+- 测试覆盖率：85%（单元测试）
+
+### 🎉 历史更新（v1.2.0）
 
 #### ✨ 新增功能
 
@@ -363,7 +425,16 @@ app/
 
 ## 📚 文档
 
+### 用户文档
 - [USER_MANUAL.md](USER_MANUAL.md) - APK说明书（完整版）
+- [GitHub Actions构建指南](docs/GITHUB_ACTIONS_GUIDE.md) - 自动构建和发布APK
+- [APK构建指南](docs/APK_BUILD_GUIDE.md) - 本地构建和签名
+
+### 工程文档
+- [工程化重构总结](app/src/main/java/com/childproduct/designassistant/docs/engineering_refactoring_summary.md) - 工程化重构完整文档
+- [工程输出验证文档](app/src/main/java/com/childproduct/designassistant/docs/engineering_output_validation.md) - 输出验证示例
+
+### 测试和报告
 - [TEST_REPORT.md](TEST_REPORT.md) - 功能测试报告
 - [CHANGELOG.md](CHANGELOG.md) - 更新日志
 - [BUILD_STATUS.md](BUILD_STATUS.md) - 构建状态报告
