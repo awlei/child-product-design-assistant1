@@ -102,26 +102,77 @@ object OutputComplianceChecker {
     private fun cleanRawContent(rawContent: String): String {
         var cleaned = rawContent
 
-        // 1. 移除所有代码式字段（如id=xxx、productType=xxx等）
-        val codePattern = Regex(
-            """CreativeIdea\(id=.+?\)|productType=\w+|ageGroup=\w+|""" +
-                    """complianceParameters=.+?\)|standardsReference=.+?\)|""" +
-                    """materialSpecs=.+?\)|colorPalette=.+?\)|\w+=[\w#]+"""
-        )
-        cleaned = codePattern.replace(cleaned, "")
+        // 1.1 移除所有代码式对象字段（增强版，支持嵌套和多行）
+        // 移除 CreativeIdea 和 Creativeldea（处理拼写错误）
+        cleaned = Regex("""CreativeIdea\([^)]+\)|Creativeldea\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
 
-        // 2. 过滤乱码字符（仅保留中文、数字、字母、常用符号）
-        val garbledPattern = Regex(
-            """[^\\u4e00-\\u9fa50-9a-zA-Z\\s\\-\\+\\≤≥（）【】：；,.，。！？cm/()%]"""
-        )
-        cleaned = garbledPattern.replace(cleaned, "")
+        // 移除 complianceParameters=... 整个对象
+        cleaned = Regex("""complianceParameters=ComplianceParameters\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
 
-        // 3. 按行去重，移除空行
-        val lines = cleaned.split("\n")
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
+        // 移除 standardsReference=... 整个对象
+        cleaned = Regex("""standardsReference=StandardsReference\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
 
-        return lines.distinct().joinToString(" ")
+        // 移除 materialSpecs=... 整个对象
+        cleaned = Regex("""materialSpecs=MaterialSpecs\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 dummyTypes=[...] 数组
+        cleaned = Regex("""dummyTypes=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 complianceRequirements=[...] 数组
+        cleaned = Regex("""complianceRequirements=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 additionalSpecs=[...] 数组
+        cleaned = Regex("""additionalSpecs=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除其他单行键值对字段
+        cleaned = Regex("""\b(?:id|title|description|ageGroup|productType|theme|dummyType|hicLimit|chestAccelerationLimit|neckTensionLimit|neckCompressionLimit|headExcursionLimit|kneeExcursionLimit|chestDeflectionLimit|flameRetardantFabric|isoFixComponents|impactAbsorber)=[\w\s#\[\],\(\).:;\\\-≤>=°]+""")
+            .replace(cleaned, "")
+
+        // 移除 features=[...] 数组
+        cleaned = Regex("""features=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 materials=[...] 数组
+        cleaned = Regex("""materials=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 colorPalette=[...] 数组
+        cleaned = Regex("""colorPalette=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 safetyNotes=[...] 数组
+        cleaned = Regex("""safetyNotes=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 1.2 移除UUID
+        cleaned = Regex("""[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}""")
+            .replace(cleaned, "")
+
+        // 1.3 过滤乱码字符（更严格，仅保留中文、英文、数字、常用标点）
+        cleaned = Regex("""[^\u4e00-\u9fa5a-zA-Z0-9\s\-+≤>=（）【】：；,.，。！？、·/℃%gNmm英寸第§]""")
+            .replace(cleaned, "")
+
+        // 1.4 移除空白行和多余空格
+        cleaned = cleaned.replace(Regex("""\s+"""), " ").trim()
+
+        // 1.5 移除重复的短语（如"HIC≤1000 HIC≤1000"）
+        val words = cleaned.split(" ")
+        val uniqueWords = mutableListOf<String>()
+        words.forEach { word ->
+            if (word.isNotBlank() && !uniqueWords.contains(word)) {
+                uniqueWords.add(word)
+            }
+        }
+        cleaned = uniqueWords.joinToString(" ")
+
+        return cleaned
     }
 
     /**
@@ -269,17 +320,36 @@ object OutputComplianceChecker {
             appendLine("- 设计主题：${scheme.designTheme}")
             appendLine()
 
-            // 2. 核心设计特点模块
+            // 2. 方案描述模块
+            appendLine("【方案描述】")
+            val themeName = scheme.designTheme.split(" - ").getOrNull(1) ?: "通用款"
+            val description = when {
+                themeName.contains("社交元素") -> "专为儿童安全座椅设计的社交元素主题产品，通过互动贴纸和个性化装饰增强儿童参与感，同时保持符合ECE R129/GB 27887-2024标准的最高安全性能。"
+                themeName.contains("个性化设计") -> "采用可定制化设计理念，支持颜色、图案自定义，让每个孩子都能拥有专属的安全座椅，同时确保材料环保、结构稳固。"
+                themeName.contains("卡通图案") -> "融入活泼可爱的卡通元素，通过丰富的视觉设计提升儿童乘坐兴趣，材质选用食品级PP塑料和高回弹海绵，兼顾安全与舒适。"
+                themeName.contains("科技元素") -> "结合智能科技设计理念，在保证安全性能的前提下，提升产品的科技感和未来感，适合追求高品质生活的家庭。"
+                else -> "基于${themeName}设计理念的儿童安全座椅，严格遵循ECE R129/GB 27887-2024标准，确保产品安全性、舒适性和环保性的完美统一。"
+            }
+
+            // 强制修正年龄段说明（针对40-150cm的特殊情况）
+            if (scheme.heightRange == "40-150cm" && description.contains("12岁以上")) {
+                appendLine("$description（注：按ECE R129/GB 27887-2024标准，40-150cm身高范围仅适配0-12岁年龄段）")
+            } else {
+                appendLine(description)
+            }
+            appendLine()
+
+            // 3. 核心设计特点模块
             appendLine("【核心设计特点】")
             scheme.coreFeatures.forEach { feature -> appendLine("- $feature") }
             appendLine()
 
-            // 3. 推荐材料模块
+            // 4. 推荐材料模块
             appendLine("【推荐材料】")
             scheme.recommendMaterials.forEach { material -> appendLine("- $material") }
             appendLine()
 
-            // 4. 合规参数模块
+            // 5. 合规参数模块
             appendLine("【合规参数】")
             appendLine("- 合规标准：${scheme.complianceStandards.joinToString(" + ")}")
             appendLine("- 适配假人：${scheme.dummyType}")
@@ -287,7 +357,7 @@ object OutputComplianceChecker {
             scheme.safetyThresholds.forEach { (key, value) -> appendLine("  - $key：$value") }
             appendLine()
 
-            // 5. 安全注意事项模块
+            // 6. 安全注意事项模块
             appendLine("【安全注意事项】")
             scheme.safetyNotes.forEach { note -> appendLine("- $note") }
         }

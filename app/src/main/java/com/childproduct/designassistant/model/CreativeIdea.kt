@@ -231,7 +231,17 @@ data class CreativeIdea(
     val complianceParameters: ComplianceParameters? = null,
     val standardsReference: StandardsReference? = null,
     val materialSpecs: MaterialSpecs? = null
-)
+) {
+    /**
+     * 自定义toString方法，返回格式化的摘要而不是完整的对象表示
+     * 这样可以避免在日志或调试时输出大量冗余信息
+     */
+    override fun toString(): String {
+        return buildString {
+            append("CreativeIdea(id=$id, title=$title, ageGroup=${ageGroup.displayName}, productType=${productType.displayName})")
+        }
+    }
+}
 
 /**
  * 假人类型枚举（基于ECE R129标准）
@@ -296,7 +306,11 @@ enum class AgeGroup(val displayName: String, val heightRange: String, val weight
     TODDLER("3-6岁", "87-105cm", "11-15kg", "36-72个月"),
     PRESCHOOL("6-9岁", "105-125cm", "15-21kg", "72-108个月"),
     SCHOOL_AGE("9-12岁", "125-145cm", "21-33kg", "108-144个月"),
-    TEEN("12岁以上", "145-150cm", "33-38kg", "144个月以上"),
+    /**
+     * 注意：根据ECE R129/GB 27887-2024标准，儿童安全座椅的适用年龄上限为12岁
+     * 145-150cm对应Q10假人，仍属于10-12岁年龄段，而非12岁以上
+     */
+    TEEN("10-12岁", "145-150cm", "33-38kg", "120-144个月"),
     /**
      * 全年龄段（强制映射：身高40-150cm → 0-12岁）
      */

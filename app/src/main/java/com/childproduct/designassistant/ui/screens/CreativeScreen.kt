@@ -379,13 +379,18 @@ fun CreativeScreen(
                                 val minH = minHeight.toIntOrNull() ?: 0
                                 val maxH = maxHeight.toIntOrNull() ?: 0
                                 val dummyType = paramValidationResult?.matchedDummy
-                                val ageGroup = when (dummyType) {
-                                    CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 -> AgeGroup.INFANT
-                                    CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
-                                    CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
-                                    CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
-                                    CrashTestDummy.Q6 -> AgeGroup.SCHOOL_AGE
-                                    else -> AgeGroup.TEEN
+                                val ageGroup = if (minH == 40 && maxH == 150) {
+                                    // 强制：40-150cm对应全年龄段（0-12岁）
+                                    AgeGroup.ALL
+                                } else {
+                                    when (dummyType) {
+                                        CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 -> AgeGroup.INFANT
+                                        CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
+                                        CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
+                                        CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
+                                        CrashTestDummy.Q6 -> AgeGroup.SCHOOL_AGE
+                                        else -> AgeGroup.TEEN
+                                    }
                                 }
                                 viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)
                             }

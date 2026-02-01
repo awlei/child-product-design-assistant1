@@ -160,17 +160,45 @@ object SchemeOptimizer {
      * 彻底清理代码字段和乱码（针对该场景强化）
      */
     private fun cleanCodeAndGarbled(rawOutput: String): String {
-        return rawOutput
-            // 移除CreativeIdea及所有代码字段
-            .replace(Regex("""CreativeIdea\(id=.+?\)"""), "")
-            .replace(Regex("""Creativeldea\(id=.+?\)"""), "") // 处理可能的拼写错误
-            .replace(Regex("""title=.+?,|title=.+?$"""), "")
-            .replace(Regex("""description=.+?,|description=.+?$"""), "")
-            .replace(Regex("""[a-zA-Z_]+=[\w#\[\],\(\).:;]+"""), "")
-            .replace(Regex("""[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"""), "")
-            // 移除无意义乱码字符
-            .replace(Regex("""[^\u4e00-\u9fa5a-zA-Z0-9\s，。！？；：""''（）【】、·-+=≤≥/§]"""), "")
-            .replace(Regex("""\s{2,}"""), " ").trim()
+        var cleaned = rawOutput
+
+        // 1. 移除所有嵌套对象字段（增强版）
+        // 移除 CreativeIdea 和 Creativeldea（处理拼写错误）
+        cleaned = Regex("""CreativeIdea\([^)]+\)|Creativeldea\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 complianceParameters=ComplianceParameters(...)
+        cleaned = Regex("""complianceParameters=ComplianceParameters\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 standardsReference=StandardsReference(...)
+        cleaned = Regex("""standardsReference=StandardsReference\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除 materialSpecs=MaterialSpecs(...)
+        cleaned = Regex("""materialSpecs=MaterialSpecs\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除所有数组字段
+        cleaned = Regex("""\b(?:features|materials|colorPalette|safetyNotes|dummyTypes|complianceRequirements|additionalSpecs)=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
+            .replace(cleaned, "")
+
+        // 移除所有单行键值对
+        cleaned = Regex("""\b(?:id|title|description|ageGroup|productType|theme|dummyType|hicLimit|chestAccelerationLimit|neckTensionLimit|neckCompressionLimit|headExcursionLimit|kneeExcursionLimit|chestDeflectionLimit|flameRetardantFabric|isoFixComponents|impactAbsorber)=[^\s,)]+""")
+            .replace(cleaned, "")
+
+        // 2. 移除UUID
+        cleaned = Regex("""[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}""")
+            .replace(cleaned, "")
+
+        // 3. 过滤乱码字符（更严格）
+        cleaned = Regex("""[^\u4e00-\u9fa5a-zA-Z0-9\s\-+≤>=（）【】：；,.，。！？、·/℃%gNmm英寸第§]""")
+            .replace(cleaned, "")
+
+        // 4. 清理多余空格
+        cleaned = cleaned.replace(Regex("""\s+"""), " ").trim()
+
+        return cleaned
     }
 
     /**
