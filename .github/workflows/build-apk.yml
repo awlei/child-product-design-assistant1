@@ -46,8 +46,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
             
-      - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --no-daemon
+      - name: Clean and Build Debug APK
+        run: ./gradlew clean assembleDebug --stacktrace --info --no-daemon
         env:
           GRADLE_OPTS: -Dorg.gradle.daemon=false -Xmx4g
           

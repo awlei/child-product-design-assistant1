@@ -20,12 +20,14 @@ android {
             useSupportLibrary true
         }
 
-        // Room kapt配置
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-                arg("room.incremental", "true")
-                arg("room.expandProjection", "true")
+        // Java 编译选项（用于 kapt）
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                    "room.schemaLocation" : "$projectDir/schemas".toString(),
+                    "room.incremental"    : "true",
+                    "room.expandProjection": "true"
+                ]
             }
         }
     }
@@ -82,6 +84,16 @@ android {
 kapt {
     useBuildCache = true
     correctErrorTypes = true
+    // Room 配置参数
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+        arg("room.incremental", "true")
+        arg("room.expandProjection", "true")
+    }
+    // 提高 kapt 处理器的内存限制
+    javacOptions {
+        option("-Xmaxerrs", 500)
+    }
 }
 
 dependencies {
