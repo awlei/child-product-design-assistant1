@@ -40,9 +40,9 @@ enum class InternationalStandard(
 /**
  * 安装方向枚举
  */
-enum class InstallDirection {
-    REARWARD,  // 后向安装
-    FORWARD    // 前向安装
+enum class InstallDirection(val displayName: String) {
+    REARWARD("后向安装"),  // 后向安装
+    FORWARD("前向安装")    // 前向安装
 }
 
 /**
@@ -113,6 +113,7 @@ enum class CrashTestDummy(
                 AgeGroup.PRESCHOOL -> Q3       // 3-4岁（学前儿童）
                 AgeGroup.SCHOOL_AGE -> Q3_S    // 4-7岁（学龄儿童）
                 AgeGroup.TEEN -> Q10           // 10岁以上（青少年）
+                AgeGroup.ALL -> Q3             // 全年龄段（0-12岁），返回中间值假人
             }
         }
 
