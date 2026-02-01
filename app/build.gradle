@@ -52,6 +52,11 @@ android {
         jvmTarget = '17'
     }
 
+    // 添加 Kotlin JVM 工具链配置（修复 KAPT 兼容性问题）
+    kotlin {
+        jvmToolchain(17)
+    }
+
     // 配置源码集
     sourceSets {
         main {
@@ -140,8 +145,8 @@ dependencies {
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.9.22'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:1.9.22'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.9.24'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit:1.9.24'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation platform('androidx.compose:compose-bom:2024.06.00')
