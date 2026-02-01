@@ -35,8 +35,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
+    - name: Clean Gradle cache to avoid KAPT compatibility issues
+      run: |
+        echo "Cleaning Gradle cache to prevent KAPT module loading errors..."
+        rm -rf ~/.gradle/caches/
+        echo "Cache cleaned successfully"
+
     - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+      run: ./gradlew clean assembleDebug --stacktrace --info
 
     - name: Run Unit Tests
       run: ./gradlew test --stacktrace
