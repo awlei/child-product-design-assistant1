@@ -2,8 +2,6 @@ package com.childproduct.designassistant.database.converter
 
 import androidx.room.TypeConverter
 import com.childproduct.designassistant.model.InstallDirection
-import com.childproduct.designassistant.model.ImpactDirection
-import com.childproduct.designassistant.model.TestPulseType
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -29,40 +27,6 @@ class Converters {
             InstallDirection.valueOf(value)
         } catch (e: IllegalArgumentException) {
             InstallDirection.REARWARD
-        }
-    }
-
-    /**
-     * ImpactDirection 转换器
-     */
-    @TypeConverter
-    fun fromImpactDirection(direction: ImpactDirection): String {
-        return direction.name
-    }
-
-    @TypeConverter
-    fun toImpactDirection(value: String): ImpactDirection {
-        return try {
-            ImpactDirection.valueOf(value)
-        } catch (e: IllegalArgumentException) {
-            ImpactDirection.Q0
-        }
-    }
-
-    /**
-     * TestPulseType 转换器
-     */
-    @TypeConverter
-    fun fromTestPulseType(type: TestPulseType): String {
-        return type.name
-    }
-
-    @TypeConverter
-    fun toTestPulseType(value: String): TestPulseType {
-        return try {
-            TestPulseType.valueOf(value)
-        } catch (e: IllegalArgumentException) {
-            TestPulseType.FRONTAL
         }
     }
 

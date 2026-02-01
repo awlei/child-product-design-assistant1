@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -85,20 +85,11 @@ android {
     }
 }
 
-// 全局kapt配置
-kapt {
-    useBuildCache = true
-    correctErrorTypes = true
-    // Room 配置参数
-    arguments {
-        arg("room.schemaLocation", "$projectDir/schemas")
-        arg("room.incremental", "true")
-        arg("room.expandProjection", "true")
-    }
-    // 提高 kapt 处理器的内存限制
-    javacOptions {
-        option("-Xmaxerrs", 500)
-    }
+// KSP 配置
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+    arg("room.expandProjection", "true")
 }
 
 dependencies {
@@ -133,7 +124,7 @@ dependencies {
     def roomVersion = "2.6.1"
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // Retrofit for API calls
     def retrofitVersion = "2.9.0"

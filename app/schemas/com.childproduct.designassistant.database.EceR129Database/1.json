@@ -1,0 +1,869 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "5ed11eca693a53a1f1256c25e4a1930d",
+    "entities": [
+      {
+        "tableName": "crash_test_dummy",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`dummyId` TEXT NOT NULL, `dummyCode` TEXT NOT NULL, `dummyName` TEXT NOT NULL, `minHeightCm` INTEGER NOT NULL, `maxHeightCm` INTEGER NOT NULL, `ageRange` TEXT NOT NULL, `productGroup` TEXT NOT NULL, `installDirection` TEXT NOT NULL, `description` TEXT NOT NULL, `standardClause` TEXT NOT NULL, `weightKg` REAL NOT NULL, `headCircumferenceMm` INTEGER, `shoulderWidthMm` INTEGER, `sittingHeightMm` INTEGER, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`dummyId`))",
+        "fields": [
+          {
+            "fieldPath": "dummyId",
+            "columnName": "dummyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dummyCode",
+            "columnName": "dummyCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dummyName",
+            "columnName": "dummyName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minHeightCm",
+            "columnName": "minHeightCm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxHeightCm",
+            "columnName": "maxHeightCm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ageRange",
+            "columnName": "ageRange",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productGroup",
+            "columnName": "productGroup",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installDirection",
+            "columnName": "installDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardClause",
+            "columnName": "standardClause",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "weightKg",
+            "columnName": "weightKg",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "headCircumferenceMm",
+            "columnName": "headCircumferenceMm",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "shoulderWidthMm",
+            "columnName": "shoulderWidthMm",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sittingHeightMm",
+            "columnName": "sittingHeightMm",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "dummyId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_crash_test_dummy_dummyCode",
+            "unique": true,
+            "columnNames": [
+              "dummyCode"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_crash_test_dummy_dummyCode` ON `${TABLE_NAME}` (`dummyCode`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "height_range_mapping",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mappingId` TEXT NOT NULL, `heightRangeStartCm` INTEGER NOT NULL, `heightRangeEndCm` INTEGER NOT NULL, `dummyId` TEXT NOT NULL, `productGroup` TEXT NOT NULL, `installDirection` TEXT NOT NULL, `standardClause` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`mappingId`))",
+        "fields": [
+          {
+            "fieldPath": "mappingId",
+            "columnName": "mappingId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heightRangeStartCm",
+            "columnName": "heightRangeStartCm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "heightRangeEndCm",
+            "columnName": "heightRangeEndCm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dummyId",
+            "columnName": "dummyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productGroup",
+            "columnName": "productGroup",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installDirection",
+            "columnName": "installDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardClause",
+            "columnName": "standardClause",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "mappingId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_height_range_mapping_heightRangeStartCm_heightRangeEndCm",
+            "unique": true,
+            "columnNames": [
+              "heightRangeStartCm",
+              "heightRangeEndCm"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_height_range_mapping_heightRangeStartCm_heightRangeEndCm` ON `${TABLE_NAME}` (`heightRangeStartCm`, `heightRangeEndCm`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "safety_threshold",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`thresholdId` TEXT NOT NULL, `dummyId` TEXT NOT NULL, `testItem` TEXT NOT NULL, `parameterName` TEXT NOT NULL, `minValue` REAL, `maxValue` REAL NOT NULL, `unit` TEXT NOT NULL, `testDurationMs` INTEGER, `applicableDummies` TEXT NOT NULL, `standardSource` TEXT NOT NULL, `notes` TEXT, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`thresholdId`), FOREIGN KEY(`dummyId`) REFERENCES `crash_test_dummy`(`dummyId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "thresholdId",
+            "columnName": "thresholdId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dummyId",
+            "columnName": "dummyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "testItem",
+            "columnName": "testItem",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parameterName",
+            "columnName": "parameterName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "minValue",
+            "columnName": "minValue",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxValue",
+            "columnName": "maxValue",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "testDurationMs",
+            "columnName": "testDurationMs",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "applicableDummies",
+            "columnName": "applicableDummies",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardSource",
+            "columnName": "standardSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "thresholdId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_safety_threshold_dummyId",
+            "unique": false,
+            "columnNames": [
+              "dummyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_safety_threshold_dummyId` ON `${TABLE_NAME}` (`dummyId`)"
+          },
+          {
+            "name": "index_safety_threshold_testItem_dummyId",
+            "unique": true,
+            "columnNames": [
+              "testItem",
+              "dummyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_safety_threshold_testItem_dummyId` ON `${TABLE_NAME}` (`testItem`, `dummyId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "crash_test_dummy",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "dummyId"
+            ],
+            "referencedColumns": [
+              "dummyId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "test_configuration",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`configId` TEXT NOT NULL, `standardReference` TEXT NOT NULL, `pulseType` TEXT NOT NULL, `impactDirection` TEXT NOT NULL, `dummyId` TEXT NOT NULL, `installDirection` TEXT NOT NULL, `installationType` TEXT NOT NULL, `productConfiguration` TEXT NOT NULL, `isofixAnchors` INTEGER NOT NULL, `floorPosition` TEXT NOT NULL, `harness` INTEGER NOT NULL, `topTetherOrSupportLeg` TEXT NOT NULL, `dashboardContact` INTEGER NOT NULL, `comments` TEXT, `buckleTest` INTEGER NOT NULL, `adjusterTest` INTEGER NOT NULL, `isofixTest` INTEGER NOT NULL, `topTetherTest` INTEGER NOT NULL, `quantity` TEXT NOT NULL, `testNumber` TEXT NOT NULL, `testSpeedKmh` REAL NOT NULL, `maxPulseG` REAL NOT NULL, `stoppingDistanceMm` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`configId`), FOREIGN KEY(`dummyId`) REFERENCES `crash_test_dummy`(`dummyId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "configId",
+            "columnName": "configId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardReference",
+            "columnName": "standardReference",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pulseType",
+            "columnName": "pulseType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "impactDirection",
+            "columnName": "impactDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dummyId",
+            "columnName": "dummyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installDirection",
+            "columnName": "installDirection",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installationType",
+            "columnName": "installationType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "productConfiguration",
+            "columnName": "productConfiguration",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isofixAnchors",
+            "columnName": "isofixAnchors",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "floorPosition",
+            "columnName": "floorPosition",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "harness",
+            "columnName": "harness",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topTetherOrSupportLeg",
+            "columnName": "topTetherOrSupportLeg",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dashboardContact",
+            "columnName": "dashboardContact",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comments",
+            "columnName": "comments",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "buckleTest",
+            "columnName": "buckleTest",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "adjusterTest",
+            "columnName": "adjusterTest",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isofixTest",
+            "columnName": "isofixTest",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "topTetherTest",
+            "columnName": "topTetherTest",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "testNumber",
+            "columnName": "testNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "testSpeedKmh",
+            "columnName": "testSpeedKmh",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxPulseG",
+            "columnName": "maxPulseG",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "stoppingDistanceMm",
+            "columnName": "stoppingDistanceMm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "configId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_test_configuration_dummyId_pulseType_impactDirection_installDirection",
+            "unique": true,
+            "columnNames": [
+              "dummyId",
+              "pulseType",
+              "impactDirection",
+              "installDirection"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_test_configuration_dummyId_pulseType_impactDirection_installDirection` ON `${TABLE_NAME}` (`dummyId`, `pulseType`, `impactDirection`, `installDirection`)"
+          },
+          {
+            "name": "index_test_configuration_standardReference",
+            "unique": false,
+            "columnNames": [
+              "standardReference"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_test_configuration_standardReference` ON `${TABLE_NAME}` (`standardReference`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "crash_test_dummy",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "dummyId"
+            ],
+            "referencedColumns": [
+              "dummyId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "standard_reference",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`referenceId` TEXT NOT NULL, `regulationNumber` TEXT NOT NULL, `regulationName` TEXT NOT NULL, `currentVersion` TEXT NOT NULL, `entryIntoForceDate` TEXT NOT NULL, `officialUrl` TEXT NOT NULL, `status` TEXT NOT NULL, `relatedRegulations` TEXT NOT NULL, `lastUpdated` INTEGER NOT NULL, PRIMARY KEY(`referenceId`))",
+        "fields": [
+          {
+            "fieldPath": "referenceId",
+            "columnName": "referenceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regulationNumber",
+            "columnName": "regulationNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regulationName",
+            "columnName": "regulationName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentVersion",
+            "columnName": "currentVersion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "entryIntoForceDate",
+            "columnName": "entryIntoForceDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "officialUrl",
+            "columnName": "officialUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "relatedRegulations",
+            "columnName": "relatedRegulations",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdated",
+            "columnName": "lastUpdated",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "referenceId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "installation_method",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`methodId` TEXT NOT NULL, `methodName` TEXT NOT NULL, `methodCode` TEXT NOT NULL, `description` TEXT NOT NULL, `applicableHeightCm` TEXT NOT NULL, `requiresTopTether` INTEGER NOT NULL, `requiresSupportLeg` INTEGER NOT NULL, `standardClause` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`methodId`))",
+        "fields": [
+          {
+            "fieldPath": "methodId",
+            "columnName": "methodId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "methodName",
+            "columnName": "methodName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "methodCode",
+            "columnName": "methodCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "applicableHeightCm",
+            "columnName": "applicableHeightCm",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requiresTopTether",
+            "columnName": "requiresTopTether",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requiresSupportLeg",
+            "columnName": "requiresSupportLeg",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardClause",
+            "columnName": "standardClause",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "methodId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "material_specification",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`specId` TEXT NOT NULL, `specName` TEXT NOT NULL, `specCode` TEXT NOT NULL, `description` TEXT NOT NULL, `standardRequirement` TEXT NOT NULL, `testMethod` TEXT NOT NULL, `applicableComponents` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`specId`))",
+        "fields": [
+          {
+            "fieldPath": "specId",
+            "columnName": "specId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "specName",
+            "columnName": "specName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "specCode",
+            "columnName": "specCode",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardRequirement",
+            "columnName": "standardRequirement",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "testMethod",
+            "columnName": "testMethod",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "applicableComponents",
+            "columnName": "applicableComponents",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "specId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "isofix_requirement",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`requirementId` TEXT NOT NULL, `sizeCategory` TEXT NOT NULL, `maxWeightKg` REAL NOT NULL, `seatWidthMm` INTEGER NOT NULL, `supportLegMinLengthMm` INTEGER NOT NULL, `supportLegMaxLengthMm` INTEGER NOT NULL, `standardClause` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`requirementId`))",
+        "fields": [
+          {
+            "fieldPath": "requirementId",
+            "columnName": "requirementId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sizeCategory",
+            "columnName": "sizeCategory",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxWeightKg",
+            "columnName": "maxWeightKg",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seatWidthMm",
+            "columnName": "seatWidthMm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supportLegMinLengthMm",
+            "columnName": "supportLegMinLengthMm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "supportLegMaxLengthMm",
+            "columnName": "supportLegMaxLengthMm",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "standardClause",
+            "columnName": "standardClause",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "requirementId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "standard_update_log",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`logId` TEXT NOT NULL, `regulationNumber` TEXT NOT NULL, `version` TEXT NOT NULL, `syncType` TEXT NOT NULL, `status` TEXT NOT NULL, `timestamp` INTEGER NOT NULL, `details` TEXT, PRIMARY KEY(`logId`))",
+        "fields": [
+          {
+            "fieldPath": "logId",
+            "columnName": "logId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regulationNumber",
+            "columnName": "regulationNumber",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncType",
+            "columnName": "syncType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "details",
+            "columnName": "details",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "logId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '5ed11eca693a53a1f1256c25e4a1930d')"
+    ]
+  }
+}

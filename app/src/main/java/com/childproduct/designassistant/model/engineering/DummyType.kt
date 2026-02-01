@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model.engineering
 
+import com.childproduct.designassistant.model.InstallDirection
+
 /**
  * 假人类型 - 基于ECE R129 Rev.4标准
  * 修正映射：40-150cm → Q0/Q0+/Q1/Q1.5/Q3/Q3s/Q6/Q10（8个区间）
@@ -234,14 +236,6 @@ enum class DummyType(
             }
         }
     }
-}
-
-/**
- * 安装方向
- */
-enum class InstallDirection(val displayName: String) {
-    REARWARD("后向安装"),
-    FORWARD("前向安装")
 }
 
 /**

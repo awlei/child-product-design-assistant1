@@ -116,10 +116,10 @@ data class IsofixEnvelope(
                 ),
                 supportLegLength = null,
                 topTetherPosition = TopTetherPosition(
-                    distanceFromSeat: 500.0,
-                    distanceRange: "500-700mm",
-                    minHeightRequirement: "≥座椅顶部",
-                    clause: "ECE R129 §6.1.2.3"
+                    distanceFromSeat = 500.0,
+                    distanceRange = "500-700mm",
+                    minHeightRequirement = "≥座椅顶部",
+                    clause = "ECE R129 §6.1.2.3"
                 ),
                 staticStrength = StaticStrengthRequirement(
                     value = 8.0,
