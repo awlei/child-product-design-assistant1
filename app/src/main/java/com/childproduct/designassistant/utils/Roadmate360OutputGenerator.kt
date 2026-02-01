@@ -43,26 +43,26 @@ object Roadmate360OutputGenerator {
     )
 
     data class Roadmate360TestItem(
-        val sample: String = "R129",
-        val pulse: String,
-        val impact: String,
-        val dummy: String,
-        val position: String,
-        val installation: String,
-        val specificInstallation: String = "-",
-        val productConfiguration: String,
-        val isofixAnchors: String = "yes",
-        val positionOfFloor: String = "Low",
-        val harness: String = "With",
-        val topTetherSupportLeg: String,
-        val dashboard: String,
-        val comments: String = "-",
-        val buckle: String = "no",
-        val adjuster: String = "no",
-        val isofix: String = "yes",
-        val tt: String,
-        val quantity: String = "n/a",
-        val testNo: String = "-"
+        val sample: String = "R129",                // 样本编号
+        val pulse: String,                          // 碰撞类型（Frontal/Rear/Lateral）
+        val impact: String,                         // 假人类型（Q6/Q10）
+        val dummy: String,                          // 碰撞假人名称（与impact相同）
+        val position: String,                       // 朝向（Forward facing）
+        val installation: String,                   // 安装方式（Isofix 3 pts）
+        val specificInstallation: String = "-",     // 具体安装
+        val productConfiguration: String,           // 产品配置（Upright/Reclined）
+        val isofixAnchors: String = "yes",          // ISOFIX锚点
+        val positionOfFloor: String = "Low",        // 地板位置
+        val harness: String = "With",               // 安全带
+        val topTetherSupportLeg: String,            // 上拉带/支撑腿（With/no）
+        val dashboard: String,                      // 仪表盘（With）
+        val comments: String = "-",                 // 备注
+        val buckle: String = "no",                  // 扣具
+        val adjuster: String = "no",                // 调节器
+        val isofix: String = "yes",                 // ISOFIX
+        val tt: String,                             // 上拉带（yes/no）
+        val quantity: String = "n/a",               // 数量
+        val testNo: String = "-"                    // 测试编号
     )
 
     // ========== 核心方法：生成完整输出 ==========
@@ -123,22 +123,22 @@ object Roadmate360OutputGenerator {
         if (maxHeightCm > 105 && minHeightCm < 145) {
             items.addAll(listOf(
                 Roadmate360TestItem(
-                    pulse = "Frontal", impact = "Q6", position = "Forward facing",
+                    pulse = "Frontal", impact = "Frontal", dummy = "Q6", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Upright",
                     topTetherSupportLeg = "With", dashboard = "With", tt = "yes"
                 ),
                 Roadmate360TestItem(
-                    pulse = "Frontal", impact = "Q6", position = "Forward facing",
+                    pulse = "Frontal", impact = "Frontal", dummy = "Q6", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Reclined",
                     topTetherSupportLeg = "With", dashboard = "With", tt = "yes"
                 ),
                 Roadmate360TestItem(
-                    pulse = "Rear", impact = "Q6", position = "Forward facing",
+                    pulse = "Rear", impact = "Rear", dummy = "Q6", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Upright",
                     topTetherSupportLeg = "With", dashboard = "With", tt = "yes"
                 ),
                 Roadmate360TestItem(
-                    pulse = "Lateral", impact = "Q6", position = "Forward facing",
+                    pulse = "Lateral", impact = "Lateral", dummy = "Q6", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Upright",
                     topTetherSupportLeg = "no", dashboard = "With", tt = "no"
                 )
@@ -149,22 +149,22 @@ object Roadmate360OutputGenerator {
         if (maxHeightCm >= 145) {
             items.addAll(listOf(
                 Roadmate360TestItem(
-                    pulse = "Frontal", impact = "Q10", position = "Forward facing",
+                    pulse = "Frontal", impact = "Frontal", dummy = "Q10", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Upright",
                     topTetherSupportLeg = "With", dashboard = "With", tt = "yes"
                 ),
                 Roadmate360TestItem(
-                    pulse = "Frontal", impact = "Q10", position = "Forward facing",
+                    pulse = "Frontal", impact = "Frontal", dummy = "Q10", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Reclined",
                     topTetherSupportLeg = "With", dashboard = "With", tt = "yes"
                 ),
                 Roadmate360TestItem(
-                    pulse = "Rear", impact = "Q10", position = "Forward facing",
+                    pulse = "Rear", impact = "Rear", dummy = "Q10", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Upright",
                     topTetherSupportLeg = "With", dashboard = "With", tt = "yes"
                 ),
                 Roadmate360TestItem(
-                    pulse = "Lateral", impact = "Q10", position = "Forward facing",
+                    pulse = "Lateral", impact = "Lateral", dummy = "Q10", position = "Forward facing",
                     installation = "Isofix 3 pts", productConfiguration = "Upright",
                     topTetherSupportLeg = "no", dashboard = "With", tt = "no"
                 )
