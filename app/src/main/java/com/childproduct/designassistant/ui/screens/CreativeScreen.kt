@@ -54,6 +54,9 @@ fun CreativeScreen(
     var paramValidationResult by remember { mutableStateOf<ParamInputResult?>(null) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
+    // 格式化输出（用于显示）
+    var formattedOutput by remember { mutableStateOf<String?>(null)
+
     // 参数验证函数
     fun validateAndSetResult() {
         selectedStandard?.let { standard ->
@@ -402,7 +405,22 @@ fun CreativeScreen(
                                         }
                                     }
                                 }
-                                viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)
+                                
+                                // 检查是否是儿童安全座椅且选择了ECE R129标准
+                                if (selectedProductType == ProductType.CHILD_SAFETY_SEAT &&
+                                    selectedStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true) {
+                                    // 使用Roadmate360OutputGenerator生成ROADMATE 360格式输出
+                                    val finalTheme = theme.ifEmpty { "标准设计" }
+                                    formattedOutput = com.childproduct.designassistant.utils.Roadmate360OutputGenerator.generateOutput(
+                                        minHeightCm = minH,
+                                        maxHeightCm = maxH,
+                                        productType = selectedProductType.displayName,
+                                        designTheme = finalTheme
+                                    )
+                                } else {
+                                    // 其他情况使用原有的生成逻辑
+                                    viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)
+                                }
                             }
                             InputType.WEIGHT_RANGE -> {
                                 // 根据体重推断年龄段
@@ -448,9 +466,37 @@ fun CreativeScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 显示生成的创意
-        creativeIdea?.let { idea ->
-            CreativeIdeaCard(idea = idea)
+        // 显示生成的结果
+        if (formattedOutput != null) {
+            // 显示ROADMATE 360格式输出
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "设计方案输出",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = formattedOutput!!,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        } else {
+            // 显示原有格式（CreativeIdea）
+            creativeIdea?.let { idea ->
+                CreativeIdeaCard(idea = idea)
+            }
         }
     }
 }
