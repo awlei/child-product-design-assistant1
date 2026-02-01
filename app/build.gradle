@@ -82,7 +82,6 @@ android {
 kapt {
     useBuildCache = true
     correctErrorTypes = true
-    generateStubs = true
 }
 
 dependencies {
