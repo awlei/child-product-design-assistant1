@@ -4,6 +4,8 @@
 
 在GitHub Actions中构建APK时遇到以下错误：
 
+### 错误1：Could not load module
+
 ```
 > Task :app:kaptGenerateStubsDebugKotlin FAILED
 e: Could not load module <Error module>
@@ -11,6 +13,14 @@ e: Could not load module <Error module>
 Execution failed for task ':app:kaptGenerateStubsDebugKotlin'.
 > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
    > Compilation error. See log for more details
+```
+
+### 错误2：Plugin version conflict
+
+```
+Error resolving plugin [id: 'org.jetbrains.kotlin.android', version: '1.9.22']
+> The request for this plugin could not be satisfied because the plugin is
+  already on the classpath with an unknown version, so compatibility cannot be checked.
 ```
 
 ## 根本原因
@@ -29,11 +39,132 @@ plugins {
 
 虽然根`build.gradle`中定义了`ext.kotlin_version = '1.9.22'`，但在新版Gradle插件系统中，这会导致kapt插件版本与Kotlin插件版本不匹配。
 
+### 2. classpath与plugins DSL冲突（2024-2026常见问题）
+
+在较新的Gradle + Android项目中，如果在以下两个地方同时声明了同一个插件，会导致冲突：
+
+- **根 `build.gradle` 的 `buildscript` 块**（旧式）：
+```groovy
+buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22"
+    }
+}
+```
+
+- **模块 `build.gradle` 的 `plugins` 块**（新式）：
+```groovy
+plugins {
+    id 'org.jetbrains.kotlin.android' version '1.9.22'  // ← 冲突
+}
+```
+
+Gradle拒绝应用同一个插件两次，特别是当版本解析策略不同时。
+
 ### 2. 缺少Room kapt优化配置
 
 项目使用了Room 2.6.1数据库库，但没有配置kapt选项，这可能导致性能问题和错误报告不清晰。
 
-## 解决方案
+## 解决方案（推荐：现代Gradle插件管理方式 - 2025-2026标准）
+
+### 推荐方案：使用 plugins DSL 统一管理
+
+这是当前Gradle最佳实践，可以完全避免classpath冲突。
+
+#### 步骤1：修改根 build.gradle
+
+删除旧的`buildscript`块，使用新的`plugins`块：
+
+```groovy
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+plugins {
+    id 'com.android.application' version '8.2.0' apply false
+    id 'org.jetbrains.kotlin.android' version '1.9.22' apply false
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+
+**关键点**：
+- `apply false` 表示声明插件但不在根项目应用
+- 版本在这里统一管理
+- 删除了整个 `buildscript` 块
+
+#### 步骤2：修改 settings.gradle
+
+添加 `pluginManagement` 和 `dependencyResolutionManagement`：
+
+```groovy
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "ChildProductDesignAssistant"
+include ':app'
+```
+
+#### 步骤3：修改 app/build.gradle
+
+plugins 块中不再指定版本：
+
+```groovy
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'  // 版本从根build.gradle继承
+    id 'org.jetbrains.kotlin.kapt'     // 版本自动匹配Kotlin
+}
+
+android {
+    namespace 'com.childproduct.designassistant'
+    // ... 其余配置
+}
+
+// Room kapt优化配置
+defaultConfig {
+    // ... 其他配置
+
+    kapt {
+        arguments {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.incremental", "true")
+            arg("room.expandProjection", "true")
+        }
+    }
+}
+
+// 全局kapt配置
+kapt {
+    useBuildCache = true
+    correctErrorTypes = true
+    generateStubs = true
+}
+```
+
+---
+
+## 旧版解决方案（不推荐，仅供参考）
 
 ### 修复1：明确指定Kotlin和kapt版本
 
@@ -48,6 +179,8 @@ plugins {
 ```
 
 **重要**：Kotlin插件版本和kapt插件版本必须完全一致。
+
+**注意**：此方案会导致与根 `build.gradle` 的 `buildscript` 块冲突，仅在没有 `buildscript` 块时使用。
 
 ### 修复2：添加Room kapt优化配置
 
@@ -157,8 +290,34 @@ rm -rf ~/.gradle/caches/
 
 ## 提交记录
 
-- `da1350b` - fix: 修复Kotlin和kapt版本不匹配问题
-- `308186e` - feat: 添加Room kapt优化配置
+| Commit | 说明 |
+|--------|------|
+| `da1350b` | fix: 修复Kotlin和kapt版本不匹配问题（已废弃） |
+| `308186e` | feat: 添加Room kapt优化配置 |
+| `ded85ac` | fix: 移除plugins块中的版本声明，避免与classpath冲突（部分修复） |
+| `aa0c8d5` | refactor: 迁移到现代Gradle插件管理方式（推荐方案） |
+
+## 工作原理
+
+### plugins DSL vs buildscript
+
+| 特性 | buildscript（旧式） | plugins DSL（新式） |
+|------|---------------------|---------------------|
+| 版本管理 | 在 `dependencies.classpath` 中 | 在 `plugins` 块中 |
+| 可靠性 | 可能与 `plugins` 块冲突 | 类型安全，推荐方式 |
+| 性能 | 慢（需要解析整个 classpath） | 快（延迟加载） |
+| IDE支持 | 较弱 | 强（自动补全） |
+
+### 版本解析流程
+
+```
+app/build.gradle (plugins)
+    ↓ 继承版本
+root/build.gradle (plugins with apply false)
+    ↓ 解析插件
+pluginManagement.repositories
+    → Google / Maven Central / Gradle Portal
+```
 
 ## 验证
 
