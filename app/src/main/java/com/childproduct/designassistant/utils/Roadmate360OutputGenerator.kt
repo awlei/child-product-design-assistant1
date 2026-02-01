@@ -128,7 +128,7 @@ object Roadmate360OutputGenerator {
             appendLine("【设计方案】")
             appendLine("产品类型：$productType")
             appendLine("身高范围：${minHeightCm}-${maxHeightCm}cm")
-            appendLine("适配年龄段：0-12岁（全年龄段）")
+            appendLine("适配年龄段：${getAgeRange(maxHeightCm)}")
             appendLine("设计主题：${designTheme}安全座椅")
             appendLine("Tether类型：${tetherType.displayName} - ${tetherType.description}")
             appendLine("安装方式：")
@@ -254,6 +254,29 @@ object Roadmate360OutputGenerator {
                 ))
             }
 
+            // Q0+假人（50-60cm）
+            if (maxHeightCm > 50) {
+                items.addAll(listOf(
+                    Roadmate360TestItem(
+                        pulse = "Frontal", impact = "Q0+", dummy = "Q0+", position = "Rearward facing",
+                        installation = "Isofix 3 pts", productConfiguration = "Upright",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
+                        comments = "if contact repeat the test without dashboard"
+                    ),
+                    Roadmate360TestItem(
+                        pulse = "Frontal", impact = "Q0+", dummy = "Q0+", position = "Rearward facing",
+                        installation = "Isofix 3 pts", productConfiguration = "Reclined",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
+                        comments = "if contact repeat the test without dashboard"
+                    ),
+                    Roadmate360TestItem(
+                        pulse = "Rear", impact = "Q0+", dummy = "Q0+", position = "Rearward facing",
+                        installation = "Isofix 3 pts", productConfiguration = "Upright",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With"
+                    )
+                ))
+            }
+
             // Q1假人（60-75cm）
             if (maxHeightCm > 60) {
                 items.addAll(listOf(
@@ -271,6 +294,29 @@ object Roadmate360OutputGenerator {
                     ),
                     Roadmate360TestItem(
                         pulse = "Rear", impact = "Q1", dummy = "Q1", position = "Rearward facing",
+                        installation = "Isofix 3 pts", productConfiguration = "Upright",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With"
+                    )
+                ))
+            }
+
+            // Q1.5假人（75-87cm）
+            if (maxHeightCm > 75) {
+                items.addAll(listOf(
+                    Roadmate360TestItem(
+                        pulse = "Frontal", impact = "Q1.5", dummy = "Q1.5", position = "Rearward facing",
+                        installation = "Isofix 3 pts", productConfiguration = "Upright",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
+                        comments = "if contact repeat the test without dashboard"
+                    ),
+                    Roadmate360TestItem(
+                        pulse = "Frontal", impact = "Q1.5", dummy = "Q1.5", position = "Rearward facing",
+                        installation = "Isofix 3 pts", productConfiguration = "Reclined",
+                        topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With",
+                        comments = "if contact repeat the test without dashboard"
+                    ),
+                    Roadmate360TestItem(
+                        pulse = "Rear", impact = "Q1.5", dummy = "Q1.5", position = "Rearward facing",
                         installation = "Isofix 3 pts", productConfiguration = "Upright",
                         topTetherSupportLeg = rearwardTetherValue, tt = "no", dashboard = "With"
                     )
@@ -480,7 +526,7 @@ object Roadmate360OutputGenerator {
         return com.childproduct.designassistant.model.ChildProductDesignScheme(
             productType = productType,
             heightRange = "${minHeightCm}-${maxHeightCm}cm",
-            ageRange = "0-12岁",
+            ageRange = getAgeRange(maxHeightCm),
             designTheme = "${designTheme}安全座椅",
             installMethodDesc = installMethodDesc,
             coreFeatures = coreFeatures,
@@ -519,5 +565,19 @@ object Roadmate360OutputGenerator {
             productType = scheme.productType,
             designTheme = scheme.designTheme.replace("安全座椅", "").trim()
         )
+    }
+
+    // ========== 辅助方法：根据身高范围获取年龄段 ==========
+    private fun getAgeRange(maxHeightCm: Int): String {
+        return when {
+            maxHeightCm <= 50 -> "0-6个月"
+            maxHeightCm <= 60 -> "0-12个月"
+            maxHeightCm <= 75 -> "0-2岁"
+            maxHeightCm <= 87 -> "0-3岁"
+            maxHeightCm <= 105 -> "0-4岁"
+            maxHeightCm <= 125 -> "0-6岁"
+            maxHeightCm <= 145 -> "0-10岁"
+            else -> "0-12岁"
+        }
     }
 }
