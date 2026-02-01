@@ -40,7 +40,7 @@ fun TechnicalRecommendationScreen(
     // 输入状态
     var minHeight by remember { mutableStateOf("") }
     var maxHeight by remember { mutableStateOf("") }
-    var selectedProductType by remember { mutableStateOf(ProductType.CHILD_SAFETY_SEAT) }
+    var selectedProductType by remember { mutableStateOf(ProductType.SAFETY_SEAT) }
     var selectedConfigurations by remember { mutableStateOf<Set<String>>(emptySet()) }
     var designRequirement by remember { mutableStateOf("") }
 

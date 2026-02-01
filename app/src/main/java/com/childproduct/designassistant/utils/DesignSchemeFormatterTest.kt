@@ -41,7 +41,7 @@ object DesignSchemeFormatterTest {
             title = "婴幼儿专用儿童安全座椅 - 柔和色彩",
             description = "专为0-3岁儿童设计的儿童安全座椅",
             ageGroup = AgeGroup.INFANT,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             theme = "婴幼儿专用儿童安全座椅（柔和色彩）",
             features = listOf(
                 "易安装性：支持ISOFIX快速连接",
@@ -102,7 +102,7 @@ object DesignSchemeFormatterTest {
             title = "0-12岁儿童安全座椅",
             description = "覆盖全年龄段的儿童安全座椅",
             ageGroup = AgeGroup.TODDLER,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             theme = "全年龄段儿童安全座椅（时尚设计）",
             features = listOf(
                 "易安装性：支持ISOFIX快速连接",
@@ -165,7 +165,7 @@ object DesignSchemeFormatterTest {
             title = "测试标题",
             description = "测试描述",
             ageGroup = AgeGroup.INFANT,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             theme = "测试主题",
             features = listOf("特性1", "特性2", "特性3", "特性4"),
             materials = listOf("材料1", "材料2", "材料3", "材料4"),

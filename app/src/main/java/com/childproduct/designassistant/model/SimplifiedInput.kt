@@ -160,8 +160,8 @@ data class WeightRange(
         return minWeight > 0 &&
                 maxWeight > minWeight &&
                 maxWeight <= when (productType) {
-                    ProductType.CHILD_SAFETY_SEAT -> 36.0
-                    ProductType.BABY_STROLLER -> 25.0
+                    ProductType.SAFETY_SEAT -> 36.0
+                    ProductType.STROLLER -> 25.0
                     else -> 36.0
                 }
     }
@@ -171,8 +171,8 @@ data class WeightRange(
      */
     fun getValidationHint(productType: ProductType): String? {
         val maxLimit = when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> 36.0
-            ProductType.BABY_STROLLER -> 25.0
+            ProductType.SAFETY_SEAT -> 36.0
+            ProductType.STROLLER -> 25.0
             else -> 36.0
         }
 
@@ -189,14 +189,14 @@ data class WeightRange(
      */
     fun getRecommendedStandard(productType: ProductType): InternationalStandard? {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 when {
                     maxWeight <= 13 -> InternationalStandard.FMVSS_213  // Infant Seat
                     maxWeight <= 18 -> InternationalStandard.FMVSS_213  // Convertible
                     else -> InternationalStandard.FMVSS_213  // Forward-facing
                 }
             }
-            ProductType.BABY_STROLLER -> InternationalStandard.EN_1888
+            ProductType.STROLLER -> InternationalStandard.EN_1888
             else -> null
         }
     }
@@ -206,14 +206,14 @@ data class WeightRange(
      */
     fun getRecommendedType(productType: ProductType): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 when {
                     maxWeight <= 13 -> "Infant Seat（婴儿座椅）"
                     maxWeight <= 18 -> "Convertible（可转换座椅）"
                     else -> "Forward-facing（前向座椅）"
                 }
             }
-            ProductType.BABY_STROLLER -> {
+            ProductType.STROLLER -> {
                 when {
                     maxWeight <= 15 -> "通用型推车"
                     else -> "重型推车"
@@ -253,8 +253,8 @@ data class AgeRange(
         return minAge > 0 &&
                 maxAge > minAge &&
                 maxAge <= when (productType) {
-                    ProductType.CHILD_SAFETY_SEAT -> 144  // 12岁
-                    ProductType.BABY_STROLLER -> 48  // 4岁
+                    ProductType.SAFETY_SEAT -> 144  // 12岁
+                    ProductType.STROLLER -> 48  // 4岁
                     else -> 144
                 }
     }
@@ -264,8 +264,8 @@ data class AgeRange(
      */
     fun getValidationHint(productType: ProductType): String? {
         val maxLimit = when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> 144
-            ProductType.BABY_STROLLER -> 48
+            ProductType.SAFETY_SEAT -> 144
+            ProductType.STROLLER -> 48
             else -> 144
         }
 
@@ -283,14 +283,14 @@ data class AgeRange(
      */
     fun getRecommendedStandard(productType: ProductType): InternationalStandard? {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 when {
                     maxAge <= 9 -> InternationalStandard.ECE_R129  // Group 0+
                     maxAge <= 18 -> InternationalStandard.ECE_R129  // Group 0/1
                     else -> InternationalStandard.ECE_R129  // Group 2/3
                 }
             }
-            ProductType.BABY_STROLLER -> InternationalStandard.EN_1888
+            ProductType.STROLLER -> InternationalStandard.EN_1888
             else -> null
         }
     }
@@ -300,14 +300,14 @@ data class AgeRange(
      */
     fun getRecommendedType(productType: ProductType): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 when {
                     maxAge <= 9 -> "Group 0+（后向强制）"
                     maxAge <= 18 -> "Group 0/1"
                     else -> "Group 2/3"
                 }
             }
-            ProductType.BABY_STROLLER -> {
+            ProductType.STROLLER -> {
                 when {
                     maxAge <= 6 -> "婴儿推车"
                     else -> "幼儿推车"
@@ -350,7 +350,7 @@ object InputMatchingEngine {
                 if (heightRange == null) {
                     return InputMatchingResult(
                         success = false,
-                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        productType = ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,
@@ -368,7 +368,7 @@ object InputMatchingEngine {
                 if (!heightRange.isValid()) {
                     return InputMatchingResult(
                         success = false,
-                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        productType = ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,
@@ -380,7 +380,7 @@ object InputMatchingEngine {
                 // 匹配成功
                 return InputMatchingResult(
                     success = true,
-                    productType = ProductType.CHILD_SAFETY_SEAT,
+                    productType = ProductType.SAFETY_SEAT,
                     standard = heightRange.getRecommendedStandard(),
                     recommendedGroup = heightRange.getRecommendedGroup(),
                     recommendedType = null,
@@ -399,7 +399,7 @@ object InputMatchingEngine {
                 if (weightRange == null) {
                     return InputMatchingResult(
                         success = false,
-                        productType = input.productType ?: ProductType.CHILD_SAFETY_SEAT,
+                        productType = input.productType ?: ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,
@@ -412,7 +412,7 @@ object InputMatchingEngine {
                 if (productType == null) {
                     return InputMatchingResult(
                         success = false,
-                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        productType = ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,
@@ -444,7 +444,7 @@ object InputMatchingEngine {
                     success = true,
                     productType = productType,
                     standard = weightRange.getRecommendedStandard(productType),
-                    recommendedGroup = if (productType == ProductType.CHILD_SAFETY_SEAT) {
+                    recommendedGroup = if (productType == ProductType.SAFETY_SEAT) {
                         weightRange.getRecommendedType(productType)
                     } else {
                         null
@@ -460,7 +460,7 @@ object InputMatchingEngine {
                 if (ageRange == null) {
                     return InputMatchingResult(
                         success = false,
-                        productType = input.productType ?: ProductType.CHILD_SAFETY_SEAT,
+                        productType = input.productType ?: ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,
@@ -473,7 +473,7 @@ object InputMatchingEngine {
                 if (productType == null) {
                     return InputMatchingResult(
                         success = false,
-                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        productType = ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,
@@ -505,7 +505,7 @@ object InputMatchingEngine {
                     success = true,
                     productType = productType,
                     standard = ageRange.getRecommendedStandard(productType),
-                    recommendedGroup = if (productType == ProductType.CHILD_SAFETY_SEAT) {
+                    recommendedGroup = if (productType == ProductType.SAFETY_SEAT) {
                         ageRange.getRecommendedType(productType)
                     } else {
                         null
@@ -520,7 +520,7 @@ object InputMatchingEngine {
                 if (input.productType == null) {
                     return InputMatchingResult(
                         success = false,
-                        productType = ProductType.CHILD_SAFETY_SEAT,
+                        productType = ProductType.SAFETY_SEAT,
                         standard = null,
                         recommendedGroup = null,
                         recommendedType = null,

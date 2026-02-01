@@ -374,7 +374,7 @@ fun CreativeScreen(
                 }
 
                 // ========== 5. Tether类型选择（仅儿童安全座椅ECE R129标准显示）==========
-                val isShowTetherSelector = selectedProductType == ProductType.CHILD_SAFETY_SEAT &&
+                val isShowTetherSelector = selectedProductType == ProductType.SAFETY_SEAT &&
                                          selectedStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true
                 
                 if (isShowTetherSelector) {
@@ -503,7 +503,7 @@ fun CreativeScreen(
                                 val currentProductType = selectedProductType
                                 val currentStandard = selectedStandard
 
-                                if (currentProductType == ProductType.CHILD_SAFETY_SEAT &&
+                                if (currentProductType == ProductType.SAFETY_SEAT &&
                                     currentStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true) {
                                     // 使用Roadmate360OutputGenerator生成ROADMATE 360格式输出
                                     val finalTheme = theme.ifEmpty { "标准设计" }

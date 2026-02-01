@@ -177,7 +177,7 @@ class AIAnalysisService(private val context: Context) {
         sb.appendLine()
         
         when (request.productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 sb.appendLine("## 儿童安全座椅专业设计建议（适配${request.standard.displayName} ${request.userInput.let { input ->
                     when (input) {
                         is ProductInput.SafetySeat -> input.data.heightRange ?: "60-105cm身高组"
@@ -259,7 +259,7 @@ class AIAnalysisService(private val context: Context) {
                 sb.appendLine("- 整体重量控制在15kg以内（满足ISOFIX承载要求）")
                 sb.appendLine("- 减重区域选择在非受力部件（如装饰件）")
             }
-            ProductType.BABY_STROLLER -> {
+            ProductType.STROLLER -> {
                 sb.appendLine("## 婴儿推车设计建议（适配${request.standard.displayName} 0-15kg重量组）")
                 sb.appendLine()
                 sb.appendLine("### 1. 尺寸参数")
@@ -297,7 +297,7 @@ class AIAnalysisService(private val context: Context) {
                 sb.appendLine("| 斜坡制动测试 | EN 1888 §7.3 | 在15°斜坡上锁定制动，座椅放置15kg负重，静置30min | 推车无滑动、无倾倒；制动机构无松动 |")
                 sb.appendLine("| 折叠锁定可靠性测试 | ASTM F833 §5.7 | 反复折叠-展开500次 | 折叠机构无卡滞；锁定后无意外解锁 |")
             }
-            ProductType.CHILD_HOUSEHOLD_GOODS -> {
+            ProductType.CRIB -> {
                 sb.appendLine("## 儿童家庭用品设计建议")
                 sb.appendLine()
                 sb.appendLine("### 1. 尺寸参数")
@@ -312,7 +312,7 @@ class AIAnalysisService(private val context: Context) {
                 sb.appendLine("| 材料阻燃性测试 | ISO 13209 | 垂直燃烧测试 | 燃烧速率 < 100mm/min |")
                 sb.appendLine("| 重金属含量测试 | GB 6675 | ICP-MS检测 | 符合GB 6675限值 |")
             }
-            ProductType.CHILD_HIGH_CHAIR -> {
+            ProductType.HIGH_CHAIR -> {
                 sb.appendLine("## 儿童高脚椅设计建议（适配ISO 8124-3 & GB 28007-2011）")
                 sb.appendLine()
                 sb.appendLine("### 1. 尺寸参数")
@@ -538,7 +538,7 @@ class AIAnalysisService(private val context: Context) {
         val testItems = mutableListOf<DVPTestItem>()
         
         when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "IMP-001",
@@ -581,7 +581,7 @@ class AIAnalysisService(private val context: Context) {
                     )
                 ))
             }
-            ProductType.BABY_STROLLER -> {
+            ProductType.STROLLER -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "BRK-001",
@@ -624,7 +624,7 @@ class AIAnalysisService(private val context: Context) {
                     )
                 ))
             }
-            ProductType.CHILD_HOUSEHOLD_GOODS -> {
+            ProductType.CRIB -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "MAT-001",
@@ -654,7 +654,7 @@ class AIAnalysisService(private val context: Context) {
                     )
                 ))
             }
-            ProductType.CHILD_HIGH_CHAIR -> {
+            ProductType.HIGH_CHAIR -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "STB-001",

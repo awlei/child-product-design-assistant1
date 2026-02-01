@@ -135,10 +135,10 @@ object DesignSchemeFormatter {
      */
     private fun getInstallFeature(productType: ProductType): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> "支持ISOFIX连接，实现快速安装"
-            ProductType.BABY_STROLLER -> "支持一键折叠，收纳便捷"
-            ProductType.CHILD_HIGH_CHAIR -> "支持快速拆装，便于清洁"
-            ProductType.CHILD_HOUSEHOLD_GOODS -> "结构简单，易于组装"
+            ProductType.SAFETY_SEAT -> "支持ISOFIX连接，实现快速安装"
+            ProductType.STROLLER -> "支持一键折叠，收纳便捷"
+            ProductType.HIGH_CHAIR -> "支持快速拆装，便于清洁"
+            ProductType.CRIB -> "结构简单，易于组装"
         }
     }
 
@@ -147,10 +147,10 @@ object DesignSchemeFormatter {
      */
     private fun getComfortFeature(productType: ProductType): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> "采用高回弹海绵填充，贴合儿童体型"
-            ProductType.BABY_STROLLER -> "配备悬挂避震系统，乘坐平稳舒适"
-            ProductType.CHILD_HIGH_CHAIR -> "座椅角度多档可调，适应不同坐姿需求"
-            ProductType.CHILD_HOUSEHOLD_GOODS -> "人体工学设计，使用舒适"
+            ProductType.SAFETY_SEAT -> "采用高回弹海绵填充，贴合儿童体型"
+            ProductType.STROLLER -> "配备悬挂避震系统，乘坐平稳舒适"
+            ProductType.HIGH_CHAIR -> "座椅角度多档可调，适应不同坐姿需求"
+            ProductType.CRIB -> "人体工学设计，使用舒适"
         }
     }
 
@@ -159,10 +159,10 @@ object DesignSchemeFormatter {
      */
     private fun getMaterialFeature(productType: ProductType): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> "选用食品级安全材料，无甲醛/重金属"
-            ProductType.BABY_STROLLER -> "选用无毒环保材料，符合欧盟安全标准"
-            ProductType.CHILD_HIGH_CHAIR -> "食品级材质，可直接接触食品"
-            ProductType.CHILD_HOUSEHOLD_GOODS -> "环保材质，可回收利用"
+            ProductType.SAFETY_SEAT -> "选用食品级安全材料，无甲醛/重金属"
+            ProductType.STROLLER -> "选用无毒环保材料，符合欧盟安全标准"
+            ProductType.HIGH_CHAIR -> "食品级材质，可直接接触食品"
+            ProductType.CRIB -> "环保材质，可回收利用"
         }
     }
 
@@ -171,10 +171,10 @@ object DesignSchemeFormatter {
      */
     private fun getSafetyFeature(productType: ProductType): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> "符合UN R129 i-Size+GB 27887-2024安全要求"
-            ProductType.BABY_STROLLER -> "符合EN 1888婴儿推车安全标准"
-            ProductType.CHILD_HIGH_CHAIR -> "符合GB 22793-2008儿童高椅安全标准"
-            ProductType.CHILD_HOUSEHOLD_GOODS -> "符合ISO 8124儿童用品安全要求"
+            ProductType.SAFETY_SEAT -> "符合UN R129 i-Size+GB 27887-2024安全要求"
+            ProductType.STROLLER -> "符合EN 1888婴儿推车安全标准"
+            ProductType.HIGH_CHAIR -> "符合GB 22793-2008儿童高椅安全标准"
+            ProductType.CRIB -> "符合ISO 8124儿童用品安全要求"
         }
     }
 

@@ -21,10 +21,10 @@ class CreativeService {
     )
 
     private val productTypeFeatures = mapOf(
-        ProductType.CHILD_SAFETY_SEAT to listOf("安全性", "舒适性", "易安装性", "材质环保"),
-        ProductType.BABY_STROLLER to listOf("折叠便携", "避震系统", "稳固性", "储物功能"),
-        ProductType.CHILD_HOUSEHOLD_GOODS to listOf("安全设计", "易清洁", "耐久性", "适龄性"),
-        ProductType.CHILD_HIGH_CHAIR to listOf("稳定性", "可调节高度", "安全带系统", "易清洁")
+        ProductType.SAFETY_SEAT to listOf("安全性", "舒适性", "易安装性", "材质环保"),
+        ProductType.STROLLER to listOf("折叠便携", "避震系统", "稳固性", "储物功能"),
+        ProductType.CRIB to listOf("安全设计", "易清洁", "耐久性", "适龄性"),
+        ProductType.HIGH_CHAIR to listOf("稳定性", "可调节高度", "安全带系统", "易清洁")
     )
 
     private val colorPalettes = mapOf(
@@ -37,10 +37,10 @@ class CreativeService {
     )
 
     private val materialSuggestions = mapOf(
-        ProductType.CHILD_SAFETY_SEAT to listOf("食品级PP塑料", "高回弹海绵", "安全带织带", "铝合金支架"),
-        ProductType.BABY_STROLLER to listOf("铝合金框架", "耐磨牛津布", "EVA发泡轮子", "不锈钢车轴"),
-        ProductType.CHILD_HOUSEHOLD_GOODS to listOf("ABS环保塑料", "实木（榉木/桦木）", "食品级硅胶", "不锈钢配件"),
-        ProductType.CHILD_HIGH_CHAIR to listOf("实木（榉木）", "食品级PP塑料", "不锈钢螺丝", "环保涂层")
+        ProductType.SAFETY_SEAT to listOf("食品级PP塑料", "高回弹海绵", "安全带织带", "铝合金支架"),
+        ProductType.STROLLER to listOf("铝合金框架", "耐磨牛津布", "EVA发泡轮子", "不锈钢车轴"),
+        ProductType.CRIB to listOf("ABS环保塑料", "实木（榉木/桦木）", "食品级硅胶", "不锈钢配件"),
+        ProductType.HIGH_CHAIR to listOf("实木（榉木）", "食品级PP塑料", "不锈钢螺丝", "环保涂层")
     )
 
     suspend fun generateCreativeIdea(
@@ -197,13 +197,13 @@ class CreativeService {
 
     private fun generateTitle(ageGroup: AgeGroup, productType: ProductType, theme: String): String {
         return when {
-            ageGroup == AgeGroup.ALL && productType == ProductType.CHILD_SAFETY_SEAT ->
+            ageGroup == AgeGroup.ALL && productType == ProductType.SAFETY_SEAT ->
                 "全年龄段通用${productType.displayName} - $theme"
             ageGroup == AgeGroup.ALL ->
                 "全年龄段通用${productType.displayName} - $theme"
-            ageGroup == AgeGroup.INFANT && productType == ProductType.CHILD_SAFETY_SEAT ->
+            ageGroup == AgeGroup.INFANT && productType == ProductType.SAFETY_SEAT ->
                 "婴幼儿专用${productType.displayName} - $theme"
-            ageGroup == AgeGroup.INFANT && productType == ProductType.BABY_STROLLER ->
+            ageGroup == AgeGroup.INFANT && productType == ProductType.STROLLER ->
                 "婴幼儿${productType.displayName} - $theme"
             else ->
                 "${ageGroup.displayName}${productType.displayName} - $theme"
@@ -226,7 +226,7 @@ class CreativeService {
 
         // 根据产品类型添加专业性描述
         val professionalDescription = when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 if (ageGroup == AgeGroup.ALL) {
                     "$baseDescription 符合UN R129 i-Size标准（Q0-Q10全假人，0-12岁），满足FMVSS 302燃烧性能要求，通过ISOFIX连接实现快速安装。"
                 } else {
@@ -242,10 +242,10 @@ class CreativeService {
                     "$baseDescription $complianceText 满足FMVSS 302燃烧性能要求，通过ISOFIX连接实现快速安装。"
                 }
             }
-            ProductType.BABY_STROLLER -> {
+            ProductType.STROLLER -> {
                 "$baseDescription 符合EN 1888 + GB 14748-2020标准，制动系统可靠，折叠机构安全防夹，危险点圆角处理R≥ 2.5mm。"
             }
-            ProductType.CHILD_HIGH_CHAIR -> {
+            ProductType.HIGH_CHAIR -> {
                 "$baseDescription 符合EN 14988 + GB 22793.1-2008标准，五点式安全带，防滑脚垫，稳固结构设计。"
             }
             else -> {

@@ -200,8 +200,8 @@ class DesignSuggestion_${suggestion.id.replace("-", "_")} {
      */
     private fun generateCommitMessage(suggestion: DesignSuggestionReport): String {
         val productType = when (suggestion.productType) {
-            ProductType.CHILD_SAFETY_SEAT -> "儿童安全座椅"
-            ProductType.BABY_STROLLER -> "婴儿推车"
+            ProductType.SAFETY_SEAT -> "儿童安全座椅"
+            ProductType.STROLLER -> "婴儿推车"
             else -> "儿童产品"
         }
 
@@ -224,8 +224,8 @@ class DesignSuggestion_${suggestion.id.replace("-", "_")} {
      */
     private fun generateBranchName(suggestion: DesignSuggestionReport): String {
         val productType = when (suggestion.productType) {
-            ProductType.CHILD_SAFETY_SEAT -> "child-seat"
-            ProductType.BABY_STROLLER -> "stroller"
+            ProductType.SAFETY_SEAT -> "child-seat"
+            ProductType.STROLLER -> "stroller"
             else -> "child-product"
         }
         val date = java.text.SimpleDateFormat("yyyyMMdd").format(java.util.Date())

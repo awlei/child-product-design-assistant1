@@ -574,8 +574,8 @@ object BrandDatabase {
      */
     fun getBrandsByProductType(productType: ProductType): List<BrandDetailedComparison> {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> safetySeatBrands
-            ProductType.BABY_STROLLER -> strollerBrands
+            ProductType.SAFETY_SEAT -> safetySeatBrands
+            ProductType.STROLLER -> strollerBrands
             else -> emptyList()
         }
     }
@@ -587,14 +587,14 @@ object BrandDatabase {
         val brands = getBrandsByProductType(productType)
 
         return buildString {
-            if (productType == ProductType.CHILD_SAFETY_SEAT) {
+            if (productType == ProductType.SAFETY_SEAT) {
                 appendLine("| 品牌 | 型号 | 宽度 | 长度 | 高度 | 重量 | 核心优势 | 市场定位 |")
                 appendLine("|------|------|------|------|------|------|----------|----------|")
 
                 brands.forEach { brand ->
                     appendLine("| ${brand.brandName} | ${brand.productName} | ${brand.dimensions.width}cm | ${brand.dimensions.length}cm | ${brand.dimensions.height}cm | ${brand.weight.weight}kg | ${brand.keyAdvantages.first()} | ${brand.marketPosition} |")
                 }
-            } else if (productType == ProductType.BABY_STROLLER) {
+            } else if (productType == ProductType.STROLLER) {
                 appendLine("| 品牌 | 型号 | 展开尺寸 | 折叠尺寸 | 重量 | 核心优势 | 市场定位 |")
                 appendLine("|------|------|----------|----------|------|----------|----------|")
 

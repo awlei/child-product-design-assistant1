@@ -14,7 +14,7 @@ object BrandDatabase {
     val britaxRomerDualfix = BrandParameters(
         brandName = "Britax Römer",
         productName = "Dualfix M i-Size",
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         specifications = ProductSpec(
             internalDimensions = InternalDimensions(
                 seatWidth = 38.0,
@@ -80,7 +80,7 @@ object BrandDatabase {
     val britaxAdvansafix = BrandParameters(
         brandName = "Britax Römer",
         productName = "Advansafix M i-Size",
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         specifications = ProductSpec(
             internalDimensions = InternalDimensions(
                 seatWidth = 40.0,
@@ -137,7 +137,7 @@ object BrandDatabase {
     val maxiCosiPearl360 = BrandParameters(
         brandName = "Maxi-Cosi",
         productName = "Pearl 360",
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         specifications = ProductSpec(
             internalDimensions = InternalDimensions(
                 seatWidth = 37.0,
@@ -192,7 +192,7 @@ object BrandDatabase {
     val maxiCosiRodifix = BrandParameters(
         brandName = "Maxi-Cosi",
         productName = "RodiFix",
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         specifications = ProductSpec(
             internalDimensions = InternalDimensions(
                 seatWidth = 39.0,
@@ -247,7 +247,7 @@ object BrandDatabase {
     val cybexSirona = BrandParameters(
         brandName = "Cybex",
         productName = "Sirona Gi i-Size",
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         specifications = ProductSpec(
             internalDimensions = InternalDimensions(
                 seatWidth = 36.0,
@@ -307,7 +307,7 @@ object BrandDatabase {
     val cybexSolution = BrandParameters(
         brandName = "Cybex",
         productName = "Solution X-Fix",
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         specifications = ProductSpec(
             internalDimensions = InternalDimensions(
                 seatWidth = 38.0,
@@ -466,7 +466,7 @@ object BrandDatabase {
         }
 
         return BrandComparison(
-            targetProductType = ProductType.CHILD_SAFETY_SEAT,
+            targetProductType = ProductType.SAFETY_SEAT,
             comparedBrands = brandBenchmarks,
             summaryAnalysis = "基于${filteredBrands.size}个品牌的分析",
             differentiatingSuggestions = recommendations,

@@ -51,8 +51,8 @@ object GlobalRegulationLibrary {
      */
     fun getRegulationsByProductType(productType: ProductType): List<RegulationDetail> {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> safetySeatRegulations
-            ProductType.BABY_STROLLER -> strollerRegulations
+            ProductType.SAFETY_SEAT -> safetySeatRegulations
+            ProductType.STROLLER -> strollerRegulations
             else -> emptyList()
         }
     }
@@ -120,7 +120,7 @@ object GlobalRegulationLibrary {
             code = "ECE R129",
             name = "关于儿童约束系统审批的统一规定",
             region = Region.EU,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             version = "2023修订版",
             publishDate = "2013-07-09",
             updateDate = "2023-01-15",
@@ -177,7 +177,7 @@ object GlobalRegulationLibrary {
             code = "EN 1888",
             name = "儿童护理用品—轮式推车",
             region = Region.EU,
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             version = "2018版",
             publishDate = "2018-04-01",
             updateDate = "2018-04-01",
@@ -231,7 +231,7 @@ object GlobalRegulationLibrary {
             code = "FMVSS 213",
             name = "儿童约束系统",
             region = Region.US,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             version = "2023版",
             publishDate = "2007-03-01",
             updateDate = "2023-06-01",
@@ -273,7 +273,7 @@ object GlobalRegulationLibrary {
             code = "ASTM F833",
             name = "轮式婴儿推车标准消费者安全规范",
             region = Region.US,
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             version = "ASTM F833-22",
             publishDate = "2022-04-01",
             updateDate = "2022-04-01",
@@ -312,7 +312,7 @@ object GlobalRegulationLibrary {
             code = "GB 27887",
             name = "机动车儿童乘员用约束系统",
             region = Region.CHINA,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             version = "GB 27887-2024",
             publishDate = "2024-01-01",
             updateDate = "2024-01-01",
@@ -347,7 +347,7 @@ object GlobalRegulationLibrary {
             code = "GB 14748",
             name = "婴儿推车安全要求",
             region = Region.CHINA,
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             version = "GB 14748-2020",
             publishDate = "2020-07-01",
             updateDate = "2020-07-01",
@@ -385,7 +385,7 @@ object GlobalRegulationLibrary {
             code = "JIS D 0161",
             name = "儿童约束装置",
             region = Region.JAPAN,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             version = "JIS D 0161:2023",
             publishDate = "2023-03-01",
             updateDate = "2023-03-01",
@@ -412,7 +412,7 @@ object GlobalRegulationLibrary {
             code = "JIS D 9302",
             name = "婴儿推车",
             region = Region.JAPAN,
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             version = "JIS D 9302:2022",
             publishDate = "2022-06-01",
             updateDate = "2022-06-01",
@@ -443,7 +443,7 @@ object GlobalRegulationLibrary {
             code = "AS/NZS 1754",
             name = "儿童约束系统",
             region = Region.AUSTRALIA,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             version = "AS/NZS 1754:2024",
             publishDate = "2024-01-01",
             updateDate = "2024-01-01",
@@ -470,7 +470,7 @@ object GlobalRegulationLibrary {
             code = "AS/NZS 2088",
             name = "婴儿推车",
             region = Region.AUSTRALIA,
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             version = "AS/NZS 2088:2023",
             publishDate = "2023-06-01",
             updateDate = "2023-06-01",
@@ -505,6 +505,6 @@ object GlobalRegulationLibrary {
     )
 
     // ========== 按产品类型分类 ==========
-    private val safetySeatRegulations = allRegulations.filter { it.productType == ProductType.CHILD_SAFETY_SEAT }
-    private val strollerRegulations = allRegulations.filter { it.productType == ProductType.BABY_STROLLER }
+    private val safetySeatRegulations = allRegulations.filter { it.productType == ProductType.SAFETY_SEAT }
+    private val strollerRegulations = allRegulations.filter { it.productType == ProductType.STROLLER }
 }

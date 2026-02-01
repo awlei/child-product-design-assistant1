@@ -49,15 +49,15 @@ class FeatureTest {
         val weightRange = WeightRange(minWeight = 0.0, maxWeight = 15.0, unit = WeightUnit.KG)
 
         // 校验输入
-        assertTrue(weightRange.isValid(ProductType.BABY_STROLLER), "重量范围应该有效")
+        assertTrue(weightRange.isValid(ProductType.STROLLER), "重量范围应该有效")
 
         // 获取推荐标准
-        val standard = weightRange.getRecommendedStandard(ProductType.BABY_STROLLER)
+        val standard = weightRange.getRecommendedStandard(ProductType.STROLLER)
         assertNotNull(standard, "应该返回推荐标准")
         assertEquals(InternationalStandard.EN_1888, standard, "应该返回EN 1888")
 
         // 获取推荐类型
-        val type = weightRange.getRecommendedType(ProductType.BABY_STROLLER)
+        val type = weightRange.getRecommendedType(ProductType.STROLLER)
         assertTrue(type.contains("通用型"), "应该推荐通用型")
     }
 
@@ -68,14 +68,14 @@ class FeatureTest {
     fun testInputMatchingEngine() {
         val input = SimplifiedInput(
             inputType = InputType.HEIGHT,
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             heightRange = HeightRange(minHeight = 60.0, maxHeight = 105.0)
         )
 
         val result = InputMatchingEngine.match(input)
 
         assertTrue(result.success, "匹配应该成功")
-        assertEquals(ProductType.CHILD_SAFETY_SEAT, result.productType, "产品类型应该是安全座椅")
+        assertEquals(ProductType.SAFETY_SEAT, result.productType, "产品类型应该是安全座椅")
         assertEquals(InternationalStandard.ECE_R129, result.standard, "标准应该是ECE R129")
         assertNotNull(result.recommendedGroup, "应该有推荐分组")
     }
@@ -102,11 +102,11 @@ class FeatureTest {
         assertTrue(regulations.isNotEmpty(), "应该有法规")
 
         // 获取儿童安全座椅法规
-        val safetySeatRegulations = GlobalRegulationLibrary.getRegulationsByProductType(ProductType.CHILD_SAFETY_SEAT)
+        val safetySeatRegulations = GlobalRegulationLibrary.getRegulationsByProductType(ProductType.SAFETY_SEAT)
         assertTrue(safetySeatRegulations.isNotEmpty(), "应该有安全座椅法规")
 
         // 获取婴儿推车法规
-        val strollerRegulations = GlobalRegulationLibrary.getRegulationsByProductType(ProductType.BABY_STROLLER)
+        val strollerRegulations = GlobalRegulationLibrary.getRegulationsByProductType(ProductType.STROLLER)
         assertTrue(strollerRegulations.isNotEmpty(), "应该有婴儿推车法规")
 
         // 根据代码获取法规
@@ -140,11 +140,11 @@ class FeatureTest {
         val allBrands = BrandDatabase.getAllBrandParameters()
 
         // 获取安全座椅品牌
-        val safetySeatBrands = allBrands.filter { it.productType == ProductType.CHILD_SAFETY_SEAT }
+        val safetySeatBrands = allBrands.filter { it.productType == ProductType.SAFETY_SEAT }
         assertTrue(safetySeatBrands.isNotEmpty(), "应该有安全座椅品牌")
 
         // 获取推车品牌
-        val strollerBrands = allBrands.filter { it.productType == ProductType.BABY_STROLLER }
+        val strollerBrands = allBrands.filter { it.productType == ProductType.STROLLER }
         assertTrue(strollerBrands.isNotEmpty(), "应该有推车品牌")
 
         // 生成对比表
@@ -210,7 +210,7 @@ class FeatureTest {
     @Test
     fun testBrandDetailedComparison() {
         val allBrands = BrandDatabase.getAllBrandParameters()
-        val brands = allBrands.filter { it.productType == ProductType.CHILD_SAFETY_SEAT }
+        val brands = allBrands.filter { it.productType == ProductType.SAFETY_SEAT }
 
         val britax = brands.find { it.brandName == "Britax" }
         assertNotNull(britax, "应该找到Britax")
@@ -236,14 +236,14 @@ class FeatureTest {
         assertFalse(invalidHeight.isValid(), "无效身高范围应该失败")
 
         val invalidWeight = WeightRange(minWeight = 15.0, maxWeight = 0.0, unit = WeightUnit.KG)
-        assertFalse(invalidWeight.isValid(ProductType.BABY_STROLLER), "无效重量范围应该失败")
+        assertFalse(invalidWeight.isValid(ProductType.STROLLER), "无效重量范围应该失败")
 
         // 测试有效输入
         val validHeight = HeightRange(minHeight = 60.0, maxHeight = 105.0)
         assertTrue(validHeight.isValid(), "有效身高范围应该通过")
 
         val validWeight = WeightRange(minWeight = 0.0, maxWeight = 15.0, unit = WeightUnit.KG)
-        assertTrue(validWeight.isValid(ProductType.BABY_STROLLER), "有效重量范围应该通过")
+        assertTrue(validWeight.isValid(ProductType.STROLLER), "有效重量范围应该通过")
     }
 
     /**
@@ -320,8 +320,8 @@ class FeatureTest {
     fun testProductType() {
         val productTypes = ProductType.entries
         assertTrue(productTypes.size >= 3, "应该至少有3种产品类型")
-        assertTrue(productTypes.contains(ProductType.CHILD_SAFETY_SEAT), "应该有安全座椅类型")
-        assertTrue(productTypes.contains(ProductType.BABY_STROLLER), "应该有婴儿推车类型")
+        assertTrue(productTypes.contains(ProductType.SAFETY_SEAT), "应该有安全座椅类型")
+        assertTrue(productTypes.contains(ProductType.STROLLER), "应该有婴儿推车类型")
     }
 
     /**

@@ -543,7 +543,7 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
         heightSegmentMatch: com.childproduct.designassistant.data.HeightSegmentMatch?
     ): String {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 val standardCode = matchedStandards.firstOrNull()?.standard?.code ?: "ECE R129"
                 if (heightSegmentMatch?.isFullRange == true) {
                     "ECE R129全分组安全适配主题（40-150cm，Group 0+/1/2/3）"
@@ -551,13 +551,13 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
                     "ECE R129标准适配主题（$standardCode）"
                 }
             }
-            ProductType.BABY_STROLLER -> {
+            ProductType.STROLLER -> {
                 "EN 1888便携避震合规主题"
             }
-            ProductType.CHILD_HIGH_CHAIR -> {
+            ProductType.HIGH_CHAIR -> {
                 "ISO 8124-3进食安全适配主题"
             }
-            ProductType.CHILD_HOUSEHOLD_GOODS -> {
+            ProductType.CRIB -> {
                 "GB 6675安全标准适配主题"
             }
         }
@@ -578,10 +578,10 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
 
     private fun mapProductTypeToStandardCategory(productType: ProductType): StandardCategory {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> StandardCategory.SAFETY_SEAT
-            ProductType.BABY_STROLLER -> StandardCategory.CARRIER
-            ProductType.CHILD_HOUSEHOLD_GOODS -> StandardCategory.SAFETY_SEAT
-            ProductType.CHILD_HIGH_CHAIR -> StandardCategory.SAFETY_SEAT
+            ProductType.SAFETY_SEAT -> StandardCategory.SAFETY_SEAT
+            ProductType.STROLLER -> StandardCategory.CARRIER
+            ProductType.CRIB -> StandardCategory.SAFETY_SEAT
+            ProductType.HIGH_CHAIR -> StandardCategory.SAFETY_SEAT
         }
     }
 

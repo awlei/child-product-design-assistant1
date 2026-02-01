@@ -14,7 +14,7 @@ object ProfessionalDesignExamples {
     val safetySeatECE129Example = DesignSuggestionReport(
         id = "example-safety-seat-ece129",
         timestamp = System.currentTimeMillis(),
-        productType = ProductType.CHILD_SAFETY_SEAT,
+        productType = ProductType.SAFETY_SEAT,
         standard = InternationalStandard.ECE_R129,
         userInput = ProductInput.SafetySeat(
             SafetySeatInput(
@@ -29,7 +29,7 @@ object ProfessionalDesignExamples {
             )
         ),
         designSuggestions = DesignSuggestions(
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             functionalFeatures = listOf(
                 FunctionalFeature(
                     category = "头托调节",
@@ -188,7 +188,7 @@ object ProfessionalDesignExamples {
             )
         ),
         brandComparison = BrandComparison(
-            targetProductType = ProductType.CHILD_SAFETY_SEAT,
+            targetProductType = ProductType.SAFETY_SEAT,
             comparedBrands = listOf(
                 BrandBenchmark(
                     brandName = "Britax",
@@ -247,7 +247,7 @@ object ProfessionalDesignExamples {
             )
         ),
         dvpTestMatrix = DVPTestMatrix(
-            productType = ProductType.CHILD_SAFETY_SEAT,
+            productType = ProductType.SAFETY_SEAT,
             standard = InternationalStandard.ECE_R129,
             testItems = listOf(
                 DVPTestItem(
@@ -353,7 +353,7 @@ object ProfessionalDesignExamples {
     val strollerEN1888Example = DesignSuggestionReport(
         id = "example-stroller-en1888",
         timestamp = System.currentTimeMillis(),
-        productType = ProductType.BABY_STROLLER,
+        productType = ProductType.STROLLER,
         standard = InternationalStandard.EN_1888,
         userInput = ProductInput.Stroller(
             StrollerInput(
@@ -368,7 +368,7 @@ object ProfessionalDesignExamples {
             )
         ),
         designSuggestions = DesignSuggestions(
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             functionalFeatures = listOf(
                 FunctionalFeature(
                     category = "避震功能",
@@ -521,7 +521,7 @@ object ProfessionalDesignExamples {
             )
         ),
         brandComparison = BrandComparison(
-            targetProductType = ProductType.BABY_STROLLER,
+            targetProductType = ProductType.STROLLER,
             comparedBrands = listOf(
                 BrandBenchmark(
                     brandName = "UPPAbaby",
@@ -580,7 +580,7 @@ object ProfessionalDesignExamples {
             )
         ),
         dvpTestMatrix = DVPTestMatrix(
-            productType = ProductType.BABY_STROLLER,
+            productType = ProductType.STROLLER,
             standard = InternationalStandard.EN_1888,
             testItems = listOf(
                 DVPTestItem(

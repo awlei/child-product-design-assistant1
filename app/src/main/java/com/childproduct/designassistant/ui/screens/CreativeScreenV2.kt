@@ -42,7 +42,7 @@ fun CreativeScreenV2(
 
     // 获取当前产品类型适用的标准
     val applicableStandards = selectedProductType?.let { productType ->
-        InternationalStandard.values().filter { it.applicableProducts.contains(productType) }
+        InternationalStandard.values().filter { it.applicableProducts.contains(productType.toProductType()) }
     } ?: emptyList()
 
     // 获取当前产品的安装方式

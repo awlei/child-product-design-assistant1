@@ -37,7 +37,7 @@ fun OneClickGenerationScreen(
     // 输入状态
     var minHeight by remember { mutableStateOf("") }
     var maxHeight by remember { mutableStateOf("") }
-    var selectedProductType by remember { mutableStateOf(ProductType.CHILD_SAFETY_SEAT) }
+    var selectedProductType by remember { mutableStateOf(ProductType.SAFETY_SEAT) }
     var selectedStandard by remember { mutableStateOf("ECE R129/GB 27887") }
     
     // 生成状态
@@ -158,10 +158,10 @@ fun OneClickGenerationScreen(
                     
                     // 产品类型选择器
                     val productTypes = listOf(
-                        ProductType.CHILD_SAFETY_SEAT to "儿童安全座椅",
-                        ProductType.BABY_STROLLER to "婴儿推车",
-                        ProductType.CHILD_HIGH_CHAIR to "儿童高脚椅",
-                        ProductType.CHILD_HOUSEHOLD_GOODS to "儿童家庭用品"
+                        ProductType.SAFETY_SEAT to "儿童安全座椅",
+                        ProductType.STROLLER to "婴儿推车",
+                        ProductType.HIGH_CHAIR to "儿童高脚椅",
+                        ProductType.CRIB to "儿童家庭用品"
                     )
                     
                     productTypes.forEach { (type, name) ->

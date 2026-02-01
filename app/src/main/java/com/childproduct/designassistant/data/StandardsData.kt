@@ -352,7 +352,7 @@ object ChildSafetySeatConfigurations {
     val ISOFIX_INTERFACE = ProductConfiguration(
         configId = "isofix_interface",
         configName = "ISOFIX接口",
-        applicableProductTypes = listOf(ProductType.CHILD_SAFETY_SEAT),
+        applicableProductTypes = listOf(ProductType.SAFETY_SEAT),
         isRequired = true,
         relatedClauses = listOf(ECE_R129_Clauses.ISOFIX_INTERFACE),
         description = "国际标准化固定接口，提供更稳固的安装方式"
@@ -361,7 +361,7 @@ object ChildSafetySeatConfigurations {
     val SUPPORT_LEG = ProductConfiguration(
         configId = "support_leg",
         configName = "支撑腿",
-        applicableProductTypes = listOf(ProductType.CHILD_SAFETY_SEAT),
+        applicableProductTypes = listOf(ProductType.SAFETY_SEAT),
         isRequired = true,
         relatedClauses = listOf(ECE_R129_Clauses.SUPPORT_LEG),
         description = "防止座椅在碰撞中向前倾倒，提高稳定性"
@@ -370,7 +370,7 @@ object ChildSafetySeatConfigurations {
     val TOP_TETHER = ProductConfiguration(
         configId = "top_tether",
         configName = "顶部系带",
-        applicableProductTypes = listOf(ProductType.CHILD_SAFETY_SEAT),
+        applicableProductTypes = listOf(ProductType.SAFETY_SEAT),
         isRequired = false,
         relatedClauses = emptyList(),
         description = "提供额外的固定点，适用于正向安装"
@@ -379,7 +379,7 @@ object ChildSafetySeatConfigurations {
     val SIDE_IMPACT_PROTECTION = ProductConfiguration(
         configId = "side_impact_protection",
         configName = "侧面碰撞保护",
-        applicableProductTypes = listOf(ProductType.CHILD_SAFETY_SEAT),
+        applicableProductTypes = listOf(ProductType.SAFETY_SEAT),
         isRequired = true,
         relatedClauses = listOf(ECE_R129_Clauses.SIDE_IMPACT_TEST),
         description = "提供侧面碰撞时的额外保护"
@@ -388,7 +388,7 @@ object ChildSafetySeatConfigurations {
     val ADJUSTABLE_HEADREST = ProductConfiguration(
         configId = "adjustable_headrest",
         configName = "可调头托",
-        applicableProductTypes = listOf(ProductType.CHILD_SAFETY_SEAT),
+        applicableProductTypes = listOf(ProductType.SAFETY_SEAT),
         isRequired = true,
         relatedClauses = listOf(ECE_R129_Clauses.HEADREST_ADJUSTMENT),
         description = "根据儿童身高调节头托高度，提供最佳保护"
@@ -396,7 +396,7 @@ object ChildSafetySeatConfigurations {
 
     fun getConfigurationsForProduct(productType: ProductType): List<ProductConfiguration> {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> listOf(
+            ProductType.SAFETY_SEAT -> listOf(
                 ISOFIX_INTERFACE,
                 SUPPORT_LEG,
                 TOP_TETHER,
@@ -422,7 +422,7 @@ class StandardMatchingService {
         productType: ProductType
     ): StandardMatchResult? {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> matchChildSafetySeatStandard(minHeightCm, maxHeightCm)
+            ProductType.SAFETY_SEAT -> matchChildSafetySeatStandard(minHeightCm, maxHeightCm)
             else -> null
         }
     }
@@ -526,7 +526,7 @@ class StandardMatchingService {
         val parameters = mutableListOf<DesignParameter>()
 
         when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 // 头托调节范围（根据身高范围计算）
                 val adjustmentRange = 154
                 val steps = 7
@@ -585,7 +585,7 @@ class StandardMatchingService {
         val tests = mutableListOf<ComplianceTestItem>()
 
         when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT -> {
                 // 正向撞击测试
                 tests.add(ComplianceTestItem(
                     testName = "正向撞击测试（Q0, Q1, Q1.5）",
@@ -690,10 +690,10 @@ class StandardParameterPreviewService {
         maxHeight: Int
     ): List<StandardParameterPreview> {
         return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT -> getChildSafetySeatParameters(minHeight, maxHeight)
-            ProductType.BABY_STROLLER -> getStrollerParameters(minHeight, maxHeight)
+            ProductType.SAFETY_SEAT -> getChildSafetySeatParameters(minHeight, maxHeight)
+            ProductType.STROLLER -> getStrollerParameters(minHeight, maxHeight)
             ProductType.CHILD_HOUSEHOLD_GOODS -> getHouseholdGoodsParameters(minHeight, maxHeight)
-            ProductType.CHILD_HIGH_CHAIR -> getHighChairParameters(minHeight, maxHeight)
+            ProductType.HIGH_CHAIR -> getHighChairParameters(minHeight, maxHeight)
         }
     }
 

@@ -95,7 +95,7 @@ data class StandardsReference(
          */
         fun getDefaultForProductType(productType: ProductType): StandardsReference {
             return when (productType) {
-                ProductType.CHILD_SAFETY_SEAT -> StandardsReference(
+                ProductType.SAFETY_SEAT -> StandardsReference(
                     mainStandard = "ECE R129 + GB 27887-2024 + FMVSS 213",
                     keyClauses = listOf(
                         // ECE R129标准
@@ -154,7 +154,7 @@ data class StandardsReference(
                         "Q10 (青少年, 145-150cm)"
                     )
                 )
-                ProductType.BABY_STROLLER -> StandardsReference(
+                ProductType.STROLLER -> StandardsReference(
                     mainStandard = "EN 1888-2:2018 + GB 14748-2020",
                     keyClauses = listOf(
                         "GB 14748-2020 §5.3: 稳定性要求",
@@ -197,7 +197,7 @@ data class MaterialSpecs(
         // 根据产品类型生成材质规格
         fun getDefaultForProductType(productType: ProductType): MaterialSpecs {
             return when (productType) {
-                ProductType.CHILD_SAFETY_SEAT -> MaterialSpecs(
+                ProductType.SAFETY_SEAT -> MaterialSpecs(
                     flameRetardantFabric = "通过FMVSS 302认证的阻燃面料，燃烧速度< 4英寸/分钟",
                     isoFixComponents = "高强度钢材ISOFIX连接件，抗拉强度>= 450MPa",
                     impactAbsorber = "三层复合EPP/EPS吸能材料，密度30-50kg/m³",
@@ -317,9 +317,13 @@ enum class AgeGroup(val displayName: String, val heightRange: String, val weight
     ALL("0-12岁", "40-150cm", "2.5-38kg", "0-144个月")
 }
 
-enum class ProductType(val displayName: String, val standardAbbr: String, val mainStandards: String) {
-    CHILD_SAFETY_SEAT("儿童安全座椅", "ECE/GB", "主标准：ECE R129、GB 27887-2024"),
-    BABY_STROLLER("婴儿推车", "EN/GB", "主标准：EN 1888、GB 14748-2020"),
-    CHILD_HOUSEHOLD_GOODS("儿童家庭用品", "ISO/GB", "主标准：ISO 8124-3、GB 28007-2011"),
-    CHILD_HIGH_CHAIR("儿童高脚椅", "ISO/GB", "主标准：ISO 8124-3、GB 28007-2011")
+enum class ProductType(
+    val displayName: String,
+    val requiresHeightInput: Boolean,
+    val requiresInstallMethod: Boolean
+) {
+    SAFETY_SEAT("儿童安全座椅", true, true),
+    STROLLER("婴儿推车", false, false),
+    HIGH_CHAIR("儿童高脚椅", false, false),
+    CRIB("婴儿床", false, false)
 }

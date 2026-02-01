@@ -13,7 +13,16 @@ enum class EnhancedProductType(
     SAFETY_SEAT("儿童安全座椅", "SAFETY_SEAT", true, true),
     STROLLER("婴儿推车", "STROLLER", false, false),
     HIGH_CHAIR("儿童高脚椅", "HIGH_CHAIR", false, false),
-    CRIB("婴儿床", "CRIB", false, false)
+    CRIB("婴儿床", "CRIB", false, false);
+
+    fun toProductType(): ProductType {
+        return when (this) {
+            SAFETY_SEAT -> ProductType.SAFETY_SEAT
+            STROLLER -> ProductType.STROLLER
+            HIGH_CHAIR -> ProductType.HIGH_CHAIR
+            CRIB -> ProductType.CRIB
+        }
+    }
 }
 
 /**
@@ -24,17 +33,16 @@ enum class InternationalStandard(
     val displayName: String,
     val code: String,
     val region: String,
-    val applicableProducts: List<EnhancedProductType>
+    val applicableProducts: List<ProductType>
 ) {
-    ECE_R129("ECE R129 (i-Size)", "ECE R129", "欧洲", listOf(EnhancedProductType.SAFETY_SEAT)),
-    FMVSS_213("FMVSS 213", "FMVSS 213", "美国", listOf(EnhancedProductType.SAFETY_SEAT)),
-    JIS("JIS D 0401", "JIS", "日本", listOf(EnhancedProductType.SAFETY_SEAT, EnhancedProductType.STROLLER)),
-    CANADIAN("CMVSS 213", "CMVSS 213", "加拿大", listOf(EnhancedProductType.SAFETY_SEAT)),
-    AUSTRALIAN("AS/NZS 1754", "AS/NZS 1754", "澳洲", listOf(EnhancedProductType.SAFETY_SEAT)),
-    GB_27887("GB 27887-2024", "GB 27887-2024", "中国", listOf(EnhancedProductType.SAFETY_SEAT)),
-    GB_14748("GB 14748", "GB 14748", "中国", listOf(EnhancedProductType.STROLLER)),
-    GB_22793("GB 22793", "GB 22793", "中国", listOf(EnhancedProductType.HIGH_CHAIR)),
-    EN_1888("EN 1888", "EN 1888", "欧洲", listOf(EnhancedProductType.STROLLER))
+    ECE_R129("ECE R129 (i-Size)", "ECE R129", "欧洲", listOf(ProductType.SAFETY_SEAT)),
+    FMVSS_213("FMVSS 213", "FMVSS 213", "美国", listOf(ProductType.SAFETY_SEAT)),
+    JIS("JIS D 0401", "JIS", "日本", listOf(ProductType.SAFETY_SEAT, ProductType.STROLLER)),
+    CANADIAN("CMVSS 213", "CMVSS 213", "加拿大", listOf(ProductType.SAFETY_SEAT)),
+    AUSTRALIAN("AS/NZS 1754", "AS/NZS 1754", "澳洲", listOf(ProductType.SAFETY_SEAT)),
+    GB_27887("GB 27887-2024", "GB 27887-2024", "中国", listOf(ProductType.SAFETY_SEAT)),
+    GB_14748("GB 14748", "GB 14748", "中国", listOf(ProductType.STROLLER)),
+    GB_22793("GB 22793", "GB 22793", "中国", listOf(ProductType.HIGH_CHAIR))
 }
 
 /**
