@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.*
 import com.childproduct.designassistant.ui.MainViewModel
 import com.childproduct.designassistant.ui.UiState
+import com.childproduct.designassistant.utils.TetherType
 
 /**
  * 重构后的创意生成界面（方案生成）
@@ -49,6 +50,9 @@ fun CreativeScreen(
     
     // 设计主题
     var theme by remember { mutableStateOf("") }
+    
+    // Tether类型选择（仅用于ECE R129标准的儿童安全座椅）
+    var selectedTetherType by remember { mutableStateOf(TetherType.BOTH) }
     
     // 参数验证结果
     var paramValidationResult by remember { mutableStateOf<ParamInputResult?>(null) }
@@ -186,6 +190,7 @@ fun CreativeScreen(
                         onSelected = { 
                             selectedProductType = productType
                             selectedStandard = null  // 重置标准选择
+                            selectedTetherType = TetherType.SUPPORT_LEG  // 重置Tether类型选择
                             paramValidationResult = null  // 重置验证结果
                             validationError = null
                         }
@@ -368,6 +373,94 @@ fun CreativeScreen(
                     )
                 }
 
+                // ========== 5. Tether类型选择（仅儿童安全座椅ECE R129标准显示）==========
+                val isShowTetherSelector = selectedProductType == ProductType.CHILD_SAFETY_SEAT &&
+                                         selectedStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true
+                
+                if (isShowTetherSelector) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "5. Tether类型",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    
+                    var isExpanded by remember { mutableStateOf(false) }
+                    
+                    ExposedDropdownMenuBox(
+                        expanded = isExpanded,
+                        onExpandedChange = { isExpanded = it }
+                    ) {
+                        OutlinedTextField(
+                            value = selectedTetherType.displayName,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("选择Tether类型") },
+                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(),
+                            singleLine = true
+                        )
+                        
+                        ExposedDropdownMenu(
+                            expanded = isExpanded,
+                            onDismissRequest = { isExpanded = false }
+                        ) {
+                            TetherType.values().forEach { tetherType ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Column {
+                                            Text(
+                                                text = tetherType.displayName,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                            Text(
+                                                text = tetherType.description,
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    },
+                                    onClick = {
+                                        selectedTetherType = tetherType
+                                        isExpanded = false
+                                    },
+                                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                                )
+                            }
+                        }
+                    }
+                    
+                    // Tether类型说明
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(12.dp)
+                        ) {
+                            Text(
+                                text = "Tether类型说明：",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = selectedTetherType.description,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                }
+
                 // ========== 生成按钮 ==========
                 Button(
                     onClick = {
@@ -418,7 +511,8 @@ fun CreativeScreen(
                                         minHeightCm = minH,
                                         maxHeightCm = maxH,
                                         productType = currentProductType.displayName,
-                                        designTheme = finalTheme
+                                        designTheme = finalTheme,
+                                        tetherType = selectedTetherType
                                     )
                                 } else {
                                     // 其他情况使用原有的生成逻辑
