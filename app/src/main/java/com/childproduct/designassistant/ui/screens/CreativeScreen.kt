@@ -378,18 +378,28 @@ fun CreativeScreen(
                             InputType.HEIGHT_RANGE -> {
                                 val minH = minHeight.toIntOrNull() ?: 0
                                 val maxH = maxHeight.toIntOrNull() ?: 0
-                                val dummyType = paramValidationResult?.matchedDummy
                                 val ageGroup = if (minH == 40 && maxH == 150) {
                                     // 强制：40-150cm对应全年龄段（0-12岁）
                                     AgeGroup.ALL
                                 } else {
+                                    // 其他身高范围按假人类型推断
+                                    val dummyType = paramValidationResult?.matchedDummy
                                     when (dummyType) {
                                         CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 -> AgeGroup.INFANT
                                         CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
                                         CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
                                         CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
                                         CrashTestDummy.Q6 -> AgeGroup.SCHOOL_AGE
-                                        else -> AgeGroup.TEEN
+                                        else -> {
+                                            // 如果假人类型无法确定，根据身高范围推断
+                                            when {
+                                                maxH <= 87 -> AgeGroup.INFANT
+                                                maxH <= 105 -> AgeGroup.TODDLER
+                                                maxH <= 125 -> AgeGroup.PRESCHOOL
+                                                maxH <= 145 -> AgeGroup.SCHOOL_AGE
+                                                else -> AgeGroup.TEEN
+                                            }
+                                        }
                                     }
                                 }
                                 viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)

@@ -103,74 +103,83 @@ object OutputComplianceChecker {
         var cleaned = rawContent
 
         // 1.1 移除所有代码式对象字段（增强版，支持嵌套和多行）
-        // 移除 CreativeIdea 和 Creativeldea（处理拼写错误）
-        cleaned = Regex("""CreativeIdea\([^)]+\)|Creativeldea\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+        try {
+            // 移除 CreativeIdea 和 Creativeldea（处理拼写错误）
+            cleaned = Regex("""CreativeIdea\([^)]*\)|Creativeldea\([^)]*\)""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 complianceParameters=... 整个对象
-        cleaned = Regex("""complianceParameters=ComplianceParameters\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 complianceParameters=ComplianceParameters(...) 整个对象
+            cleaned = Regex("""complianceParameters=ComplianceParameters\([^)]*\)""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 standardsReference=... 整个对象
-        cleaned = Regex("""standardsReference=StandardsReference\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 standardsReference=StandardsReference(...) 整个对象
+            cleaned = Regex("""standardsReference=StandardsReference\([^)]*\)""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 materialSpecs=... 整个对象
-        cleaned = Regex("""materialSpecs=MaterialSpecs\([^)]+\)""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 materialSpecs=MaterialSpecs(...) 整个对象
+            cleaned = Regex("""materialSpecs=MaterialSpecs\([^)]*\)""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 dummyTypes=[...] 数组
-        cleaned = Regex("""dummyTypes=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 dummyTypes=[...] 数组
+            cleaned = Regex("""dummyTypes=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 complianceRequirements=[...] 数组
-        cleaned = Regex("""complianceRequirements=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 complianceRequirements=[...] 数组
+            cleaned = Regex("""complianceRequirements=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 additionalSpecs=[...] 数组
-        cleaned = Regex("""additionalSpecs=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 additionalSpecs=[...] 数组
+            cleaned = Regex("""additionalSpecs=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除其他单行键值对字段
-        cleaned = Regex("""\b(?:id|title|description|ageGroup|productType|theme|dummyType|hicLimit|chestAccelerationLimit|neckTensionLimit|neckCompressionLimit|headExcursionLimit|kneeExcursionLimit|chestDeflectionLimit|flameRetardantFabric|isoFixComponents|impactAbsorber)=[\w\s#\[\],\(\).:;\\\-≤>=°]+""")
-            .replace(cleaned, "")
+            // 移除其他单行键值对字段
+            cleaned = Regex("""\b(?:id|title|description|ageGroup|productType|theme|dummyType|hicLimit|chestAccelerationLimit|neckTensionLimit|neckCompressionLimit|headExcursionLimit|kneeExcursionLimit|chestDeflectionLimit|flameRetardantFabric|isoFixComponents|impactAbsorber)=[\w\s#\[\],\(\).:;\\\-≤>=°]+""")
+                .replace(cleaned, "")
 
-        // 移除 features=[...] 数组
-        cleaned = Regex("""features=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 features=[...] 数组
+            cleaned = Regex("""features=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 materials=[...] 数组
-        cleaned = Regex("""materials=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 materials=[...] 数组
+            cleaned = Regex("""materials=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 colorPalette=[...] 数组
-        cleaned = Regex("""colorPalette=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 colorPalette=[...] 数组
+            cleaned = Regex("""colorPalette=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 移除 safetyNotes=[...] 数组
-        cleaned = Regex("""safetyNotes=\[[^\]]+\]""", RegexOption.DOT_MATCHES_ALL)
-            .replace(cleaned, "")
+            // 移除 safetyNotes=[...] 数组
+            cleaned = Regex("""safetyNotes=\[[^\]]*\]""", RegexOption.DOT_MATCHES_ALL)
+                .replace(cleaned, "")
 
-        // 1.2 移除UUID
-        cleaned = Regex("""[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}""")
-            .replace(cleaned, "")
+            // 1.2 移除UUID
+            cleaned = Regex("""[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}""")
+                .replace(cleaned, "")
 
-        // 1.3 过滤乱码字符（更严格，仅保留中文、英文、数字、常用标点）
-        cleaned = Regex("""[^\u4e00-\u9fa5a-zA-Z0-9\s\-+≤>=（）【】：；,.，。！？、·/℃%gNmm英寸第§]""")
-            .replace(cleaned, "")
+            // 1.3 过滤乱码字符（更严格，仅保留中文、英文、数字、常用标点）
+            cleaned = Regex("""[^\u4e00-\u9fa5a-zA-Z0-9\s\-+≤>=（）【】：;,.，。！？、·/]""")
+                .replace(cleaned, "")
 
-        // 1.4 移除空白行和多余空格
-        cleaned = cleaned.replace(Regex("""\s+"""), " ").trim()
+            // 1.4 移除空白行和多余空格
+            cleaned = cleaned.replace(Regex("""\s+"""), " ").trim()
 
-        // 1.5 移除重复的短语（如"HIC≤1000 HIC≤1000"）
-        val words = cleaned.split(" ")
-        val uniqueWords = mutableListOf<String>()
-        words.forEach { word ->
-            if (word.isNotBlank() && !uniqueWords.contains(word)) {
-                uniqueWords.add(word)
+            // 1.5 移除重复的短语（如"HIC≤1000 HIC≤1000"）
+            val words = cleaned.split(" ")
+            val uniqueWords = mutableListOf<String>()
+            words.forEach { word ->
+                if (word.isNotBlank() && !uniqueWords.contains(word)) {
+                    uniqueWords.add(word)
+                }
             }
+            cleaned = uniqueWords.joinToString(" ")
+
+        } catch (e: Exception) {
+            // 如果清理过程中出现异常，返回清理过的基本版本
+            cleaned = rawContent
+                .replace(Regex("""[^\u4e00-\u9fa5a-zA-Z0-9\s\-+≤>=（）【】：;,.，。！？、·/]"""), "")
+                .replace(Regex("""\s+"""), " ")
+                .trim()
         }
-        cleaned = uniqueWords.joinToString(" ")
 
         return cleaned
     }
