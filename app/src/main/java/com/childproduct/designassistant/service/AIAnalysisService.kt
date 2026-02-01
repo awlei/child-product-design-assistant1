@@ -86,7 +86,7 @@ class AIAnalysisService(private val context: Context) {
         // 输入信息
         sb.appendLine("## 产品信息")
         sb.appendLine("- 产品类型: ${request.productType.displayName}")
-        sb.appendLine("- 适用标准: ${request.standard.displayName} (${request.standard.englishName})")
+        sb.appendLine("- 适用标准: ${request.standard.displayName} (${request.standard.code})")
         sb.appendLine()
         
         // 用户需求

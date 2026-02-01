@@ -89,16 +89,34 @@ enum class CrashTestDummy(
     val displayName: String,
     val heightRange: String,
     val ageRange: String,
-    val weight: String
+    val weight: String,
+    val age: String,           // 添加 age 字段，与 ageRange 保持一致
+    val hicLimit: Int         // 添加 hicLimit 字段，基于 UN R129 标准
 ) {
-    Q0("Q0", "新生儿假人", "40-50cm", "0-6个月", "3.5kg"),
-    Q0_PLUS("Q0+", "大婴儿假人", "50-60cm", "6-12个月", "6kg"),
-    Q1("Q1", "幼儿假人", "60-75cm", "1-2岁", "9.5kg"),
-    Q1_5("Q1.5", "学步儿童假人", "75-87cm", "2-3岁", "11kg"),
-    Q3("Q3", "学前儿童假人", "87-105cm", "3-4岁", "15kg"),
-    Q3_S("Q3s", "儿童假人", "105-125cm", "4-6岁", "21.5kg"),
-    Q6("Q6", "大龄儿童假人", "125-145cm", "6-10岁", "30kg"),
-    Q10("Q10", "青少年假人", "145-150cm", "10-12岁", "36kg")
+    Q0("Q0", "新生儿假人", "40-50cm", "0-6个月", "3.5kg", "0-6个月", 390),
+    Q0_PLUS("Q0+", "大婴儿假人", "50-60cm", "6-12个月", "6kg", "6-12个月", 390),
+    Q1("Q1", "幼儿假人", "60-75cm", "1-2岁", "9.5kg", "9-18个月", 390),
+    Q1_5("Q1.5", "学步儿童假人", "75-87cm", "2-3岁", "11kg", "18-36个月", 570),
+    Q3("Q3", "学前儿童假人", "87-105cm", "3-4岁", "15kg", "3-4岁", 1000),
+    Q3_S("Q3s", "儿童假人", "105-125cm", "4-6岁", "21.5kg", "4-7岁", 1000),
+    Q6("Q6", "大龄儿童假人", "125-145cm", "6-10岁", "30kg", "7-10岁", 1000),
+    Q10("Q10", "青少年假人", "145-150cm", "10-12岁", "36kg", "10岁以上", 1000);
+
+    companion object {
+        /**
+         * 根据年龄段获取推荐的假人类型（返回中间值）
+         */
+        fun getByAgeGroup(ageGroup: AgeGroup): CrashTestDummy {
+            return when (ageGroup) {
+                AgeGroup.INFANT -> Q1           // 9-18个月（新生儿到幼儿的中间值）
+                AgeGroup.TODDLER -> Q1_5       // 18-36个月（学步儿童）
+                AgeGroup.PRESCHOOL -> Q3       // 3-4岁（学前儿童）
+                AgeGroup.SCHOOL_AGE -> Q3_S    // 4-7岁（学龄儿童）
+                AgeGroup.PRETEEN -> Q6         // 7-10岁（青春期前）
+                AgeGroup.TEEN -> Q10           // 10岁以上（青少年）
+            }
+        }
+    }
 }
 
 /**
