@@ -1,27 +1,6 @@
 package com.childproduct.designassistant.model
 
 /**
- * 国际标准枚举
- */
-enum class InternationalStandard(
-    val displayName: String,
-    val englishName: String,
-    val applicableProductType: ProductType
-) {
-    // 儿童安全座椅标准
-    ECE_R129("ECE R129/i-Size", "ECE R129/i-Size", ProductType.CHILD_SAFETY_SEAT),
-    FMVSS_213("FMVSS 213", "FMVSS 213", ProductType.CHILD_SAFETY_SEAT),
-    GB_27887("GB 27887", "GB 27887", ProductType.CHILD_SAFETY_SEAT),
-    
-    // 婴儿推车标准
-    EN_1888("EN 1888", "EN 1888", ProductType.BABY_STROLLER),
-    ASTM_F833("ASTM F833", "ASTM F833", ProductType.BABY_STROLLER),
-    
-    // 通用标准
-    ISO_13209("ISO 13209", "ISO 13209", ProductType.CHILD_HOUSEHOLD_GOODS)
-}
-
-/**
  * 产品细分类型 - 儿童安全座椅
  */
 enum class SafetySeatSubtype(
@@ -141,16 +120,6 @@ data class SafetyRequirements(
     val materialFlammability: Boolean = true,  // 材料阻燃性
     val chemicalSafety: Boolean = true  // 化学安全性
 )
-
-/**
- * 安装方向
- */
-enum class InstallDirection(val displayName: String) {
-    REARWARD("后向安装"),
-    FORWARD("前向安装"),
-    CONVERTIBLE("可转换"),
-    UNIVERSAL("通用")
-}
 
 /**
  * 安全带类型

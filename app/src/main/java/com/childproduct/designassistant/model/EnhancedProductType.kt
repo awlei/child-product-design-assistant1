@@ -33,7 +33,8 @@ enum class InternationalStandard(
     AUSTRALIAN("AS/NZS 1754", "AS/NZS 1754", "澳洲", listOf(EnhancedProductType.SAFETY_SEAT)),
     GB_27887("GB 27887-2024", "GB 27887-2024", "中国", listOf(EnhancedProductType.SAFETY_SEAT)),
     GB_14748("GB 14748", "GB 14748", "中国", listOf(EnhancedProductType.STROLLER)),
-    GB_22793("GB 22793", "GB 22793", "中国", listOf(EnhancedProductType.HIGH_CHAIR))
+    GB_22793("GB 22793", "GB 22793", "中国", listOf(EnhancedProductType.HIGH_CHAIR)),
+    EN_1888("EN 1888", "EN 1888", "欧洲", listOf(EnhancedProductType.STROLLER))
 }
 
 /**

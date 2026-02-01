@@ -5,7 +5,7 @@ package com.childproduct.designassistant.model
  * 存储儿童安全座椅/儿童产品的关键合规指标
  */
 data class ComplianceParameters(
-    val dummyType: CrashTestDummy,    // 假人类型（新增，作为主要判断依据）
+    val dummyType: ComplianceDummy,    // 假人类型（新增，作为主要判断依据）
     val hicLimit: Int = 1000,          // HIC (头部伤害准则) 极限值，默认1000 (FMVSS 213标准)
     val chestAccelerationLimit: Int = 55, // 胸部加速度极限，默认55g
     val neckTensionLimit: Int = 1800,  // 颈部张力极限，默认1800N
@@ -18,10 +18,10 @@ data class ComplianceParameters(
         /**
          * 根据假人类型返回精确参数（基于UN R129标准）
          */
-        fun getByDummy(dummyType: CrashTestDummy): ComplianceParameters {
+        fun getByDummy(dummyType: ComplianceDummy): ComplianceParameters {
             return when (dummyType) {
                 // Q0/Q0+/Q1假人（0-18个月）：最严格
-                CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 -> ComplianceParameters(
+                ComplianceDummy.Q0, ComplianceDummy.Q0_PLUS, ComplianceDummy.Q1 -> ComplianceParameters(
                     dummyType = dummyType,
                     hicLimit = 390,  // 最严格
                     chestAccelerationLimit = 55,
@@ -32,7 +32,7 @@ data class ComplianceParameters(
                     chestDeflectionLimit = 52
                 )
                 // Q1.5假人（18-36个月）：中等严格
-                CrashTestDummy.Q1_5 -> ComplianceParameters(
+                ComplianceDummy.Q1_5 -> ComplianceParameters(
                     dummyType = dummyType,
                     hicLimit = 570,  // Q1.5专用标准
                     chestAccelerationLimit = 55,
@@ -43,7 +43,7 @@ data class ComplianceParameters(
                     chestDeflectionLimit = 52
                 )
                 // Q3/Q3s假人（3-12岁）：标准严格度
-                CrashTestDummy.Q3, CrashTestDummy.Q3_S -> ComplianceParameters(
+                ComplianceDummy.Q3, ComplianceDummy.Q3_S -> ComplianceParameters(
                     dummyType = dummyType,
                     hicLimit = 1000,  // Q3标准
                     chestAccelerationLimit = 60,  // 胸部加速度放宽到60g
@@ -54,7 +54,7 @@ data class ComplianceParameters(
                     chestDeflectionLimit = 52
                 )
                 // Q6/Q10假人（7岁以上）：严格度适中
-                CrashTestDummy.Q6, CrashTestDummy.Q10 -> ComplianceParameters(
+                ComplianceDummy.Q6, ComplianceDummy.Q10 -> ComplianceParameters(
                     dummyType = dummyType,
                     hicLimit = 1000,
                     chestAccelerationLimit = 60,
@@ -73,7 +73,7 @@ data class ComplianceParameters(
          */
         @Deprecated("Use getByDummy instead for more accurate parameters")
         fun getDefaultForAgeGroup(ageGroup: AgeGroup): ComplianceParameters {
-            val dummyType = CrashTestDummy.getByAgeGroup(ageGroup)
+            val dummyType = ComplianceDummy.getByAgeGroup(ageGroup)
             return getByDummy(dummyType)
         }
     }
@@ -244,9 +244,9 @@ data class CreativeIdea(
 }
 
 /**
- * 假人类型枚举（基于ECE R129标准）
+ * 合规假人类型枚举（基于ECE R129标准，用于合规性检查）
  */
-enum class CrashTestDummy(val displayName: String, val heightRange: String, val weight: Float, val age: String, val hicLimit: Int) {
+enum class ComplianceDummy(val displayName: String, val heightRange: String, val weight: Float, val age: String, val hicLimit: Int) {
     Q0("Q0新生儿假人", "出生-50cm", 2.5f, "0-6个月", 390),
     Q0_PLUS("Q0+大婴儿假人", "50-60cm", 4.0f, "6-9个月", 390),
     Q1("Q1幼儿假人", "60-75cm", 9.0f, "9-18个月", 390),
@@ -260,7 +260,7 @@ enum class CrashTestDummy(val displayName: String, val heightRange: String, val 
         /**
          * 根据身高获取对应的假人类型
          */
-        fun getByHeight(heightCm: Int): CrashTestDummy {
+        fun getByHeight(heightCm: Int): ComplianceDummy {
             return when {
                 heightCm < 50 -> Q0
                 heightCm < 60 -> Q0_PLUS
@@ -276,7 +276,7 @@ enum class CrashTestDummy(val displayName: String, val heightRange: String, val 
         /**
          * 根据年龄段获取推荐的假人类型（返回中间值）
          */
-        fun getByAgeGroup(ageGroup: AgeGroup): CrashTestDummy {
+        fun getByAgeGroup(ageGroup: AgeGroup): ComplianceDummy {
             return when (ageGroup) {
                 AgeGroup.INFANT -> Q1  // 0-3岁中间值
                 AgeGroup.TODDLER -> Q1_5  // 3-6岁中间值
@@ -290,7 +290,7 @@ enum class CrashTestDummy(val displayName: String, val heightRange: String, val 
         /**
          * 获取假人类型对应的产品分组
          */
-        fun getProductGroup(dummy: CrashTestDummy): String {
+        fun getProductGroup(dummy: ComplianceDummy): String {
             return when (dummy) {
                 Q0, Q0_PLUS, Q1 -> "Group 0+ (0-13kg)"
                 Q1_5 -> "Group 1 (9-18kg)"
