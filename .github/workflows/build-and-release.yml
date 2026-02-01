@@ -35,7 +35,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'none'  # Disable caching to fix KAPT compatibility
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
