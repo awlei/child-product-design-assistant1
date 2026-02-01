@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -95,6 +96,20 @@ dependencies {
 
     // Immutable Collections（用于不可变集合，提升性能和线程安全）
     implementation 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.6'
+
+    // Room Database
+    def roomVersion = "2.6.1"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+
+    // Retrofit for API calls
+    def retrofitVersion = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+
+    // Gson for JSON parsing
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     // Testing
     testImplementation 'junit:junit:4.13.2'
