@@ -25,47 +25,22 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    - name: Clean ALL Gradle caches before restore
+    - name: Disable Gradle cache and force clean build
       run: |
-        echo "=== Pre-restore: Cleaning all Gradle and Kotlin caches ==="
+        echo "=== Force Clean: Remove ALL caches to fix KAPT compatibility ==="
         rm -rf ~/.gradle/
         rm -rf ~/.kotlin/
         rm -rf .gradle/
         rm -rf build/
         rm -rf app/build/
-        echo "=== Pre-restore cleaning completed ==="
-
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-kotlin-1.9.24-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-kotlin-1.9.24-
-
-    - name: Clean Gradle cache after restore (to handle KAPT compatibility)
-      run: |
-        echo "=== Post-restore: Cleaning Gradle cache to prevent KAPT module loading errors ==="
-        echo "Removing all Gradle caches..."
-        rm -rf ~/.gradle/caches/
-        rm -rf ~/.gradle/native/
-        rm -rf ~/.gradle/daemon/
-        rm -rf ~/.gradle/build-cache/
-        rm -rf .gradle/
-        echo "Creating clean .gradle directory..."
-        mkdir -p .gradle
-        echo "=== Cache cleaning completed ==="
-        echo "Current Gradle directory contents:"
-        ls -la ~/.gradle/ || echo "~/.gradle does not exist yet"
-        ls -la .gradle/ || echo ".gradle does not exist yet"
+        rm -rf local.properties
+        echo "=== All caches removed ==="
 
     - name: Build Debug APK
-      run: ./gradlew clean assembleDebug --stacktrace --debug --refresh-dependencies --no-build-cache --no-daemon
+      run: ./gradlew clean assembleDebug --stacktrace --info -Pkapt.verbose=true --no-daemon
 
     - name: Run Unit Tests
-      run: ./gradlew test --stacktrace --no-build-cache
+      run: ./gradlew test --stacktrace --info --no-daemon
 
     - name: Upload Debug APK
       uses: actions/upload-artifact@v3
