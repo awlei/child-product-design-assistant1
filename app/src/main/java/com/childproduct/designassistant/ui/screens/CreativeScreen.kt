@@ -378,8 +378,8 @@ fun CreativeScreen(
                             InputType.HEIGHT_RANGE -> {
                                 val minH = minHeight.toIntOrNull() ?: 0
                                 val maxH = maxHeight.toIntOrNull() ?: 0
-                                val ageGroup = if (minH == 40 && maxH == 150) {
-                                    // 强制：40-150cm对应全年龄段（0-12岁）
+                                val ageGroup = if (minH <= 40 && maxH >= 150) {
+                                    // 覆盖整个标准范围（40-150cm）对应全年龄段（0-12岁）
                                     AgeGroup.ALL
                                 } else {
                                     // 其他身高范围按假人类型推断

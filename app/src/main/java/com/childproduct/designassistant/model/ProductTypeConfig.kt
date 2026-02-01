@@ -273,7 +273,7 @@ object ProductTypeConfigManager {
         standardConfig: StandardConfig
     ): ParamInputResult {
         val rule = standardConfig.paramRule
-        
+
         // 检查范围有效性
         if (minHeight >= maxHeight) {
             return ParamInputResult(
@@ -293,6 +293,15 @@ object ProductTypeConfigManager {
             return ParamInputResult(
                 isValid = false,
                 errorMessage = rule.errorTip
+            )
+        }
+
+        // 特殊处理：如果范围覆盖整个标准范围（40-150cm），返回全假人
+        if (minHeight <= 40.0 && maxHeight >= 150.0) {
+            return ParamInputResult(
+                isValid = true,
+                matchedDummy = null,  // null表示全假人
+                matchedInterval = "全年龄段（0-12岁）"
             )
         }
 

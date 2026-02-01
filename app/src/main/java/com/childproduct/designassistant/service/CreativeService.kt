@@ -16,7 +16,8 @@ class CreativeService {
         AgeGroup.TODDLER to listOf("鲜艳色彩", "简单互动", "大尺寸", "耐摔材料"),
         AgeGroup.PRESCHOOL to listOf("教育主题", "创意涂鸦", "角色扮演", "拼图游戏"),
         AgeGroup.SCHOOL_AGE to listOf("科技元素", "团队合作", "探索发现", "竞技挑战"),
-        AgeGroup.TEEN to listOf("个性化设计", "社交元素", "技能培养", "潮流风格")
+        AgeGroup.TEEN to listOf("个性化设计", "社交元素", "技能培养", "潮流风格"),
+        AgeGroup.ALL to listOf("通用款", "经典设计", "全年龄段适用", "多功能")
     )
 
     private val productTypeFeatures = mapOf(
@@ -31,7 +32,8 @@ class CreativeService {
         AgeGroup.TODDLER to listOf("#FF6347", "#4169E1", "#32CD32", "#FFD700"),
         AgeGroup.PRESCHOOL to listOf("#FF69B4", "#00CED1", "#FFA500", "#9370DB"),
         AgeGroup.SCHOOL_AGE to listOf("#1E90FF", "#00FA9A", "#FF4500", "#9932CC"),
-        AgeGroup.TEEN to listOf("#000000", "#FFFFFF", "#808080", "#C0C0C0", "#FF1493")
+        AgeGroup.TEEN to listOf("#000000", "#FFFFFF", "#808080", "#C0C0C0", "#FF1493"),
+        AgeGroup.ALL to listOf("#000000", "#FFFFFF", "#808080", "#C0C0C0", "#FF1493")
     )
 
     private val materialSuggestions = mapOf(
@@ -97,11 +99,11 @@ class CreativeService {
         productType: ProductType,
         customTheme: String = ""
     ): CreativeIdeaResult = withContext(Dispatchers.IO) {
-        // 强制规则：身高40-150cm → 0-12岁（AgeGroup.ALL）
-        val ageGroup = if (minHeightCm >= 40 && maxHeightCm <= 150) {
-            AgeGroup.ALL  // 强制映射到0-12岁
+        // 规则：身高覆盖40-150cm → 0-12岁（AgeGroup.ALL）
+        val ageGroup = if (minHeightCm <= 40 && maxHeightCm >= 150) {
+            AgeGroup.ALL  // 映射到0-12岁
         } else {
-            // 如果范围超出，根据中间高度映射
+            // 如果范围未覆盖，根据中间高度映射
             val middleHeight = (minHeightCm + maxHeightCm) / 2
             val dummyType = CrashTestMapping.getDummyByHeight(middleHeight)
             when {
@@ -195,6 +197,10 @@ class CreativeService {
 
     private fun generateTitle(ageGroup: AgeGroup, productType: ProductType, theme: String): String {
         return when {
+            ageGroup == AgeGroup.ALL && productType == ProductType.CHILD_SAFETY_SEAT ->
+                "全年龄段通用${productType.displayName} - $theme"
+            ageGroup == AgeGroup.ALL ->
+                "全年龄段通用${productType.displayName} - $theme"
             ageGroup == AgeGroup.INFANT && productType == ProductType.CHILD_SAFETY_SEAT ->
                 "婴幼儿专用${productType.displayName} - $theme"
             ageGroup == AgeGroup.INFANT && productType == ProductType.BABY_STROLLER ->
@@ -210,22 +216,31 @@ class CreativeService {
         theme: String,
         features: List<String>
     ): String {
-        val baseDescription = "专为${ageGroup.displayName}儿童设计的${productType.displayName}，" +
-                "融入${theme}设计理念。主要特点包括：${features.joinToString("、")}。"
+        val baseDescription = if (ageGroup == AgeGroup.ALL) {
+            "全年龄段（0-12岁）通用${productType.displayName}，" +
+                    "融入$theme设计理念。主要特点包括：${features.joinToString("、")}。"
+        } else {
+            "专为${ageGroup.displayName}儿童设计的${productType.displayName}，" +
+                    "融入${theme}设计理念。主要特点包括：${features.joinToString("、")}。"
+        }
 
         // 根据产品类型添加专业性描述
         val professionalDescription = when (productType) {
             ProductType.CHILD_SAFETY_SEAT -> {
-                val dummyType = CrashTestDummy.getByAgeGroup(ageGroup)
-                val complianceText = when (dummyType) {
-                    CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 ->
-                        "符合UN R129 i-Size婴儿标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
-                    CrashTestDummy.Q1_5 ->
-                        "符合UN R129 i-Size幼儿标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
-                    else ->
-                        "符合UN R129 i-Size儿童标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
+                if (ageGroup == AgeGroup.ALL) {
+                    "$baseDescription 符合UN R129 i-Size标准（Q0-Q10全假人，0-12岁），满足FMVSS 302燃烧性能要求，通过ISOFIX连接实现快速安装。"
+                } else {
+                    val dummyType = CrashTestDummy.getByAgeGroup(ageGroup)
+                    val complianceText = when (dummyType) {
+                        CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 ->
+                            "符合UN R129 i-Size婴儿标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
+                        CrashTestDummy.Q1_5 ->
+                            "符合UN R129 i-Size幼儿标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
+                        else ->
+                            "符合UN R129 i-Size儿童标准（${dummyType.name}假人），HIC极限值≤ ${dummyType.hicLimit}，"
+                    }
+                    "$baseDescription $complianceText 满足FMVSS 302燃烧性能要求，通过ISOFIX连接实现快速安装。"
                 }
-                "$baseDescription $complianceText 满足FMVSS 302燃烧性能要求，通过ISOFIX连接实现快速安装。"
             }
             ProductType.BABY_STROLLER -> {
                 "$baseDescription 符合EN 1888 + GB 14748-2020标准，制动系统可靠，折叠机构安全防夹，危险点圆角处理R≥ 2.5mm。"
@@ -254,6 +269,12 @@ class CreativeService {
                 notes.add("避免细小零件脱落风险")
                 notes.add("材料需通过欧盟EN71安全认证")
                 notes.add("结构稳固，不易倒塌")
+            }
+            AgeGroup.ALL -> {
+                notes.add("全年龄段适用，满足各阶段儿童安全标准")
+                notes.add("符合UN R129 i-Size标准（0-12岁全假人）")
+                notes.add("材料需通过欧盟EN71、EN14350等多项认证")
+                notes.add("提供多档位调节，适应不同年龄段需求")
             }
             else -> {
                 notes.add("符合国家玩具安全标准GB 6675")
