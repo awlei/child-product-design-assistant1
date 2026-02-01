@@ -36,7 +36,7 @@ jobs:
         echo "=== All caches removed ==="
 
     - name: Build Debug APK
-      run: ./gradlew clean assembleDebug --stacktrace --info -Pkapt.verbose=true --no-daemon
+      run: ./gradlew clean assembleDebug --stacktrace --info --no-daemon
 
     - name: Run Unit Tests
       run: ./gradlew test --stacktrace --info --no-daemon

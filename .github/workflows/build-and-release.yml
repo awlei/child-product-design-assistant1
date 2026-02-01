@@ -61,11 +61,11 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
       - name: Build Debug APK
-        run: ./gradlew clean assembleDebug --stacktrace --info -Pkapt.verbose=true --no-daemon
+        run: ./gradlew clean assembleDebug --stacktrace --info --no-daemon
 
       - name: Build Release APK
         if: github.event.inputs.release_type == 'release'
-        run: ./gradlew assembleRelease --stacktrace --info -Pkapt.verbose=true --no-daemon
+        run: ./gradlew assembleRelease --stacktrace --info --no-daemon
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
