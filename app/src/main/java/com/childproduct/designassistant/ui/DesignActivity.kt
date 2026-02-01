@@ -13,6 +13,7 @@ import com.childproduct.designassistant.helper.UiHelper
 import com.childproduct.designassistant.model.InstallMethod
 import com.childproduct.designassistant.model.ProductFactory
 import com.childproduct.designassistant.validator.ValidatorFactory
+import com.childproduct.designassistant.utils.OutputComplianceChecker
 
 /**
  * 设计方案生成页面（优化版）
@@ -134,9 +135,18 @@ class DesignActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                // 6. 格式化方案并展示到UI
-                val displayText = SchemeOptimizer.formatSchemeForDisplay(optimizedScheme)
-                tvResult.text = displayText
+                // 6. 先将方案格式化为原始文本（用于优化器处理）
+                val rawSchemeText = SchemeOptimizer.formatSchemeForDisplay(optimizedScheme)
+
+                // 7. 使用OutputComplianceChecker进行深度优化（清理代码字段、乱码，生成规范输出）
+                val finalDisplayText = OutputComplianceChecker.optimizeScheme(
+                    rawContent = rawSchemeText,
+                    inputHeight = userInput.heightRange,
+                    productType = userInput.productType
+                )
+
+                // 8. 显示优化后的方案
+                tvResult.text = finalDisplayText
 
                 Toast.makeText(
                     this,
