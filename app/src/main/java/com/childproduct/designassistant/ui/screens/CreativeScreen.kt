@@ -407,32 +407,37 @@ fun CreativeScreen(
                                 }
                                 
                                 // 检查是否是儿童安全座椅且选择了ECE R129标准
-                                if (selectedProductType == ProductType.CHILD_SAFETY_SEAT &&
-                                    selectedStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true) {
+                                val currentProductType = selectedProductType
+                                val currentStandard = selectedStandard
+
+                                if (currentProductType == ProductType.CHILD_SAFETY_SEAT &&
+                                    currentStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true) {
                                     // 使用Roadmate360OutputGenerator生成ROADMATE 360格式输出
                                     val finalTheme = theme.ifEmpty { "标准设计" }
                                     formattedOutput = com.childproduct.designassistant.utils.Roadmate360OutputGenerator.generateOutput(
                                         minHeightCm = minH,
                                         maxHeightCm = maxH,
-                                        productType = selectedProductType.displayName,
+                                        productType = currentProductType.displayName,
                                         designTheme = finalTheme
                                     )
                                 } else {
                                     // 其他情况使用原有的生成逻辑
-                                    viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)
+                                    viewModel.generateCreativeIdea(ageGroup, currentProductType!!, theme)
                                 }
                             }
                             InputType.WEIGHT_RANGE -> {
                                 // 根据体重推断年龄段
+                                val currentProductType = selectedProductType
                                 val weight = minWeight.toDoubleOrNull() ?: 0.0
                                 val ageGroup = if (weight < 9.0) AgeGroup.INFANT
                                                else if (weight < 18.0) AgeGroup.TODDLER
                                                else if (weight < 21.0) AgeGroup.PRESCHOOL
                                                else if (weight < 33.0) AgeGroup.SCHOOL_AGE
                                                else AgeGroup.TEEN
-                                viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)
+                                viewModel.generateCreativeIdea(ageGroup, currentProductType!!, theme)
                             }
                             InputType.AGE_RANGE -> {
+                                val currentProductType = selectedProductType
                                 val age = minAge.toIntOrNull() ?: 0
                                 val ageGroup = when (age) {
                                     0, 1, 2 -> AgeGroup.INFANT
@@ -441,7 +446,7 @@ fun CreativeScreen(
                                     9, 10, 11 -> AgeGroup.SCHOOL_AGE
                                     else -> AgeGroup.TEEN
                                 }
-                                viewModel.generateCreativeIdea(ageGroup, selectedProductType!!, theme)
+                                viewModel.generateCreativeIdea(ageGroup, currentProductType!!, theme)
                             }
                             else -> {}
                         }
