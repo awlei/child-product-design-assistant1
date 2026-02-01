@@ -37,35 +37,25 @@ object SchemeOptimizer {
 
         // 步骤5：固定规范数据（无拼接，零乱码）
         val coreFeatures = listOf(
-            "材质环保：食品级PP塑料，无甲醛/重金属，符合EN 71-3标准",
-            "易安装性：${userInput.installMethod.description}，安装耗时≤5分钟",
-            "舒适性：高回弹海绵填充，头枕多档位调节，适配不同身高儿童"
-        ) + if (safeTheme.contains("社交元素")) {
-            listOf("社交互动：支持个性化装饰定制、互动贴纸搭配（社交元素主题专属）")
-        } else if (safeTheme.contains("个性化设计")) {
-            listOf("个性化定制：支持颜色、图案自定义，适配不同儿童审美偏好")
-        } else {
-            listOf("安全性能：符合ECE R129/GB 27887-2024标准，通过动态测试")
-        }
+            "易安装性：ISOFIX快速连接 + Top-tether防旋转（上拉带）",
+            "安全性：符合ECE R129/GB 27887-2024 + FMVSS 213标准（全假人覆盖）",
+            "舒适性：高回弹海绵填充（密度30kg/m³，适配0-12岁儿童体型）",
+            "材质环保：食品级PP塑料（无甲醛/重金属，符合EN 71-3有害元素标准）"
+        )
 
         val recommendMaterials = listOf(
             "主体框架：食品级PP塑料（耐温-30℃~80℃，抗冲击强度≥20kJ/m²）",
-            "填充层：高回弹海绵（密度30kg/m³，压缩回弹率≥90%）",
-            "约束部件：高强度安全带织带（断裂强度≥11000N，耐磨后强度保留率≥75%）"
-        ) + if (safeTheme.contains("社交元素") || safeTheme.contains("个性化设计")) {
-            listOf("装饰材料：可移除环保贴纸（无荧光剂，符合儿童安全标准）")
-        } else {
-            listOf()
-        }
+            "填充层：高回弹海绵（压缩回弹率≥90%，无异味）",
+            "约束部件：高强度安全带织带（断裂强度≥11000N，耐磨后强度保留率≥75%）",
+            "支撑结构：铝合金支架（盐雾测试50小时无腐蚀，抗拉强度≥300MPa）",
+            "面料：阻燃聚酯纤维（符合FMVSS 302，燃烧速度≤4英寸/分钟）"
+        )
 
         val safetyThresholds = mapOf(
             "HIC极限值" to "≤390（Q0-Q1.5）/≤1000（Q3-Q10）",
             "胸部加速度" to "≤55g（Q0-Q1.5）/≤60g（Q3-Q10）",
-            "颈部张力极限" to "≤1800N（Q0-Q1.5）/≤2000N（Q3+）",
-            "颈部压缩极限" to "≤2500N",
+            "颈部张力极限" to "≤1800N（Q3-Q10）",
             "头部位移极限" to "≤550mm（全假人）",
-            "膝部位移极限" to "≤650mm（全假人）",
-            "胸部位移极限" to "≤52mm（全假人）",
             "阻燃性能" to "符合FMVSS 302（燃烧速度≤4英寸/分钟）"
         )
 
@@ -128,15 +118,25 @@ object SchemeOptimizer {
             )
         )
 
-        val safetyNotes = mutableListOf(
-            "符合ECE R129/GB 27887-2024+FMVSS 213标准",
-            "安装后需确认防旋转装置（Top-tether/支撑腿）锁止到位"
+        val safetyNotes = listOf(
+            "防吞咽风险：所有可拆卸部件尺寸≥3.5cm（ISO 8124-2要求）",
+            "材质安全：使用食品级PP塑料，无甲醛/重金属残留（GB 6675.4/EN 71-3）",
+            "边缘安全：产品边缘做圆角处理（R≥2mm），无尖锐突出物（ISO 8124-1）",
+            "防火阻燃：面料通过FMVSS 302认证（燃烧速度≤4英寸/分钟）",
+            "安装警示：必须严格按照ISOFIX/安全带固定说明安装（ECE R129 §5.2）"
         )
-        if (safeTheme.contains("社交元素") || safeTheme.contains("个性化设计")) {
-            safetyNotes.add(0, "装饰贴纸需定期检查，避免脱落导致儿童吞咽风险")
-            safetyNotes.add(1, "个性化定制时不可修改座椅结构和安全部件")
+
+        // 生成适配假人描述（根据身高范围）
+        val dummyTypeDesc = when {
+            userInput.heightRange == "40-150cm" -> "Q0-Q10全假人（0-12岁）"
+            userInput.heightRange.contains("40-60") -> "Q0假人（新生儿）"
+            userInput.heightRange.contains("60-75") -> "Q1假人（幼儿）"
+            userInput.heightRange.contains("75-87") -> "Q1.5假人（学步儿童）"
+            userInput.heightRange.contains("87-105") -> "Q3假人（学前儿童）"
+            userInput.heightRange.contains("105-125") -> "Q3s假人（儿童）"
+            userInput.heightRange.contains("125-150") -> "Q10假人（青少年）"
+            else -> "Q0-Q10全假人（0-12岁）"
         }
-        safetyNotes.add("定期检查安全带和卡扣，确保无磨损、无断裂")
 
         // 构建最终方案
         return ChildProductDesignScheme.builder(
@@ -148,8 +148,8 @@ object SchemeOptimizer {
             .installMethodDesc(userInput.installMethod.description)
             .coreFeatures(coreFeatures)
             .recommendMaterials(recommendMaterials)
-            .complianceStandards(listOf("ECE R129 i-Size", "GB 27887-2024", "FMVSS 213"))
-            .dummyType("Q0-Q10全假人")
+            .complianceStandards(listOf("ECE R129 / GB 27887-2024", "FMVSS 213（美标）"))
+            .dummyType(dummyTypeDesc)
             .safetyThresholds(safetyThresholds)
             .testMatrix(testMatrix)
             .safetyNotes(safetyNotes)

@@ -317,39 +317,25 @@ object OutputComplianceChecker {
     }
 
     /**
-     * 步骤3：生成结构化输出（模块清晰，无杂乱）
+     * 步骤3：生成结构化输出（按照指定格式）
      */
     private fun generateStructuredOutput(scheme: ChildProductDesignScheme): String {
         return buildString {
-            // 1. 基本信息模块
-            appendLine("【基本信息】")
-            appendLine("- 产品类型：${scheme.productType}")
-            appendLine("- 身高范围：${scheme.heightRange}")
-            appendLine("- 适用年龄段：${scheme.ageRange}")
-            appendLine("- 设计主题：${scheme.designTheme}")
+            // 1. 设计方案模块
+            appendLine("【设计方案】")
+            appendLine("产品类型：${scheme.productType}")
+            appendLine("身高范围：${scheme.heightRange}")
+            appendLine("年龄段：${scheme.ageRange}")
+            appendLine("设计主题：${scheme.designTheme}")
             appendLine()
 
-            // 2. 方案描述模块
-            appendLine("【方案描述】")
-            val themeName = scheme.designTheme.split(" - ").getOrNull(1) ?: "通用款"
-            val description = when {
-                themeName.contains("社交元素") -> "专为儿童安全座椅设计的社交元素主题产品，通过互动贴纸和个性化装饰增强儿童参与感，同时保持符合ECE R129/GB 27887-2024标准的最高安全性能。"
-                themeName.contains("个性化设计") -> "采用可定制化设计理念，支持颜色、图案自定义，让每个孩子都能拥有专属的安全座椅，同时确保材料环保、结构稳固。"
-                themeName.contains("卡通图案") -> "融入活泼可爱的卡通元素，通过丰富的视觉设计提升儿童乘坐兴趣，材质选用食品级PP塑料和高回弹海绵，兼顾安全与舒适。"
-                themeName.contains("科技元素") -> "结合智能科技设计理念，在保证安全性能的前提下，提升产品的科技感和未来感，适合追求高品质生活的家庭。"
-                else -> "基于${themeName}设计理念的儿童安全座椅，严格遵循ECE R129/GB 27887-2024标准，确保产品安全性、舒适性和环保性的完美统一。"
-            }
-
-            // 强制修正年龄段说明（针对40-150cm的特殊情况）
-            if (scheme.heightRange == "40-150cm" && description.contains("12岁以上")) {
-                appendLine("$description（注：按ECE R129/GB 27887-2024标准，40-150cm身高范围仅适配0-12岁年龄段）")
-            } else {
-                appendLine(description)
-            }
+            // 2. 安装方式模块
+            appendLine("【安装方式】")
+            appendLine(scheme.installMethodDesc)
             appendLine()
 
-            // 3. 核心设计特点模块
-            appendLine("【核心设计特点】")
+            // 3. 核心特点模块
+            appendLine("【核心特点】")
             scheme.coreFeatures.forEach { feature -> appendLine("- $feature") }
             appendLine()
 
@@ -358,15 +344,22 @@ object OutputComplianceChecker {
             scheme.recommendMaterials.forEach { material -> appendLine("- $material") }
             appendLine()
 
-            // 5. 合规参数模块
-            appendLine("【合规参数】")
-            appendLine("- 合规标准：${scheme.complianceStandards.joinToString(" + ")}")
-            appendLine("- 适配假人：${scheme.dummyType}")
-            appendLine("- 安全阈值：")
-            scheme.safetyThresholds.forEach { (key, value) -> appendLine("  - $key：$value") }
+            // 5. 合规标准模块
+            appendLine("【合规标准】")
+            scheme.complianceStandards.forEach { standard -> appendLine("- $standard") }
             appendLine()
 
-            // 6. 安全注意事项模块
+            // 6. 适配假人模块
+            appendLine("【适配假人】")
+            appendLine(scheme.dummyType)
+            appendLine()
+
+            // 7. 安全阈值模块
+            appendLine("【安全阈值】")
+            scheme.safetyThresholds.forEach { (key, value) -> appendLine("- $key：$value") }
+            appendLine()
+
+            // 8. 安全注意事项模块
             appendLine("【安全注意事项】")
             scheme.safetyNotes.forEach { note -> appendLine("- $note") }
         }
