@@ -20,9 +20,20 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        cache: 'none'
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Clean ALL Gradle caches before restore
+      run: |
+        echo "=== Pre-restore: Cleaning all Gradle and Kotlin caches ==="
+        rm -rf ~/.gradle/
+        rm -rf ~/.kotlin/
+        rm -rf .gradle/
+        rm -rf build/
+        rm -rf app/build/
+        echo "=== Pre-restore cleaning completed ==="
 
     - name: Cache Gradle packages
       uses: actions/cache@v4
@@ -34,13 +45,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-kotlin-1.9.24-
 
-    - name: Clean Gradle cache to avoid KAPT compatibility issues
+    - name: Clean Gradle cache after restore (to handle KAPT compatibility)
       run: |
-        echo "=== Cleaning Gradle cache to prevent KAPT module loading errors ==="
+        echo "=== Post-restore: Cleaning Gradle cache to prevent KAPT module loading errors ==="
         echo "Removing all Gradle caches..."
         rm -rf ~/.gradle/caches/
         rm -rf ~/.gradle/native/
         rm -rf ~/.gradle/daemon/
+        rm -rf ~/.gradle/build-cache/
         rm -rf .gradle/
         echo "Creating clean .gradle directory..."
         mkdir -p .gradle
@@ -50,7 +62,7 @@ jobs:
         ls -la .gradle/ || echo ".gradle does not exist yet"
 
     - name: Build Debug APK
-      run: ./gradlew clean assembleDebug --stacktrace --info --refresh-dependencies --no-build-cache
+      run: ./gradlew clean assembleDebug --stacktrace --debug --refresh-dependencies --no-build-cache --no-daemon
 
     - name: Run Unit Tests
       run: ./gradlew test --stacktrace --no-build-cache
