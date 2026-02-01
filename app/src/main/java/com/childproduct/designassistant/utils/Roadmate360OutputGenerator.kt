@@ -1,5 +1,11 @@
 package com.childproduct.designassistant.utils
 
+import com.childproduct.designassistant.model.TestMatrixItem
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
+
 /**
  * ROADMATE 360测试矩阵输出生成器（ECE R129单一标准 · 40-150cm全范围）
  * 严格遵循ECE R129 Annex 19标准，不混用GB 27887-2024/FMVSS 213
@@ -375,7 +381,7 @@ object Roadmate360OutputGenerator {
             "安全性：符合ECE R129标准（Q0-Q10全假人覆盖，分段安全阈值）",
             "舒适性：高回弹海绵填充（密度30kg/m³，适配0-12岁儿童体型变化）",
             "材质环保：食品级PP塑料（无甲醛/重金属，符合EN 71-3有害元素标准）"
-        )
+        ).toImmutableList()
 
         // 构建推荐材料
         val recommendMaterials = listOf(
@@ -384,7 +390,7 @@ object Roadmate360OutputGenerator {
             "约束部件：高强度安全带织带（断裂强度≥11000N，耐磨后强度保留率≥75%）",
             "支撑结构：铝合金支架（盐雾测试50小时无腐蚀，抗拉强度≥300MPa）",
             "面料：阻燃聚酯纤维（符合FMVSS 302，燃烧速度≤4英寸/分钟）"
-        )
+        ).toImmutableList()
 
         // 构建安全注意事项
         val safetyNotes = listOf(
@@ -393,7 +399,7 @@ object Roadmate360OutputGenerator {
             "边缘安全：产品边缘做圆角处理（R≥2mm），无尖锐突出物",
             "防火阻燃：面料通过FMVSS 302认证（燃烧速度≤4英寸/分钟）",
             "安装警示：40-105cm必须后向安装；105-150cm前向安装必须使用Top-tether（ECE R129 §8.1）"
-        )
+        ).toImmutableList()
 
         // 构建测试矩阵项
         val testMatrixItems = SAFETY_THRESHOLDS.map {
@@ -404,7 +410,7 @@ object Roadmate360OutputGenerator {
                 unit = it.unit,
                 standardSource = it.standardSource
             )
-        }
+        }.toImmutableList()
 
         return com.childproduct.designassistant.model.ChildProductDesignScheme(
             productType = productType,
@@ -414,7 +420,7 @@ object Roadmate360OutputGenerator {
             installMethodDesc = "40-105cm：ISOFIX+支撑腿（后向）；105-150cm：ISOFIX+Top-tether（前向）",
             coreFeatures = coreFeatures,
             recommendMaterials = recommendMaterials,
-            complianceStandards = listOf("ECE R129 (i-Size)"),
+            complianceStandards = listOf("ECE R129 (i-Size)").toImmutableList(),
             dummyType = "Q0→Q10全假人序列（40-150cm）",
             safetyThresholds = mapOf(
                 "HIC" to "HIC15≤390(Q0-Q1.5)/HIC36≤1000(Q3-Q10)",
@@ -423,7 +429,7 @@ object Roadmate360OutputGenerator {
                 "头部位移" to "≤550mm(全假人)",
                 "膝部位移" to "≤650mm(全假人)",
                 "胸部位移" to "≤45mm(Q0-Q1.5)/≤52mm(Q3-Q10)"
-            ),
+            ).toImmutableMap(),
             testMatrix = testMatrixItems,
             safetyNotes = safetyNotes
         )
