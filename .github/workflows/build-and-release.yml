@@ -35,7 +35,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
+          cache: 'none'  # Disable caching to fix KAPT compatibility
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -43,15 +43,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Force clean build - remove all caches
+        run: |
+          echo "=== Force Clean: Remove ALL caches to fix KAPT compatibility ==="
+          rm -rf ~/.gradle/
+          rm -rf ~/.kotlin/
+          rm -rf .gradle/
+          rm -rf build/
+          rm -rf app/build/
+          rm -rf local.properties
+          echo "=== All caches removed ==="
 
       - name: Decode keystore
         if: github.event.inputs.release_type == 'release'
@@ -61,11 +62,11 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew clean assembleDebug --stacktrace --info -Pkapt.verbose=true --no-daemon
 
       - name: Build Release APK
         if: github.event.inputs.release_type == 'release'
-        run: ./gradlew assembleRelease --stacktrace
+        run: ./gradlew assembleRelease --stacktrace --info -Pkapt.verbose=true --no-daemon
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -198,7 +199,3 @@ jobs:
           echo "- **提交**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **触发者**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "- **构建时间**: $(date)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 📥 下载APK" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "APK文件已上传到Artifacts，点击工作流页面底部的Artifacts即可下载。" >> $GITHUB_STEP_SUMMARY
