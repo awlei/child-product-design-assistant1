@@ -4,6 +4,8 @@ import com.childproduct.designassistant.model.CrashTestMapping
 import com.childproduct.designassistant.model.InstallDirection
 import com.childproduct.designassistant.model.InstallMethod
 import com.childproduct.designassistant.model.ProductType
+import com.childproduct.designassistant.model.getAntiRotation
+import com.childproduct.designassistant.model.getDirection
 import com.childproduct.designassistant.model.engineering.AntiRotationType
 import com.childproduct.designassistant.model.engineering.DummyType
 import com.childproduct.designassistant.model.engineering.EngineeringInput

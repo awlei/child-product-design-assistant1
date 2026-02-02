@@ -4,6 +4,8 @@ import com.childproduct.designassistant.common.ValidationResult
 import com.childproduct.designassistant.model.InstallDirection
 import com.childproduct.designassistant.model.InstallMethod
 import com.childproduct.designassistant.model.ProductType
+import com.childproduct.designassistant.model.getAntiRotation
+import com.childproduct.designassistant.model.getDirection
 
 /**
  * 工程输入数据 - 工程师专用
