@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.model.engineering.ProductType
+
 /**
  * 合规参数模型
  * 存储儿童安全座椅/儿童产品的关键合规指标
@@ -95,7 +97,7 @@ data class StandardsReference(
          */
         fun getDefaultForProductType(productType: ProductType): StandardsReference {
             return when (productType) {
-                ProductType.SAFETY_SEAT -> StandardsReference(
+                ProductType.CHILD_SAFETY_SEAT -> StandardsReference(
                     mainStandard = "ECE R129 + GB 27887-2024 + FMVSS 213",
                     keyClauses = listOf(
                         // ECE R129标准
@@ -197,7 +199,7 @@ data class MaterialSpecs(
         // 根据产品类型生成材质规格
         fun getDefaultForProductType(productType: ProductType): MaterialSpecs {
             return when (productType) {
-                ProductType.SAFETY_SEAT -> MaterialSpecs(
+                ProductType.CHILD_SAFETY_SEAT -> MaterialSpecs(
                     flameRetardantFabric = "通过FMVSS 302认证的阻燃面料，燃烧速度< 4英寸/分钟",
                     isoFixComponents = "高强度钢材ISOFIX连接件，抗拉强度>= 450MPa",
                     impactAbsorber = "三层复合EPP/EPS吸能材料，密度30-50kg/m³",
@@ -315,15 +317,4 @@ enum class AgeGroup(val displayName: String, val heightRange: String, val weight
      * 全年龄段（强制映射：身高40-150cm → 0-12岁）
      */
     ALL("0-12岁", "40-150cm", "2.5-38kg", "0-144个月")
-}
-
-enum class ProductType(
-    val displayName: String,
-    val requiresHeightInput: Boolean,
-    val requiresInstallMethod: Boolean
-) {
-    SAFETY_SEAT("儿童安全座椅", true, true),
-    STROLLER("婴儿推车", false, false),
-    HIGH_CHAIR("儿童高脚椅", false, false),
-    CRIB("婴儿床", false, false)
 }
