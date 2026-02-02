@@ -21,6 +21,7 @@ import com.childproduct.designassistant.ui.MainViewModel
  * 文档学习界面
  * 支持上传专业文档、管理已学习文档、查看学习进度
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentLearningScreen(
     viewModel: MainViewModel,

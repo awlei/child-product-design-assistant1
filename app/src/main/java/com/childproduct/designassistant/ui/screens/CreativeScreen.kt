@@ -24,6 +24,7 @@ import com.childproduct.designassistant.utils.TetherType
  * 实现产品类型-标准-参数输入联动逻辑
  */
 @OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreativeScreen(
     viewModel: MainViewModel,

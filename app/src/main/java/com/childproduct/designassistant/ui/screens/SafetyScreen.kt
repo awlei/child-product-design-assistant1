@@ -22,6 +22,7 @@ import com.childproduct.designassistant.ui.UiState
  * 改进的安全检查界面（测试矩阵）
  * 标题：安全测试矩阵
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SafetyScreen(
     viewModel: MainViewModel,
