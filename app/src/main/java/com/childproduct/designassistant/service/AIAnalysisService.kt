@@ -260,6 +260,18 @@ class AIAnalysisService(private val context: Context) {
                 sb.appendLine("- 整体重量控制在15kg以内（满足ISOFIX承载要求）")
                 sb.appendLine("- 减重区域选择在非受力部件（如装饰件）")
             }
+            ProductType.CRIB -> {
+                sb.appendLine("## 儿童家庭用品设计建议（适配${request.standard.displayName}）")
+                sb.appendLine()
+                sb.appendLine("### 1. 尺寸参数")
+                sb.appendLine("- 根据具体产品类型确定尺寸参数")
+            }
+            ProductType.HIGH_CHAIR -> {
+                sb.appendLine("## 儿童高脚椅设计建议（适配${request.standard.displayName}）")
+                sb.appendLine()
+                sb.appendLine("### 1. 核心设计要求")
+                sb.appendLine("- 符合ISO 8124-3 & GB 28007-2011标准")
+            }
             ProductType.STROLLER -> {
                 sb.appendLine("## 婴儿推车设计建议（适配${request.standard.displayName} 0-15kg重量组）")
                 sb.appendLine()
@@ -344,6 +356,11 @@ class AIAnalysisService(private val context: Context) {
                 sb.appendLine("|--------|-------------|----------|----------|")
                 sb.appendLine("| 稳定性测试 | ISO 8124-3 | 倾斜测试 | 倾斜角度<10° |")
                 sb.appendLine("| 强度测试 | GB 28007 | 静载测试 | 无明显变形 |")
+            }
+            else -> {
+                sb.appendLine("## 产品设计建议（适配${request.standard.displayName}）")
+                sb.appendLine()
+                sb.appendLine("请根据具体产品类型参考相关标准进行设计。")
             }
         }
         
@@ -697,6 +714,23 @@ class AIAnalysisService(private val context: Context) {
                         notes = "推荐测试"
                     )
                 ))
+            }
+            else -> {
+                // 添加默认测试项
+                testItems.add(
+                    DVPTestItem(
+                        testId = "GEN-001",
+                        testCategory = TestCategory.SAFETY_TESTING,
+                        testName = "通用安全测试",
+                        testMethod = "参照相关标准进行测试",
+                        acceptanceCriteria = "符合相关标准要求",
+                        testEquipment = "通用测试设备",
+                        sampleSize = 1,
+                        estimatedDuration = "2小时",
+                        priority = TestPriority.MANDATORY,
+                        notes = "必须测试"
+                    )
+                )
             }
         }
         

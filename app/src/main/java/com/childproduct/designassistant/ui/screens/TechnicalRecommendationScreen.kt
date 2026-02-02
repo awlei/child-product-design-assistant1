@@ -442,7 +442,7 @@ fun TechnicalProductTypeWithStandardSelector(
                         // 标准缩写标签
                         SuggestionChip(
                             onClick = {},
-                            label = { Text(productType.standardAbbr) }
+                            label = { Text(getStandardAbbreviation(productType)) }
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Column {
@@ -1099,4 +1099,11 @@ private fun getAgeRangeHint(minHeight: Int, maxHeight: Int): String? {
         minHeight >= 100 && maxHeight <= 150 -> "4岁-12岁"
         else -> null
     }
+}
+
+/**
+ * 获取标准缩写
+ */
+private fun getStandardAbbreviation(productType: ProductType): String {
+    return productType.mainStandards.split("/").first().trim()
 }

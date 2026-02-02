@@ -1,20 +1,20 @@
 package com.childproduct.designassistant.service.engineering
 
 import com.childproduct.designassistant.model.CrashTestMapping
-import com.childproduct.designassistant.model.DummyType
 import com.childproduct.designassistant.model.EnhancedProductType
 import com.childproduct.designassistant.model.InstallDirection
 import com.childproduct.designassistant.model.ProductType
-import com.childproduct.designassistant.model.SafetyStandard
-import com.childproduct.designassistant.model.Standard
+import com.childproduct.designassistant.model.engineering.Standard
 import com.childproduct.designassistant.model.engineering.AntiRotationType
 import com.childproduct.designassistant.model.engineering.CrashTestRequirement
+import com.childproduct.designassistant.model.engineering.DummyType
 import com.childproduct.designassistant.model.engineering.EngineeringConfig
 import com.childproduct.designassistant.model.engineering.EngineeringOutput
 import com.childproduct.designassistant.model.engineering.SafetyParameter
-import com.childproduct.designassistant.model.engineering.TestMatrix
+import com.childproduct.designassistant.model.engineering.RoadmateTestMatrix
 import com.childproduct.designassistant.model.engineering.TestMatrixMetadata
 import com.childproduct.designassistant.model.engineering.TestMatrixRow
+import com.childproduct.designassistant.model.engineering.InstallMethod as EngineeringInstallMethod
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -154,14 +154,16 @@ class EngineeringOutputGenerator {
      * 获取ISOFIX Envelope
      */
     private fun getIsofixEnvelope(
-        installMethod: InstallMethod?
+        installMethod: EngineeringInstallMethod?
     ): IsofixEnvelope? {
-        if (installMethod?.type != InstallType.ISOFIX) {
+        // 检查是否是 ISOFIX 相关的安装方式
+        if (installMethod == null || 
+            installMethod.fixationType != com.childproduct.designassistant.model.engineering.FixationType.ISOFIX_3PTS) {
             return null
         }
         
-        // 根据安装方向确定对应的Envelope
-        val direction = installMethod.direction
+        // 根据安装方式确定对应的Envelope
+        val direction = installMethod.direction ?: InstallDirection.REARWARD
         return IsofixEnvelope.getEnvelopeByDirection(direction)
     }
     
@@ -194,7 +196,7 @@ class EngineeringOutputGenerator {
         standards: Set<Standard>,
         dummyTypes: List<DummyType>,
         installDirections: Map<DummyType, InstallDirection>
-    ): TestMatrix {
+    ): RoadmateTestMatrix {
         val rows = mutableListOf<TestMatrixRow>()
         
         standards.forEach { standard ->
@@ -205,7 +207,7 @@ class EngineeringOutputGenerator {
             }
         }
         
-        return TestMatrix(
+        return RoadmateTestMatrix(
             rows = rows,
             metadata = TestMatrixMetadata(
                 generatedAt = System.currentTimeMillis(),
@@ -242,6 +244,7 @@ class EngineeringOutputGenerator {
         val topTether = when (direction) {
             InstallDirection.REARWARD -> "no"
             InstallDirection.FORWARD -> if (dummy.heightRangeCm.start >= 105) "yes" else "no"
+            else -> "no"
         }
         
         return TestMatrixRow(
@@ -272,6 +275,6 @@ class EngineeringOutputGenerator {
      * 构建假人覆盖字符串
      */
     private fun buildDummyCoverageString(dummyTypes: List<DummyType>): String {
-        return dummyTypes.joinToString(" → ") { "${it.code} (${it.heightRange.start.toInt()}-${it.heightRange.endInclusive.toInt()}cm)" }
+        return dummyTypes.joinToString(" → ") { "${it.code} (${it.heightRangeCm.start.toInt()}-${it.heightRangeCm.endInclusive.toInt()}cm)" }
     }
 }

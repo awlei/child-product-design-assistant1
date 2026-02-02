@@ -19,6 +19,15 @@ data class IsofixEnvelope(
 ) {
     companion object {
         /**
+         * 根据安装方向获取ISOFIX Envelope
+         * @param installDirection 安装方向
+         * @return ISOFIX Envelope要求
+         */
+        fun getEnvelopeByDirection(installDirection: InstallDirection): IsofixEnvelope {
+            return fromInstallDirection(installDirection)
+        }
+
+        /**
          * 根据安装方向生成ISOFIX Envelope要求
          * @param installDirection 安装方向
          * @return ISOFIX Envelope要求

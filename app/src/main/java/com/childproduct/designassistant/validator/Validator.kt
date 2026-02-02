@@ -76,13 +76,13 @@ class ProductInputValidator : Validator<SchemeOptimizer.UserInput> {
 
         // 主题关键词校验
         val themeResult = themeValidator.validate(target.themeKeyword)
-        allErrors.addAll(themeResult.errors)
-        allWarnings.addAll(themeResult.warnings)
+        allErrors.addAll(themeResult.errors.map { it.toString() })
+        allWarnings.addAll(themeResult.warnings.map { it.toString() })
 
         // 身高校验
         val heightResult = heightValidator.validate(target.heightRange)
-        allErrors.addAll(heightResult.errors)
-        allWarnings.addAll(heightResult.warnings)
+        allErrors.addAll(heightResult.errors.map { it.toString() })
+        allWarnings.addAll(heightResult.warnings.map { it.toString() })
 
         return when {
             allErrors.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.failure(allErrors, allWarnings)
