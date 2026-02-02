@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model.engineering
 
+import com.childproduct.designassistant.model.ProductType
+
 /**
  * 标准模型 - 工程级标准定义
  * 严格遵循标准隔离原则，每个标准独立定义其参数，防止混用
@@ -369,19 +371,3 @@ data class TestRequirements(
     val sideImpact: List<TestCondition>,
     val rearImpact: List<TestCondition>
 )
-
-/**
- * 产品类型
- */
-enum class ProductType(val displayName: String) {
-    CHILD_SAFETY_SEAT("儿童安全座椅"),
-    CHILD_STROLLER("婴儿推车"),
-    CHILD_HOUSEHOLD_GOODS("儿童家庭用品"),
-    CHILD_HIGH_CHAIR("儿童高脚椅"),
-    CRIB("儿童床"),
-    
-    // 兼容旧代码
-    SAFETY_SEAT("安全座椅"),
-    STROLLER("婴儿推车"),
-    HIGH_CHAIR("儿童高脚椅")
-}

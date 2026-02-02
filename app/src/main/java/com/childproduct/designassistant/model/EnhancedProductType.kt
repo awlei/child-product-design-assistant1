@@ -1,7 +1,5 @@
 package com.childproduct.designassistant.model
 
-import com.childproduct.designassistant.model.engineering.ProductType
-
 /**
  * 增强的产品类型枚举
  * 包含产品类型的基本信息和输入需求

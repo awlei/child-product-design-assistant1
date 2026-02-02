@@ -115,10 +115,10 @@ class HeightAgeGroupMapper {
         val (minHeight, maxHeight) = parseHeightRange(heightRange)
 
         return when (productType) {
-            ProductType.SAFETY_SEAT -> matchSafetySeatHeight(minHeight, maxHeight)
-            ProductType.STROLLER -> matchStrollerHeight(minHeight, maxHeight)
-            ProductType.HIGH_CHAIR -> matchHighChairHeight(minHeight, maxHeight)
-            ProductType.CRIB -> matchHouseholdGoodsHeight(minHeight, maxHeight)
+            ProductType.CHILD_SAFETY_SEAT, ProductType.SAFETY_SEAT -> matchSafetySeatHeight(minHeight, maxHeight)
+            ProductType.CHILD_STROLLER, ProductType.STROLLER -> matchStrollerHeight(minHeight, maxHeight)
+            ProductType.CHILD_HIGH_CHAIR, ProductType.HIGH_CHAIR -> matchHighChairHeight(minHeight, maxHeight)
+            ProductType.CHILD_HOUSEHOLD_GOODS, ProductType.CRIB -> matchHouseholdGoodsHeight(minHeight, maxHeight)
         }
     }
 
