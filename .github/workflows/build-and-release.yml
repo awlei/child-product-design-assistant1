@@ -46,17 +46,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Force clean build - remove all caches
-        run: |
-          echo "=== Force Clean: Remove ALL caches to fix KAPT compatibility ==="
-          rm -rf ~/.gradle/
-          rm -rf ~/.kotlin/
-          rm -rf .gradle/
-          rm -rf build/
-          rm -rf app/build/
-          rm -rf local.properties
-          echo "=== All caches removed ==="
-
       - name: Decode keystore
         if: github.event.inputs.release_type == 'release'
         run: |
@@ -65,11 +54,11 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
       - name: Build Debug APK
-        run: ./gradlew clean assembleDebug --stacktrace --info --no-daemon
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
 
       - name: Build Release APK
         if: github.event.inputs.release_type == 'release'
-        run: ./gradlew assembleRelease --stacktrace --info --no-daemon
+        run: ./gradlew assembleRelease --stacktrace --no-daemon
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
