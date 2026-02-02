@@ -282,6 +282,8 @@ fun CreativeScreenV2(
  * 增强的产品类型卡片
  */
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun EnhancedProductTypeCard(
     productType: EnhancedProductType,
     isSelected: Boolean,
@@ -336,6 +338,7 @@ fun EnhancedProductTypeCard(
 /**
  * 标准卡片 V2
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardCardV2(
     standard: InternationalStandard,
@@ -398,6 +401,7 @@ fun StandardCardV2(
 /**
  * 安装方式卡片
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstallMethodCard(
     installMethod: EnhancedInstallMethod,

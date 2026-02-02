@@ -376,6 +376,7 @@ fun DocumentLearningCard(
 /**
  * 上传文档对话框
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UploadDocumentDialog(
     onDismiss: () -> Unit,

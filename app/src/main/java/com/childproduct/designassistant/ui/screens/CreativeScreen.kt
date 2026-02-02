@@ -604,6 +604,7 @@ fun CreativeScreen(
 /**
  * 产品类型卡片
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductTypeCard(
     productType: ProductType,
@@ -687,6 +688,7 @@ fun ProductTypeCard(
 /**
  * 标准卡片
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardCard(
     standard: StandardConfig,

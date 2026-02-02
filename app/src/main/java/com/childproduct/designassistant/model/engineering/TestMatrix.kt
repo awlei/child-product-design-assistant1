@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model.engineering
 
+import com.childproduct.designassistant.model.InstallDirection
+
 /**
  * 测试矩阵 - ROADMATE 360标准格式
  * 修正：Impact列填假人类型（Q0/Q1/Q3/Q3s/Q6/Q10），非碰撞方向

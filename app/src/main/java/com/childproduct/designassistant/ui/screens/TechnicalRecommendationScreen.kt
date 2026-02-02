@@ -405,6 +405,7 @@ fun TechnicalRecommendationScreen(
 /**
  * 产品类型选择器（带标准信息）
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TechnicalProductTypeWithStandardSelector(
     selectedProductType: ProductType,
@@ -1068,6 +1069,7 @@ fun ComplianceTestItemCard(
 /**
  * 产品类型选择器（简化版）
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TechnicalProductTypeSelector(
     selectedProductType: ProductType,

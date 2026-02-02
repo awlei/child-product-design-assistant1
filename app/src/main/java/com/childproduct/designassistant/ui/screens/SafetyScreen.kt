@@ -342,6 +342,7 @@ fun SafetyCheckItem(
 /**
  * 年龄段选择器（保留用于其他场景）
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SafetyAgeGroupSelector(
     selectedAgeGroup: AgeGroup,
