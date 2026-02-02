@@ -1,6 +1,58 @@
 package com.childproduct.designassistant.engineering
 
 /**
+ * 座椅尺寸参数
+ * 基于 GPS-028 设计规则
+ */
+data class SeatDimensions(
+    val minWidth: Double,           // 最小宽度 (mm)
+    val idealWidth: Double,         // 理想宽度 (mm)
+    val maxWidth: Double,           // 最大宽度 (mm)
+    val minDepth: Double,           // 最小深度 (mm)
+    val idealDepth: Double,         // 理想深度 (mm)
+    val maxDepth: Double,           // 最大深度 (mm)
+    val headRestMinHeight: Double,  // 头枕最小高度 (mm)
+    val headRestIdealHeight: Double,// 头枕理想高度 (mm)
+    val headRestMaxHeight: Double   // 头枕最大高度 (mm)
+)
+
+/**
+ * 安全带参数
+ * 基于 GPS-028 Harness Segment Length
+ */
+data class HarnessParameters(
+    val shoulderBeltMinLength: Double,  // 肩带最小长度 (mm)
+    val shoulderBeltMaxLength: Double,  // 肩带最大长度 (mm)
+    val crotchBeltLength: Double,       // 裆带长度 (mm)
+    val bucklePositionRange: ClosedRange<Double>  // 卡扣位置范围 (mm)
+)
+
+/**
+ * ISOFIX 参数
+ * 基于 UN R129 Annex 17
+ */
+data class IsofixParameters(
+    val anchorSpacingMm: Double,              // 锚点间距 (mm)
+    val anchorToleranceMm: Double,            // 锚点容差 (mm)
+    val foreAftAdjustmentMm: Double,          // 前后调节范围 (mm)
+    val lateralAdjustmentMm: Double,          // 侧向调节范围 (mm)
+    val staticStrengthKN: Double,             // 静态强度 (kN)
+    val supportLegLengthRange: ClosedRange<Double>?,  // 支撑腿长度范围 (mm)
+    val topTetherLengthRange: ClosedRange<Double>?    // 上拉带长度范围 (mm)
+)
+
+/**
+ * 材料规格
+ * 基于 Dorel GPS 规范
+ */
+data class MaterialSpecifications(
+    val shellMaterial: String,        // 外壳材料
+    val foamDensity: String,          // 泡沫密度
+    val harnessWebbing: String,       // 安全带织带
+    val isofixHardware: String       // ISOFIX 硬件
+)
+
+/**
  * 人体数据到产品参数转换器
  * 基于GPS-028人体测量学数据生成工程设计参数
  * 
@@ -196,40 +248,4 @@ data class EngineeringDesignParameters(
     val materialSpecifications: MaterialSpecifications,
     val applicableDummies: List<String>,
     val standardReferences: List<String>
-) {
-    data class SeatDimensions(
-        val minWidth: Double,
-        val idealWidth: Double,
-        val maxWidth: Double,
-        val minDepth: Double,
-        val idealDepth: Double,
-        val maxDepth: Double,
-        val headRestMinHeight: Double,
-        val headRestIdealHeight: Double,
-        val headRestMaxHeight: Double
-    )
-    
-    data class HarnessParameters(
-        val shoulderBeltMinLength: Double,
-        val shoulderBeltMaxLength: Double,
-        val crotchBeltLength: Double,
-        val bucklePositionRange: ClosedFloatingPointRange<Double>
-    )
-    
-    data class IsofixParameters(
-        val anchorSpacingMm: Double,
-        val anchorToleranceMm: Double,
-        val foreAftAdjustmentMm: Double,
-        val lateralAdjustmentMm: Double,
-        val staticStrengthKN: Double,
-        val supportLegLengthRange: ClosedFloatingPointRange<Double>?,
-        val topTetherLengthRange: ClosedFloatingPointRange<Double>?
-    )
-    
-    data class MaterialSpecifications(
-        val shellMaterial: String,
-        val foamDensity: String,
-        val harnessWebbing: String,
-        val isofixHardware: String
-    )
-}
+)

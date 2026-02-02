@@ -59,8 +59,8 @@ data class ChildAnthropometry(
      * 从GPS-028数据生成产品设计参数
      * 基于人体测量学数据计算座椅尺寸
      */
-    fun generateSeatDimensions(): SeatDimensions {
-        return SeatDimensions(
+    fun generateSeatDimensions(): AnthropometrySeatDimensions {
+        return AnthropometrySeatDimensions(
             minWidth = hipWidthMm * 1.1,            // 臀宽×1.1（最小间隙）
             idealWidth = hipWidthMm * 1.2,          // 臀宽×1.2（舒适间隙）
             maxWidth = hipWidthMm * 1.3,            // 臀宽×1.3（最大间隙）
@@ -78,8 +78,8 @@ data class ChildAnthropometry(
      * 生成安全带长度要求
      * 基于GPS-028 Harness Segment Length数据
      */
-    fun generateHarnessRequirements(): HarnessRequirements {
-        return HarnessRequirements(
+    fun generateHarnessRequirements(): AnthropometryHarnessRequirements {
+        return AnthropometryHarnessRequirements(
             minShoulderBeltLength = harnessLengthMm * 0.9,  // 90%最小长度
             idealShoulderBeltLength = harnessLengthMm,       // 100%理想长度
             maxShoulderBeltLength = harnessLengthMm * 1.2,  // 120%最大长度
@@ -140,10 +140,10 @@ data class ChildAnthropometry(
 }
 
 /**
- * 座椅尺寸参数
+ * 座椅尺寸参数（基于人体测量学数据）
  * 基于GPS-028人体测量学数据生成
  */
-data class SeatDimensions(
+data class AnthropometrySeatDimensions(
     val minWidth: Double,           // 最小宽度(mm)
     val idealWidth: Double,         // 理想宽度(mm)
     val maxWidth: Double,           // 最大宽度(mm)
@@ -157,10 +157,10 @@ data class SeatDimensions(
 )
 
 /**
- * 安全带要求
+ * 安全带要求（基于人体测量学数据）
  * 基于GPS-028 Harness Segment Length数据
  */
-data class HarnessRequirements(
+data class AnthropometryHarnessRequirements(
     val minShoulderBeltLength: Double,   // 最小肩带长度(mm)
     val idealShoulderBeltLength: Double, // 理想肩带长度(mm)
     val maxShoulderBeltLength: Double,   // 最大肩带长度(mm)
