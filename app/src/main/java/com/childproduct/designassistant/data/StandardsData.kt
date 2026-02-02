@@ -690,10 +690,11 @@ class StandardParameterPreviewService {
         maxHeight: Int
     ): List<StandardParameterPreview> {
         return when (productType) {
-            ProductType.SAFETY_SEAT -> getChildSafetySeatParameters(minHeight, maxHeight)
-            ProductType.STROLLER -> getStrollerParameters(minHeight, maxHeight)
+            ProductType.SAFETY_SEAT, ProductType.CHILD_SAFETY_SEAT -> getChildSafetySeatParameters(minHeight, maxHeight)
+            ProductType.STROLLER, ProductType.CHILD_STROLLER -> getStrollerParameters(minHeight, maxHeight)
             ProductType.CHILD_HOUSEHOLD_GOODS -> getHouseholdGoodsParameters(minHeight, maxHeight)
-            ProductType.HIGH_CHAIR -> getHighChairParameters(minHeight, maxHeight)
+            ProductType.HIGH_CHAIR, ProductType.CHILD_HIGH_CHAIR -> getHighChairParameters(minHeight, maxHeight)
+            ProductType.CRIB -> getStrollerParameters(minHeight, maxHeight)  // 临时使用stroller参数
         }
     }
 
