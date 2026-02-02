@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.common.ValidationResult
+
 /**
  * 碰撞测试映射系统
  * 提供准确的身高-假人类型-年龄段映射，基于UN R129/GB 27887-2024标准
@@ -143,17 +145,6 @@ object CrashTestMapping {
         val description: String,
         val hicLimit: Int,
         val complianceParams: ComplianceParameters
-    )
-
-    /**
-     * 验证结果数据类
-     */
-    data class ValidationResult(
-        val isValid: Boolean,
-        val errors: List<String>,
-        val warnings: List<String>,
-        val dummyTypes: List<CrashTestDummy>,
-        val criticalPoints: List<Int>
     )
 
     /**

@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model.engineering
 
+import com.childproduct.designassistant.common.ValidationResult
+
 /**
  * 工程输入数据 - 工程师专用
  * 精准参数捕获，自动验证合规性
@@ -162,11 +164,3 @@ data class WeightConstraints(
     val unit: String = "kg"
 )
 
-/**
- * 验证结果
- */
-data class ValidationResult(
-    val isValid: Boolean,
-    val errors: List<String>,
-    val warnings: List<String>
-)

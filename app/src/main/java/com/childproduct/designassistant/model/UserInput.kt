@@ -1,5 +1,6 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.common.ValidationResult
 import com.childproduct.designassistant.model.ProductType.*
 import com.childproduct.designassistant.model.InternationalStandard.*
 import com.childproduct.designassistant.model.UsageScenario
@@ -87,15 +88,6 @@ sealed class ProductInput {
     data class Stroller(val data: StrollerInput) : ProductInput()
     data class HouseholdGood(val data: HouseholdGoodInput) : ProductInput()
 }
-
-/**
- * 输入校验结果
- */
-data class ValidationResult(
-    val isValid: Boolean,
-    val errors: List<ValidationError> = emptyList(),
-    val warnings: List<ValidationWarning> = emptyList()
-)
 
 /**
  * 校验错误

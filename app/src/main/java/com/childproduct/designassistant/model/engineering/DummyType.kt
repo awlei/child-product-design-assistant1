@@ -1,5 +1,6 @@
 package com.childproduct.designassistant.model.engineering
 
+import com.childproduct.designassistant.common.ValidationResult
 import com.childproduct.designassistant.model.InstallDirection
 
 /**
@@ -245,15 +246,6 @@ enum class AntiRotationType(val displayName: String) {
     SUPPORT_LEG("支撑腿"),
     TOP_TETHER("Top-tether上拉带")
 }
-
-/**
- * 验证结果
- */
-data class ValidationResult(
-    val isValid: Boolean,
-    val errors: List<String>,
-    val warnings: List<String>
-)
 
 /**
  * 假人详细信息

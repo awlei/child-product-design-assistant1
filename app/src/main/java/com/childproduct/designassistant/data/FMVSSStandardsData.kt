@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.data
 
+import com.childproduct.designassistant.common.ValidationResult
+
 /**
  * FMVSS 213/213a 标准数据模型
  * 
@@ -447,30 +449,6 @@ data class ManualRequirements(
 }
 
 /**
- * 验证结果
- */
-data class ValidationResult(
-    val isCompliant: Boolean,
-    val issues: List<String>
-) {
-    fun getFormattedReport(): String {
-        val report = StringBuilder()
-        
-        if (isCompliant) {
-            report.appendLine("✅ 合规性验证通过")
-        } else {
-            report.appendLine("❌ 合规性验证失败")
-            report.appendLine()
-            report.appendLine("发现的问题：")
-            issues.forEach { issue ->
-                report.appendLine("  - $issue")
-            }
-        }
-        
-        return report.toString()
-    }
-}
-
 /**
  * FMVSS 213/213a完整标准数据
  */

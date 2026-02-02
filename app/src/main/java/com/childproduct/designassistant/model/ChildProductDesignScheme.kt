@@ -1,5 +1,6 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.common.ValidationResult
 import com.childproduct.designassistant.config.StandardConfig
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.ImmutableMap
@@ -83,29 +84,6 @@ data class ChildProductDesignScheme(
             isValid = errors.isEmpty(),
             errors = errors.toImmutableList() // 转为不可变集合
         )
-    }
-
-    /**
-     * 验证结果（使用不可变集合）
-     */
-    data class ValidationResult(
-        val isValid: Boolean,
-        val errors: ImmutableList<String>
-    ) {
-        companion object {
-            /**
-             * 创建成功的验证结果
-             */
-            fun success() = ValidationResult(isValid = true, errors = emptyList())
-
-            /**
-             * 创建失败的验证结果
-             */
-            fun failure(errors: List<String>) = ValidationResult(
-                isValid = false,
-                errors = errors.toImmutableList()
-            )
-        }
     }
 
     // 构建器模式（简化对象创建）

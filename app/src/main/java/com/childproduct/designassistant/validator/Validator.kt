@@ -16,78 +16,14 @@ import kotlinx.collections.immutable.toImmutableList
  * - 提供清晰的验证结果反馈
  */
 interface Validator<T> {
-    fun validate(target: T): ValidationResult
-
-    /**
-     * 通用验证结果
-     */
-    data class ValidationResult(
-        val isValid: Boolean,
-        val errors: ImmutableList<String> = persistentListOf(),
-        val warnings: ImmutableList<String> = persistentListOf()
-    ) {
-        /**
-         * 创建成功的验证结果
-         */
-        companion object {
-            fun success() = ValidationResult(
-                isValid = true,
-                errors = persistentListOf(),
-                warnings = persistentListOf()
-            )
-
-            fun success(warnings: List<String>) = ValidationResult(
-                isValid = true,
-                errors = persistentListOf(),
-                warnings = warnings.toImmutableList()
-            )
-
-            fun failure(errors: List<String>) = ValidationResult(
-                isValid = false,
-                errors = errors.toImmutableList(),
-                warnings = persistentListOf()
-            )
-
-            fun failure(errors: List<String>, warnings: List<String>) = ValidationResult(
-                isValid = false,
-                errors = errors.toImmutableList(),
-                warnings = warnings.toImmutableList()
-            )
-        }
-
-        /**
-         * 获取错误摘要（前3个错误）
-         */
-        fun getErrorSummary(limit: Int = 3): String {
-            return if (errors.isEmpty()) {
-                "验证通过"
-            } else {
-                val displayErrors = errors.take(limit)
-                val suffix = if (errors.size > limit) "..." else ""
-                "验证失败：${displayErrors.joinToString("; ")}$suffix"
-            }
-        }
-
-        /**
-         * 获取警告摘要
-         */
-        fun getWarningSummary(limit: Int = 3): String {
-            return if (warnings.isEmpty()) {
-                ""
-            } else {
-                val displayWarnings = warnings.take(limit)
-                val suffix = if (warnings.size > limit) "..." else ""
-                "警告：${displayWarnings.joinToString("; ")}$suffix"
-            }
-        }
-    }
+    fun validate(target: T): com.childproduct.designassistant.common.ValidationResult
 }
 
 /**
  * 身高验证器（实现统一接口）
  */
 class HeightValidator : Validator<String> {
-    override fun validate(target: String): Validator.ValidationResult {
+    override fun validate(target: String): com.childproduct.designassistant.common.ValidationResult {
         val errors = mutableListOf<String>()
         val warnings = mutableListOf<String>()
 
@@ -115,9 +51,9 @@ class HeightValidator : Validator<String> {
         }
 
         return when {
-            errors.isNotEmpty() -> Validator.ValidationResult.failure(errors, warnings)
-            warnings.isNotEmpty() -> Validator.ValidationResult.success(warnings)
-            else -> Validator.ValidationResult.success()
+            errors.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.failure(errors, warnings)
+            warnings.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.success(warnings)
+            else -> com.childproduct.designassistant.common.ValidationResult.success()
         }
     }
 }
@@ -129,7 +65,7 @@ class ProductInputValidator : Validator<SchemeOptimizer.UserInput> {
     private val heightValidator = HeightValidator()
     private val themeValidator = ThemeKeywordValidator()
 
-    override fun validate(target: SchemeOptimizer.UserInput): Validator.ValidationResult {
+    override fun validate(target: SchemeOptimizer.UserInput): com.childproduct.designassistant.common.ValidationResult {
         val allErrors = mutableListOf<String>()
         val allWarnings = mutableListOf<String>()
 
@@ -149,9 +85,9 @@ class ProductInputValidator : Validator<SchemeOptimizer.UserInput> {
         allWarnings.addAll(heightResult.warnings)
 
         return when {
-            allErrors.isNotEmpty() -> Validator.ValidationResult.failure(allErrors, allWarnings)
-            allWarnings.isNotEmpty() -> Validator.ValidationResult.success(allWarnings)
-            else -> Validator.ValidationResult.success()
+            allErrors.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.failure(allErrors, allWarnings)
+            allWarnings.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.success(allWarnings)
+            else -> com.childproduct.designassistant.common.ValidationResult.success()
         }
     }
 }
@@ -160,14 +96,14 @@ class ProductInputValidator : Validator<SchemeOptimizer.UserInput> {
  * 主题关键词验证器
  */
 class ThemeKeywordValidator : Validator<String> {
-    override fun validate(target: String): Validator.ValidationResult {
+    override fun validate(target: String): com.childproduct.designassistant.common.ValidationResult {
         val errors = mutableListOf<String>()
         val warnings = mutableListOf<String>()
 
         // 非空校验
         if (target.isBlank()) {
             errors.add("设计主题不能为空")
-            return Validator.ValidationResult.failure(errors, warnings)
+            return com.childproduct.designassistant.common.ValidationResult.failure(errors, warnings)
         }
 
         // 长度校验
@@ -182,9 +118,9 @@ class ThemeKeywordValidator : Validator<String> {
         }
 
         return when {
-            errors.isNotEmpty() -> Validator.ValidationResult.failure(errors, warnings)
-            warnings.isNotEmpty() -> Validator.ValidationResult.success(warnings)
-            else -> Validator.ValidationResult.success()
+            errors.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.failure(errors, warnings)
+            warnings.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.success(warnings)
+            else -> com.childproduct.designassistant.common.ValidationResult.success()
         }
     }
 }
@@ -193,7 +129,7 @@ class ThemeKeywordValidator : Validator<String> {
  * 设计方案验证器
  */
 class DesignSchemeValidator : Validator<com.childproduct.designassistant.model.ChildProductDesignScheme> {
-    override fun validate(target: com.childproduct.designassistant.model.ChildProductDesignScheme): Validator.ValidationResult {
+    override fun validate(target: com.childproduct.designassistant.model.ChildProductDesignScheme): com.childproduct.designassistant.common.ValidationResult {
         // 复用模型自带的验证逻辑
         val modelValidation = target.validate()
 
@@ -220,9 +156,9 @@ class DesignSchemeValidator : Validator<com.childproduct.designassistant.model.C
         }
 
         return when {
-            errors.isNotEmpty() -> Validator.ValidationResult.failure(errors, warnings)
-            warnings.isNotEmpty() -> Validator.ValidationResult.success(warnings)
-            else -> Validator.ValidationResult.success()
+            errors.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.failure(errors, warnings)
+            warnings.isNotEmpty() -> com.childproduct.designassistant.common.ValidationResult.success(warnings)
+            else -> com.childproduct.designassistant.common.ValidationResult.success()
         }
     }
 }
