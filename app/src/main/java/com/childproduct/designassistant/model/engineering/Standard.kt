@@ -374,7 +374,7 @@ data class TestRequirements(
  * 产品类型
  */
 enum class ProductType(val displayName: String) {
-    SAFETY_SEAT("儿童安全座椅"),
+    CHILD_SAFETY_SEAT("儿童安全座椅"),
     STROLLER("婴儿推车"),
     HIGH_CHAIR("儿童高脚椅"),
     CRIB("儿童床")
