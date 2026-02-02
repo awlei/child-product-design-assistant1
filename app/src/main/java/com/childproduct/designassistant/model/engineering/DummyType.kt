@@ -1,7 +1,7 @@
 package com.childproduct.designassistant.model.engineering
 
 import com.childproduct.designassistant.common.ValidationResult
-import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
+import com.childproduct.designassistant.model.InstallDirection
 
 /**
  * 假人类型 - 基于ECE R129 Rev.4标准

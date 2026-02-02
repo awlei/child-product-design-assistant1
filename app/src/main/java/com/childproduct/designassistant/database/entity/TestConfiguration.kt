@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import com.childproduct.designassistant.model.TestPulseType
 import com.childproduct.designassistant.model.ImpactDirection
-import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
+import com.childproduct.designassistant.model.InstallDirection
 
 /**
  * 测试配置实体

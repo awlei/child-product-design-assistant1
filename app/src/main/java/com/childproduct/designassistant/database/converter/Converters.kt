@@ -1,7 +1,7 @@
 package com.childproduct.designassistant.database.converter
 
 import androidx.room.TypeConverter
-import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
+import com.childproduct.designassistant.model.InstallDirection
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 

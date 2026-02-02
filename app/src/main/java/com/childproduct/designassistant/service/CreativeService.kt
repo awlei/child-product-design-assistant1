@@ -296,7 +296,7 @@ data class CreativeIdeaResult(
     val success: Boolean,
     val error: String?,
     val idea: CreativeIdea?,
-    val validation: CrashTestMapping.ValidationResult,
+    val validation: ValidationResult,
     val ageCorrectionHint: String? = null,  // 年龄修正提示
     val standardComplianceText: String? = null  // 标准合规性说明
 ) {

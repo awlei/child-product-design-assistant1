@@ -1,20 +1,18 @@
 package com.childproduct.designassistant.service.engineering
 
 import com.childproduct.designassistant.model.CrashTestMapping
-import com.childproduct.designassistant.model.EnhancedProductType
 import com.childproduct.designassistant.model.InstallDirection
+import com.childproduct.designassistant.model.InstallMethod
 import com.childproduct.designassistant.model.ProductType
-import com.childproduct.designassistant.model.engineering.Standard
-import com.childproduct.designassistant.model.engineering.AntiRotationType
-import com.childproduct.designassistant.model.engineering.CrashTestRequirement
 import com.childproduct.designassistant.model.engineering.DummyType
-import com.childproduct.designassistant.model.engineering.EngineeringConfig
+import com.childproduct.designassistant.model.engineering.EngineeringInput
 import com.childproduct.designassistant.model.engineering.EngineeringOutput
-import com.childproduct.designassistant.model.engineering.SafetyParameter
+import com.childproduct.designassistant.model.engineering.IsofixEnvelope
 import com.childproduct.designassistant.model.engineering.RoadmateTestMatrix
+import com.childproduct.designassistant.model.engineering.SafetyParameter
+import com.childproduct.designassistant.model.engineering.Standard
 import com.childproduct.designassistant.model.engineering.TestMatrixMetadata
 import com.childproduct.designassistant.model.engineering.TestMatrixRow
-import com.childproduct.designassistant.model.engineering.InstallMethod as EngineeringInstallMethod
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -137,7 +135,7 @@ class EngineeringOutputGenerator {
             } 
             // 规则：105cm以上可以使用前向或后向安装
             else if (dummy.heightRangeCm.start >= 105) {
-                val userDirection = input.installMethod?.direction
+                val userDirection = input.installMethod?.getDirection()
                 if (userDirection != null) {
                     directions[dummy] = userDirection
                 } else {
@@ -154,16 +152,18 @@ class EngineeringOutputGenerator {
      * 获取ISOFIX Envelope
      */
     private fun getIsofixEnvelope(
-        installMethod: EngineeringInstallMethod?
+        installMethod: InstallMethod?
     ): IsofixEnvelope? {
         // 检查是否是 ISOFIX 相关的安装方式
         if (installMethod == null || 
-            installMethod.fixationType != com.childproduct.designassistant.model.engineering.FixationType.ISOFIX_3PTS) {
+            (installMethod != InstallMethod.ISOFIX && 
+             installMethod != InstallMethod.ISOFIX_TOP_TETHER && 
+             installMethod != InstallMethod.ISOFIX_SUPPORT_LEG)) {
             return null
         }
         
         // 根据安装方式确定对应的Envelope
-        val direction = installMethod.direction ?: InstallDirection.REARWARD
+        val direction = installMethod.getDirection() ?: InstallDirection.REARWARD
         return IsofixEnvelope.getEnvelopeByDirection(direction)
     }
     

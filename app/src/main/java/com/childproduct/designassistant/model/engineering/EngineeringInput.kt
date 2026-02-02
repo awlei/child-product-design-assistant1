@@ -1,6 +1,9 @@
 package com.childproduct.designassistant.model.engineering
 
 import com.childproduct.designassistant.common.ValidationResult
+import com.childproduct.designassistant.model.InstallDirection
+import com.childproduct.designassistant.model.InstallMethod
+import com.childproduct.designassistant.model.ProductType
 
 /**
  * 工程输入数据 - 工程师专用
@@ -27,7 +30,7 @@ data class EngineeringInput(
         val warnings = mutableListOf<String>()
         
         // 规则1: 40-105cm必须后向安装（ECE R129 §5.1.3）
-        if (heightRange.minCm < 105 && installMethod?.direction == InstallDirection.FORWARD) {
+        if (heightRange.minCm < 105 && installMethod?.getDirection() == InstallDirection.FORWARD) {
             errors.add(
                 "ECE R129 §5.1.3: 40-105cm身高范围" +
                 "强制要求后向安装（Rearward facing），禁止前向安装"
@@ -36,8 +39,8 @@ data class EngineeringInput(
         
         // 规则2: 105cm以上前向安装必须使用Top-tether（ECE R129 §6.1.2）
         if (heightRange.maxCm >= 105 && 
-            installMethod?.direction == InstallDirection.FORWARD &&
-            installMethod.antiRotation != AntiRotationType.TOP_TETHER) {
+            installMethod?.getDirection() == InstallDirection.FORWARD &&
+            installMethod?.getAntiRotation() != "Top Tether") {
             errors.add(
                 "ECE R129 §6.1.2: 105cm以上前向安装" +
                 "强制要求使用Top-tether防旋转装置"
@@ -99,7 +102,7 @@ data class EngineeringInput(
      * 获取安装方向
      */
     fun getInstallDirection(): InstallDirection? {
-        return installMethod?.direction
+        return installMethod?.getDirection()
     }
 }
 
@@ -163,4 +166,27 @@ data class WeightConstraints(
     val minWeightKg: Double?,
     val unit: String = "kg"
 )
+
+/**
+ * InstallMethod 扩展函数 - 获取安装方向
+ */
+fun InstallMethod.getDirection(): InstallDirection? {
+    return when (this) {
+        InstallMethod.ISOFIX_SUPPORT_LEG -> InstallDirection.REARWARD
+        InstallMethod.SEAT_BELT, InstallMethod.SEAT_BELT_TOP_TETHER -> InstallDirection.FORWARD
+        InstallMethod.ISOFIX -> InstallDirection.REARWARD
+        InstallMethod.ISOFIX_TOP_TETHER -> InstallDirection.FORWARD
+    }
+}
+
+/**
+ * InstallMethod 扩展函数 - 获取防旋转类型
+ */
+fun InstallMethod.getAntiRotation(): String? {
+    return when (this) {
+        InstallMethod.ISOFIX_SUPPORT_LEG -> "Support Leg"
+        InstallMethod.ISOFIX_TOP_TETHER, InstallMethod.SEAT_BELT_TOP_TETHER -> "Top Tether"
+        InstallMethod.ISOFIX, InstallMethod.SEAT_BELT -> null
+    }
+}
 

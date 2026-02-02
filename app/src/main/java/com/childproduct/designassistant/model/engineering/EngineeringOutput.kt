@@ -11,7 +11,7 @@ data class EngineeringOutput(
     val basicInfo: Map<String, Any>? = null,
     val standardMapping: Map<String, Any>? = null,
     val isofixEnvelope: IsofixEnvelope? = null,
-    val testMatrix: TestMatrix? = null,
+    val testMatrix: RoadmateTestMatrix? = null,
     val safetyThresholds: Map<String, Any>? = null,
     val complianceStatement: Map<String, Any>? = null,
     val engineeringNotes: Map<String, Any>? = null

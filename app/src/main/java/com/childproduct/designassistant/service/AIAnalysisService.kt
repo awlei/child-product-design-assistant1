@@ -722,6 +722,7 @@ class AIAnalysisService(private val context: Context) {
                         testId = "GEN-001",
                         testCategory = TestCategory.SAFETY_TESTING,
                         testName = "通用安全测试",
+                        standardReference = "相关标准",
                         testMethod = "参照相关标准进行测试",
                         acceptanceCriteria = "符合相关标准要求",
                         testEquipment = "通用测试设备",

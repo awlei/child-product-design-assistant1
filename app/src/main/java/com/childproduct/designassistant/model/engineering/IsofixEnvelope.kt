@@ -1,6 +1,6 @@
 package com.childproduct.designassistant.model.engineering
 
-import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
+import com.childproduct.designassistant.model.InstallDirection
 
 /**
  * ISOFIX Envelope - 刚性约束尺寸要求
