@@ -281,7 +281,6 @@ fun CreativeScreenV2(
 /**
  * 增强的产品类型卡片
  */
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EnhancedProductTypeCard(

@@ -28,3 +28,26 @@ enum class InstallMethod(
         description = "车辆安全带固定 + Top-tether防旋转（上拉带）"
     )
 }
+
+/**
+ * InstallMethod 扩展函数 - 获取安装方向
+ */
+fun InstallMethod.getDirection(): InstallDirection? {
+    return when (this) {
+        InstallMethod.ISOFIX_SUPPORT_LEG -> InstallDirection.REARWARD
+        InstallMethod.SEAT_BELT, InstallMethod.SEAT_BELT_TOP_TETHER -> InstallDirection.FORWARD
+        InstallMethod.ISOFIX -> InstallDirection.REARWARD
+        InstallMethod.ISOFIX_TOP_TETHER -> InstallDirection.FORWARD
+    }
+}
+
+/**
+ * InstallMethod 扩展函数 - 获取防旋转类型
+ */
+fun InstallMethod.getAntiRotation(): String? {
+    return when (this) {
+        InstallMethod.ISOFIX_SUPPORT_LEG -> "Support Leg"
+        InstallMethod.ISOFIX_TOP_TETHER, InstallMethod.SEAT_BELT_TOP_TETHER -> "Top Tether"
+        InstallMethod.ISOFIX, InstallMethod.SEAT_BELT -> null
+    }
+}
