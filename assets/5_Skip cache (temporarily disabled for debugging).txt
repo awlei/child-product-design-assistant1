@@ -1,0 +1,10 @@
+﻿2026-02-02T03:08:05.8457831Z ##[group]Run echo "Cache disabled for debugging"
+2026-02-02T03:08:05.8458241Z [36;1mecho "Cache disabled for debugging"[0m
+2026-02-02T03:08:05.8493730Z shell: /usr/bin/bash -e {0}
+2026-02-02T03:08:05.8493969Z env:
+2026-02-02T03:08:05.8494261Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-02-02T03:08:05.8494763Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-02-02T03:08:05.8495159Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-02-02T03:08:05.8495432Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-02-02T03:08:05.8495683Z ##[endgroup]
+2026-02-02T03:08:05.9434087Z Cache disabled for debugging

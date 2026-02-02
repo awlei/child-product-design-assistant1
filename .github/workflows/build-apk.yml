@@ -43,8 +43,16 @@ jobs:
         # 注意：建议将来替换为官方方案 actions/setup-java with android-sdk: true
         # 参考：https://github.com/actions/setup-java#android-sdk
 
-      - name: Skip cache (temporarily disabled for debugging)
-        run: echo "Cache disabled for debugging"
+      - name: Setup Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.gradle/daemon
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
