@@ -36,6 +36,8 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           accept-licenses: true
+        # 注意：建议将来替换为官方方案 actions/setup-java with android-sdk: true
+        # 参考：https://github.com/actions/setup-java#android-sdk
 
       - name: Setup Gradle cache
         uses: actions/cache@v4
@@ -43,8 +45,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-            ~/.gradle/daemon
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/settings.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
@@ -52,14 +53,31 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew clean assembleDebug --no-daemon
+        run: ./gradlew assembleDebug --no-daemon
         env:
           GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
 
       - name: Build Release APK
-        run: ./gradlew assembleRelease --no-daemon
+        run: ./gradlew clean assembleRelease --no-daemon
         env:
           GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
+          # 如需签名Release APK，请添加以下环境变量：
+          # SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          # SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          # SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        # 签名配置需在 app/build.gradle 中配置 signingConfigs.release
+
+      - name: Verify Debug APK
+        run: |
+          echo "=== Verifying Debug APK ==="
+          aapt dump badging app/build/outputs/apk/debug/*.apk | head -5
+          ls -lh app/build/outputs/apk/debug/*.apk
+
+      - name: Verify Release APK
+        run: |
+          echo "=== Verifying Release APK ==="
+          aapt dump badging app/build/outputs/apk/release/*.apk | head -5
+          ls -lh app/build/outputs/apk/release/*.apk
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
