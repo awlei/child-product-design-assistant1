@@ -36,6 +36,10 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           accept-licenses: true
+          api-level: 34
+          build-tools: 34.0.0
+          cmake: 3.22.1
+          ndk: 25.2.9519653
         # 注意：建议将来替换为官方方案 actions/setup-java with android-sdk: true
         # 参考：https://github.com/actions/setup-java#android-sdk
 

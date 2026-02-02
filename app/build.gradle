@@ -61,6 +61,7 @@ android {
     sourceSets {
         main {
             java.srcDirs = ['src/main/java']
+            kotlin.srcDirs += 'build/generated/ksp/main/kotlin'  // KSP生成的代码目录
         }
         test {
             java.srcDirs = ['src/test/java']
