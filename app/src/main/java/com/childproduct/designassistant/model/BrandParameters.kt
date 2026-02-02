@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.model.engineering.ProductType
+
 /**
  * 品牌产品参数数据模型
  */

@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.data
 
+import com.childproduct.designassistant.model.*
+
 /**
  * ECE R129 / GB 27887 专业参数数据库
  * 包含标准条款、设计参数、材料标准、测试矩阵等

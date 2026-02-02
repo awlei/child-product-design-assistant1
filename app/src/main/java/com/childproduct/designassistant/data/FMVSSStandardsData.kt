@@ -158,8 +158,8 @@ data class FlammabilityRequirements(
         }
 
         return ValidationResult(
-            isCompliant = isCompliant,
-            issues = issues
+            isValid = isCompliant,
+            errors = issues
         )
     }
 }

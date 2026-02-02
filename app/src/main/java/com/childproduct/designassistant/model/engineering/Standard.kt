@@ -33,7 +33,7 @@ enum class Standard(
             )
         ),
         supportedProducts = listOf(
-            ProductType.SAFETY_SEAT,
+            ProductType.CHILD_SAFETY_SEAT,
             ProductType.CRIB
         )
     ),
@@ -50,7 +50,7 @@ enum class Standard(
         effectiveDate = "2024-05-28",
         nextAmendment = null,
         supportedProducts = listOf(
-            ProductType.SAFETY_SEAT,
+            ProductType.CHILD_SAFETY_SEAT,
             ProductType.CRIB
         )
     ),
@@ -74,7 +74,7 @@ enum class Standard(
             )
         ),
         supportedProducts = listOf(
-            ProductType.SAFETY_SEAT,
+            ProductType.CHILD_SAFETY_SEAT,
             ProductType.CRIB
         )
     ),

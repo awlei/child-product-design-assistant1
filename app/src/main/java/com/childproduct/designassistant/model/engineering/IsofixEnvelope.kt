@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model.engineering
 
+import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
+
 /**
  * ISOFIX Envelope - 刚性约束尺寸要求
  * 基于ECE R129 Annex 17标准

@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.data
 
+import com.childproduct.designassistant.model.*
+
 /**
  * 动态测试矩阵数据模型
  * 参考：ROADMATE 360 dynamic test matrix

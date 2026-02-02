@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.model.engineering.ProductType
+
 /**
  * 极简输入模型
  * 核心设计：仅需输入身高或重量范围，系统自动匹配对应法规

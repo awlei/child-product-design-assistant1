@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.model.engineering.ProductType
+
 /**
  * 增强版设计建议报告
  * 每个参数都标注法规依据，融入品牌参数对比

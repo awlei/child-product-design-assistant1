@@ -1,6 +1,7 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.model.*
+import com.childproduct.designassistant.model.engineering.ProductType
 import com.childproduct.designassistant.utils.ComplianceParamsData
 import com.childproduct.designassistant.utils.DesignSchemeFormatter
 import com.childproduct.designassistant.utils.OutputComplianceChecker
