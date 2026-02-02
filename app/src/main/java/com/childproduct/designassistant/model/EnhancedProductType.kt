@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.model.engineering.ProductType
+
 /**
  * 增强的产品类型枚举
  * 包含产品类型的基本信息和输入需求
@@ -17,7 +19,7 @@ enum class EnhancedProductType(
 
     fun toProductType(): ProductType {
         return when (this) {
-            SAFETY_SEAT -> ProductType.SAFETY_SEAT
+            SAFETY_SEAT -> ProductType.CHILD_SAFETY_SEAT
             STROLLER -> ProductType.STROLLER
             HIGH_CHAIR -> ProductType.HIGH_CHAIR
             CRIB -> ProductType.CRIB
@@ -35,12 +37,12 @@ enum class InternationalStandard(
     val region: String,
     val applicableProducts: List<ProductType>
 ) {
-    ECE_R129("ECE R129 (i-Size)", "ECE R129", "欧洲", listOf(ProductType.SAFETY_SEAT)),
-    FMVSS_213("FMVSS 213", "FMVSS 213", "美国", listOf(ProductType.SAFETY_SEAT)),
-    JIS("JIS D 0401", "JIS", "日本", listOf(ProductType.SAFETY_SEAT, ProductType.STROLLER)),
-    CANADIAN("CMVSS 213", "CMVSS 213", "加拿大", listOf(ProductType.SAFETY_SEAT)),
-    AUSTRALIAN("AS/NZS 1754", "AS/NZS 1754", "澳洲", listOf(ProductType.SAFETY_SEAT)),
-    GB_27887("GB 27887-2024", "GB 27887-2024", "中国", listOf(ProductType.SAFETY_SEAT)),
+    ECE_R129("ECE R129 (i-Size)", "ECE R129", "欧洲", listOf(ProductType.CHILD_SAFETY_SEAT)),
+    FMVSS_213("FMVSS 213", "FMVSS 213", "美国", listOf(ProductType.CHILD_SAFETY_SEAT)),
+    JIS("JIS D 0401", "JIS", "日本", listOf(ProductType.CHILD_SAFETY_SEAT, ProductType.STROLLER)),
+    CANADIAN("CMVSS 213", "CMVSS 213", "加拿大", listOf(ProductType.CHILD_SAFETY_SEAT)),
+    AUSTRALIAN("AS/NZS 1754", "AS/NZS 1754", "澳洲", listOf(ProductType.CHILD_SAFETY_SEAT)),
+    GB_27887("GB 27887-2024", "GB 27887-2024", "中国", listOf(ProductType.CHILD_SAFETY_SEAT)),
     GB_14748("GB 14748", "GB 14748", "中国", listOf(ProductType.STROLLER)),
     GB_22793("GB 22793", "GB 22793", "中国", listOf(ProductType.HIGH_CHAIR))
 }

@@ -1,7 +1,7 @@
 package com.childproduct.designassistant.model
 
 import com.childproduct.designassistant.common.ValidationResult
-import com.childproduct.designassistant.model.ProductType.*
+import com.childproduct.designassistant.model.engineering.ProductType
 import com.childproduct.designassistant.model.InternationalStandard.*
 import com.childproduct.designassistant.model.UsageScenario
 

@@ -1,5 +1,7 @@
 package com.childproduct.designassistant.model
 
+import com.childproduct.designassistant.model.engineering.ProductType
+
 /**
  * 输入项类型枚举
  */
