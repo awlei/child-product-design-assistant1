@@ -556,7 +556,7 @@ class AIAnalysisService(private val context: Context) {
         val testItems = mutableListOf<DVPTestItem>()
         
         when (productType) {
-            ProductType.SAFETY_SEAT -> {
+            ProductType.SAFETY_SEAT, ProductType.CHILD_SAFETY_SEAT -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "IMP-001",
@@ -599,7 +599,7 @@ class AIAnalysisService(private val context: Context) {
                     )
                 ))
             }
-            ProductType.STROLLER -> {
+            ProductType.STROLLER, ProductType.CHILD_STROLLER -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "BRK-001",
@@ -672,7 +672,7 @@ class AIAnalysisService(private val context: Context) {
                     )
                 ))
             }
-            ProductType.HIGH_CHAIR -> {
+            ProductType.HIGH_CHAIR, ProductType.CHILD_HIGH_CHAIR -> {
                 testItems.addAll(listOf(
                     DVPTestItem(
                         testId = "STB-001",
@@ -712,6 +712,36 @@ class AIAnalysisService(private val context: Context) {
                         estimatedDuration = "1小时",
                         priority = TestPriority.IMPORTANT,
                         notes = "推荐测试"
+                    )
+                ))
+            }
+            ProductType.CHILD_HOUSEHOLD_GOODS -> {
+                testItems.addAll(listOf(
+                    DVPTestItem(
+                        testId = "SAF-001",
+                        testCategory = TestCategory.SAFETY_TESTING,
+                        testName = "安全性测试",
+                        standardReference = "GB 6675",
+                        testMethod = "按照GB 6675标准进行安全性测试",
+                        acceptanceCriteria = "符合GB 6675安全要求",
+                        testEquipment = "安全测试设备",
+                        sampleSize = 3,
+                        estimatedDuration = "2-3小时",
+                        priority = TestPriority.MANDATORY,
+                        notes = "必须测试"
+                    ),
+                    DVPTestItem(
+                        testId = "MAT-002",
+                        testCategory = TestCategory.MATERIAL_TESTING,
+                        testName = "材料安全测试",
+                        standardReference = "GB 6675 / EN 71",
+                        testMethod = "材料化学成分检测",
+                        acceptanceCriteria = "符合GB 6675和EN 71要求",
+                        testEquipment = "化学检测设备",
+                        sampleSize = 1,
+                        estimatedDuration = "4-6小时",
+                        priority = TestPriority.MANDATORY,
+                        notes = "必须测试"
                     )
                 ))
             }

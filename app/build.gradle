@@ -1,8 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    // 暂时禁用KSP以排查问题
-    // id 'com.google.devtools.ksp'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -87,12 +86,12 @@ android {
     }
 }
 
-// KSP 配置（暂时禁用）
-// ksp {
-//     arg("room.schemaLocation", "$projectDir/schemas")
-//     arg("room.incremental", "true")
-//     arg("room.expandProjection", "true")
-// }
+// KSP 配置
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+    arg("room.expandProjection", "true")
+}
 
 dependencies {
     // Core Android dependencies
@@ -126,7 +125,7 @@ dependencies {
     def roomVersion = "2.6.1"
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
-    // ksp "androidx.room:room-compiler:$roomVersion"  // 暂时禁用KSP
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // Retrofit for API calls
     def retrofitVersion = "2.9.0"
