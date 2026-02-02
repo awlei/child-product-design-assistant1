@@ -53,18 +53,7 @@ abstract class EceR129Database : RoomDatabase() {
                     EceR129Database::class.java,
                     "ece_r129_database"
                 )
-                    // 数据库初始化回调
-                    .addCallback(object : RoomDatabase.Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            // 数据库创建时初始化数据（异步执行）
-                            INSTANCE?.let { database ->
-                                DatabaseInitializer(context).also { initializer ->
-                                    initializer.execute(database)
-                                }
-                            }
-                        }
-                    })
+                    .fallbackToDestructiveMigration()  // 开发阶段允许破坏性迁移
                     .build()
                 INSTANCE = instance
                 instance
