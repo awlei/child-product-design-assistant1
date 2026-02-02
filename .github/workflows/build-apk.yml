@@ -43,18 +43,8 @@ jobs:
         # 注意：建议将来替换为官方方案 actions/setup-java with android-sdk: true
         # 参考：https://github.com/actions/setup-java#android-sdk
 
-      - name: Clear old Gradle cache (force rebuild)
-        run: rm -rf ~/.gradle/caches/modules-* ~/.gradle/caches/kotlin ~/.gradle/caches/transforms-*
-
-      - name: Setup Gradle cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/settings.gradle*', '**/gradle-wrapper.properties') }}-v2
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Skip cache (temporarily disabled for debugging)
+        run: echo "Cache disabled for debugging"
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
