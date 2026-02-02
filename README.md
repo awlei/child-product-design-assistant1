@@ -404,13 +404,20 @@ app/
 ## 🚀 当前构建状态
 
 ### 最新推送
-- **提交**：9ee0a63 (docs: 添加构建监控和故障排查文档)
-- **时间**：2026-01-29 16:50
-- **状态**：✅ 已推送到GitHub
+- **提交**：821b118 (fix: 移除 GitHub Actions 中的 kapt 参数（已迁移到 KSP）)
+- **时间**：2025-02-02
+- **状态**：✅ 代码已迁移到 KSP
+
+### 构建优化完成
+- ✅ 从 KAPT 迁移到 KSP（Kotlin Symbol Processing）
+- ✅ 修复 Kotlin 和 KAPT 版本不匹配问题
+- ✅ 使用现代 Gradle 插件管理方式（plugins DSL）
+- ✅ 配置 Room 数据库注解处理器（KSP）
+- ✅ 优化构建性能
 
 ### GitHub Actions构建
-- **Workflow**：AI Auto Build APK
-- **状态**：⏳ 自动触发中
+- **Workflow**：build-apk.yml
+- **触发条件**：推送到 main 分支
 - **预计时间**：10-15分钟
 - **查看链接**：https://github.com/awlei/new-child-product-design-assistant/actions
 
