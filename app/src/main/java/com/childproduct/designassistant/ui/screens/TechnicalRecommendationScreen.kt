@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.data.*
 import com.childproduct.designassistant.model.*
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
 import com.childproduct.designassistant.ui.UiState
 import com.childproduct.designassistant.ui.components.StandardClauseDialog

@@ -301,9 +301,9 @@ class FMVSSCRSDesignGuideService {
         report.appendLine("   - 燃烧速率：$burnRate mm/min（≤102 mm/min）")
         report.appendLine("   - 燃烧距离：$burnDistance mm（≤51 mm）")
         report.appendLine("   - 燃烧时间：$burnTime 秒（≤60 秒）")
-        report.appendLine("   - 结果：${if (flammabilityResult.isCompliant) "✅ 合格" else "❌ 不合格"}")
-        if (!flammabilityResult.isCompliant) {
-            flammabilityResult.issues.forEach { report.appendLine("   - 问题：$it") }
+        report.appendLine("   - 结果：${if (flammabilityResult.isValid) "✅ 合格" else "❌ 不合格"}")
+        if (!flammabilityResult.isValid) {
+            flammabilityResult.errors.forEach { report.appendLine("   - 问题：$it") }
         }
         report.appendLine()
         
@@ -370,7 +370,7 @@ class FMVSSCRSDesignGuideService {
         report.appendLine("总结")
         report.appendLine("=" .repeat(70))
         
-        val allCompliant = webbingCompliant && flammabilityResult.isCompliant && 
+        val allCompliant = webbingCompliant && flammabilityResult.isValid && 
                           backHeightCompliant && buckleCompliant && 
                           frontalCompliant && sideCompliant
         

@@ -1,6 +1,20 @@
 package com.childproduct.designassistant.service.engineering
 
-import com.childproduct.designassistant.model.engineering.*
+import com.childproduct.designassistant.model.CrashTestMapping
+import com.childproduct.designassistant.model.DummyType
+import com.childproduct.designassistant.model.EnhancedProductType
+import com.childproduct.designassistant.model.InstallDirection
+import com.childproduct.designassistant.model.ProductType
+import com.childproduct.designassistant.model.SafetyStandard
+import com.childproduct.designassistant.model.Standard
+import com.childproduct.designassistant.model.engineering.AntiRotationType
+import com.childproduct.designassistant.model.engineering.CrashTestRequirement
+import com.childproduct.designassistant.model.engineering.EngineeringConfig
+import com.childproduct.designassistant.model.engineering.EngineeringOutput
+import com.childproduct.designassistant.model.engineering.SafetyParameter
+import com.childproduct.designassistant.model.engineering.TestMatrix
+import com.childproduct.designassistant.model.engineering.TestMatrixMetadata
+import com.childproduct.designassistant.model.engineering.TestMatrixRow
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,35 +75,38 @@ class EngineeringOutputGenerator {
             
             // 6. 构建输出
             val output = EngineeringOutput(
-                metadata = OutputMetadata(
-                    generatedAt = System.currentTimeMillis(),
-                    appVersion = APP_VERSION,
-                    standards = input.standards.map { it.code },
-                    dummyCoverage = buildDummyCoverageString(dummyTypes)
+                productName = "儿童安全座椅",
+                productType = input.productType.displayName,
+                standardVersion = primaryStandard.code,
+                metadata = mapOf(
+                    "generatedAt" to System.currentTimeMillis(),
+                    "appVersion" to APP_VERSION,
+                    "standards" to input.standards.map { it.code },
+                    "dummyCoverage" to buildDummyCoverageString(dummyTypes)
                 ),
-                basicInfo = BasicInfoSection(
-                    productType = input.productType.displayName,
-                    heightRange = "${input.heightRange.minCm}-${input.heightRange.maxCm}cm",
-                    dummyCoverage = buildDummyCoverageString(dummyTypes),
-                    installMethod = input.installMethod?.displayName ?: "N/A"
+                basicInfo = mapOf(
+                    "productType" to input.productType.displayName,
+                    "heightRange" to "${input.heightRange.minCm}-${input.heightRange.maxCm}cm",
+                    "dummyCoverage" to buildDummyCoverageString(dummyTypes),
+                    "installMethod" to (input.installMethod?.displayName ?: "N/A")
                 ),
-                standardMapping = StandardMappingSection(
-                    dummyMappings = dummyTypes,
-                    installDirections = installDirections
+                standardMapping = mapOf(
+                    "dummyMappings" to dummyTypes,
+                    "installDirections" to installDirections
                 ),
                 isofixEnvelope = isofixEnvelope,
                 testMatrix = testMatrix,
-                safetyThresholds = SafetyThresholdsSection(
-                    standard = primaryStandard,
-                    dummyTypes = dummyTypes
+                safetyThresholds = mapOf(
+                    "standard" to primaryStandard,
+                    "dummyTypes" to dummyTypes
                 ),
-                complianceStatement = ComplianceStatementSection(
-                    standards = input.standards,
-                    dummyTypes = dummyTypes
+                complianceStatement = mapOf(
+                    "standards" to input.standards,
+                    "dummyTypes" to dummyTypes
                 ),
-                engineeringNotes = EngineeringNotesSection(
-                    input = input,
-                    dummyTypes = dummyTypes
+                engineeringNotes = mapOf(
+                    "input" to input,
+                    "dummyTypes" to dummyTypes
                 )
             )
             
@@ -177,21 +194,26 @@ class EngineeringOutputGenerator {
         standards: Set<Standard>,
         dummyTypes: List<DummyType>,
         installDirections: Map<DummyType, InstallDirection>
-    ): RoadmateTestMatrix {
-        val testCases = mutableListOf<RoadmateTestCase>()
+    ): TestMatrix {
+        val rows = mutableListOf<TestMatrixRow>()
         
         standards.forEach { standard ->
             dummyTypes.forEach { dummy ->
                 val direction = installDirections[dummy] ?: InstallDirection.REARWARD
                 val testCase = buildTestCase(standard, dummy, direction)
-                testCases.add(testCase)
+                rows.add(testCase)
             }
         }
         
-        return RoadmateTestMatrix(
-            standard = standards.firstOrNull() ?: Standard.ECE_R129,
-            generatedAt = System.currentTimeMillis(),
-            testCases = testCases
+        return TestMatrix(
+            rows = rows,
+            metadata = TestMatrixMetadata(
+                generatedAt = System.currentTimeMillis(),
+                standard = standards.firstOrNull()?.code ?: "UNKNOWN",
+                installMethod = "ISOFIX",
+                rowCount = rows.size,
+                dummyCoverage = buildDummyCoverageString(dummyTypes)
+            )
         )
     }
     
@@ -202,14 +224,14 @@ class EngineeringOutputGenerator {
         standard: Standard,
         dummy: DummyType,
         direction: InstallDirection
-    ): RoadmateTestCase {
+    ): TestMatrixRow {
         // 规则：根据安装方向和假人类型确定测试要求
-        val impactType = when (direction) {
+        val pulseType = when (direction) {
             InstallDirection.REARWARD -> "Frontal"
             InstallDirection.FORWARD -> "Frontal"
         }
         
-        val impactSpeed = "50 km/h"
+        val impactType = dummy.code
         
         val antiRotation = when {
             direction == InstallDirection.REARWARD -> AntiRotationType.SUPPORT_LEG
@@ -218,34 +240,31 @@ class EngineeringOutputGenerator {
         }
         
         val topTether = when (direction) {
-            InstallDirection.REARWARD -> "NO"
-            InstallDirection.FORWARD -> if (dummy.heightRangeCm.start >= 105) "YES" else "NO"
+            InstallDirection.REARWARD -> "no"
+            InstallDirection.FORWARD -> if (dummy.heightRangeCm.start >= 105) "yes" else "no"
         }
         
-        return RoadmateTestCase(
-            testId = "T-${standard.code}-${dummy.code}-001",
-            standard = standard.code,
-            vehicleSeatPosition = "Rear Seat",
-            dummyHeightCm = dummy.heightRangeCm.start.toInt(),
-            dummyType = dummy.code, // 修正：这里填假人类型
-            impactType = impactType,
-            impactSpeed = impactSpeed,
-            installationMethod = "ISOFIX",
-            vehicleType = "Passenger Car",
-            isofixType = when (direction) {
-                InstallDirection.REARWARD -> "ISO/R2"
-                InstallDirection.FORWARD -> "ISO/F2X"
-            },
-            installationDirection = direction.displayName,
-            supportLeg = if (direction == InstallDirection.REARWARD) "YES" else "NO",
-            antiRotationDevice = antiRotation.displayName,
-            harnessAdjustment = "Standard",
-            reclinePosition = "Multiple Positions",
-            measurementPoints = "Head, Chest, Neck",
-            criteria = standard.getSafetyParameters().headInjuryCriteria.firstOrNull()?.value ?: "N/A",
-            topTether = topTether, // Column 18: 标记Top Tether测试
-            notes = "",
-            testDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        return TestMatrixRow(
+            sample = standard.code,
+            pulse = pulseType,
+            impact = impactType,
+            dummyType = impactType,
+            position = direction.displayName,
+            installation = "ISOFIX",
+            specificInstallation = "-",
+            productConfiguration = "Upright",
+            isofixAnchors = "yes",
+            positionOfFloor = "Low",
+            harness = "With",
+            topTetherOrSupportLeg = antiRotation.displayName,
+            dashboard = "With",
+            comments = "",
+            buckle = "no",
+            adjuster = "no",
+            isofix = "yes",
+            topTether = topTether,
+            quantity = "n/a",
+            testNumber = "-"
         )
     }
     
@@ -253,6 +272,6 @@ class EngineeringOutputGenerator {
      * 构建假人覆盖字符串
      */
     private fun buildDummyCoverageString(dummyTypes: List<DummyType>): String {
-        return dummyTypes.joinToString(" → ") { "${it.code} (${it.heightRange.start.toInt()}-${it.heightRangeCm.endInclusive.toInt()}cm)" }
+        return dummyTypes.joinToString(" → ") { "${it.code} (${it.heightRange.start.toInt()}-${it.heightRange.endInclusive.toInt()}cm)" }
     }
 }

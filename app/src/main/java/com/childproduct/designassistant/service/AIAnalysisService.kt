@@ -2,7 +2,7 @@ package com.childproduct.designassistant.service
 
 import android.content.Context
 import com.childproduct.designassistant.model.*
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader

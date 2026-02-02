@@ -14,7 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.HeightAgeMappingConfig
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

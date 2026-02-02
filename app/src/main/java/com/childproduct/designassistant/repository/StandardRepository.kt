@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.childproduct.designassistant.database.EceR129Database
 import com.childproduct.designassistant.database.dao.*
 import com.childproduct.designassistant.database.entity.*
-import com.childproduct.designassistant.model.InstallDirection
+import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -1,0 +1,534 @@
+﻿2026-02-02T05:48:34.5553934Z ##[group]Run ./gradlew assembleDebug --no-daemon --stacktrace
+2026-02-02T05:48:34.5554410Z [36;1m./gradlew assembleDebug --no-daemon --stacktrace[0m
+2026-02-02T05:48:34.5586705Z shell: /usr/bin/bash -e {0}
+2026-02-02T05:48:34.5586958Z env:
+2026-02-02T05:48:34.5587259Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-02-02T05:48:34.5587744Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-02-02T05:48:34.5588129Z   ANDROID_HOME: /usr/local/lib/android/sdk
+2026-02-02T05:48:34.5588415Z   ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+2026-02-02T05:48:34.5588736Z   GRADLE_OPTS: -Xmx4096m -XX:MaxMetaspaceSize=1024m
+2026-02-02T05:48:34.5589017Z ##[endgroup]
+2026-02-02T05:48:34.6627115Z Downloading https://services.gradle.org/distributions/gradle-8.2-bin.zip
+2026-02-02T05:48:36.3335477Z ............10%............20%............30%.............40%............50%............60%............70%.............80%............90%............100%
+2026-02-02T05:48:37.5177852Z 
+2026-02-02T05:48:37.5180417Z Welcome to Gradle 8.2!
+2026-02-02T05:48:37.5180741Z 
+2026-02-02T05:48:37.5181598Z Here are the highlights of this release:
+2026-02-02T05:48:37.5186476Z  - Kotlin DSL: new reference documentation, assignment syntax by default
+2026-02-02T05:48:37.5188174Z  - Kotlin DSL is now the default with Gradle init
+2026-02-02T05:48:37.5189605Z  - Improved suggestions to resolve errors in console output
+2026-02-02T05:48:37.5190249Z 
+2026-02-02T05:48:37.5191285Z For more details see https://docs.gradle.org/8.2/release-notes.html
+2026-02-02T05:48:37.5192649Z 
+2026-02-02T05:48:37.7171662Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.2/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-02-02T05:48:38.9168646Z Daemon will be stopped at the end of the build 
+2026-02-02T05:48:39.2170193Z Configuration on demand is an incubating feature.
+2026-02-02T05:50:01.7227785Z 
+2026-02-02T05:50:01.7233202Z > Configure project :app
+2026-02-02T05:50:01.7234407Z WARNING: The option setting 'android.defaults.buildfeatures.buildconfig=true' is deprecated.
+2026-02-02T05:50:01.7235255Z The current default is 'false'.
+2026-02-02T05:50:01.7235866Z It will be removed in version 9.0 of the Android Gradle plugin.
+2026-02-02T05:50:01.7236957Z You can resolve this warning in Android Studio via `Refactor` > `Migrate BuildConfig to Gradle Build Files`
+2026-02-02T05:50:07.6167353Z 
+2026-02-02T05:50:07.6173233Z > Task :app:preBuild UP-TO-DATE
+2026-02-02T05:50:07.6174061Z > Task :app:preDebugBuild UP-TO-DATE
+2026-02-02T05:50:07.6177652Z > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+2026-02-02T05:50:07.6178338Z > Task :app:checkKotlinGradlePluginConfigurationErrors
+2026-02-02T05:50:07.7166487Z > Task :app:generateDebugBuildConfig
+2026-02-02T05:50:37.7167175Z > Task :app:checkDebugAarMetadata
+2026-02-02T05:51:45.9175210Z > Task :app:generateDebugResValues
+2026-02-02T05:51:46.0169215Z > Task :app:mapDebugSourceSetPaths
+2026-02-02T05:51:46.0183896Z > Task :app:generateDebugResources
+2026-02-02T05:51:47.2168169Z > Task :app:packageDebugResources
+2026-02-02T05:51:48.1166574Z > Task :app:mergeDebugResources
+2026-02-02T05:51:48.3205595Z > Task :app:createDebugCompatibleScreenManifests
+2026-02-02T05:51:48.3208795Z > Task :app:extractDeepLinksDebug
+2026-02-02T05:51:48.3209391Z > Task :app:parseDebugLocalResources
+2026-02-02T05:51:48.6166891Z > Task :app:processDebugMainManifest
+2026-02-02T05:51:48.7174018Z > Task :app:processDebugManifest
+2026-02-02T05:51:48.7174660Z > Task :app:javaPreCompileDebug
+2026-02-02T05:51:48.8167245Z > Task :app:mergeDebugShaders
+2026-02-02T05:51:48.8201926Z > Task :app:compileDebugShaders NO-SOURCE
+2026-02-02T05:51:48.8203041Z > Task :app:generateDebugAssets UP-TO-DATE
+2026-02-02T05:51:48.8203933Z > Task :app:mergeDebugAssets FROM-CACHE
+2026-02-02T05:51:48.9166692Z > Task :app:compressDebugAssets
+2026-02-02T05:51:48.9170784Z > Task :app:desugarDebugFileDependencies
+2026-02-02T05:51:52.1178289Z > Task :app:mergeDebugJniLibFolders FROM-CACHE
+2026-02-02T05:51:52.1204456Z > Task :app:checkDebugDuplicateClasses
+2026-02-02T05:51:52.2192416Z > Task :app:mergeDebugNativeLibs NO-SOURCE
+2026-02-02T05:52:18.7168860Z > Task :app:processDebugManifestForPackage
+2026-02-02T05:52:22.2168145Z > Task :app:mergeExtDexDebug
+2026-02-02T05:53:01.6178888Z > Task :app:stripDebugDebugSymbols NO-SOURCE
+2026-02-02T05:53:01.6206393Z > Task :app:mergeLibDexDebug
+2026-02-02T05:53:02.7195149Z > Task :app:validateSigningDebug
+2026-02-02T05:53:02.7196215Z > Task :app:writeDebugAppMetadata
+2026-02-02T05:53:02.7197173Z > Task :app:writeDebugSigningConfigVersions
+2026-02-02T05:53:05.4166385Z > Task :app:processDebugResources
+2026-02-02T05:53:35.4166625Z > Task :app:compileDebugKotlin
+2026-02-02T05:53:52.0239054Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:17:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0242766Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:83:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0246630Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:140:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0304336Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:195:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0308837Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:250:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0315318Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:310:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0318581Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/BrandDatabase.kt:469:33 Unresolved reference: ProductType
+2026-02-02T05:53:52.0321856Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/DynamicTestMatrix.kt:209:52 Unresolved reference: ProductType
+2026-02-02T05:53:52.0325457Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/EceR129StandardDatabase.kt:193:56 Unresolved reference: ProductType
+2026-02-02T05:53:52.0328698Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/FMVSSStandardsData.kt:511:1 Unclosed comment
+2026-02-02T05:53:52.0331919Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:52:50 Unresolved reference: ProductType
+2026-02-02T05:53:52.0389154Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:54:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0392385Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:55:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0395786Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:96:26 Unresolved reference: ProductType
+2026-02-02T05:53:52.0399385Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:123:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0427359Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:180:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0430892Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:234:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0434651Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:276:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0438109Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:315:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0441611Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:350:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0448980Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:388:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0452523Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:415:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0456479Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:446:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0459872Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:473:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0463336Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:508:83 Unresolved reference: ProductType
+2026-02-02T05:53:52.0467001Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/GlobalRegulationLibrary.kt:509:81 Unresolved reference: ProductType
+2026-02-02T05:53:52.0471526Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/HeightAgeGroupMapping.kt:117:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.0475974Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:17:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0479413Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:32:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0482890Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:191:33 Unresolved reference: ProductType
+2026-02-02T05:53:52.0486830Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:250:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0490336Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:356:23 Unresolved reference: ProductType
+2026-02-02T05:53:52.0493954Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:357:42 Unresolved reference: EN_1888
+2026-02-02T05:53:52.0497457Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:360:50 Unresolved reference: EN_1888
+2026-02-02T05:53:52.0500951Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:371:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0504593Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:524:33 Unresolved reference: ProductType
+2026-02-02T05:53:52.0508066Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:583:27 Unresolved reference: ProductType
+2026-02-02T05:53:52.0511792Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:584:46 Unresolved reference: EN_1888
+2026-02-02T05:53:52.0515378Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/ProfessionalDesignExamples.kt:654:46 Unresolved reference: EN_1888
+2026-02-02T05:53:52.0518707Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:355:41 Unresolved reference: ProductType
+2026-02-02T05:53:52.0521980Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:364:41 Unresolved reference: ProductType
+2026-02-02T05:53:52.0525430Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:373:41 Unresolved reference: ProductType
+2026-02-02T05:53:52.0530775Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:382:41 Unresolved reference: ProductType
+2026-02-02T05:53:52.0534292Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:391:41 Unresolved reference: ProductType
+2026-02-02T05:53:52.0537647Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:397:50 Unresolved reference: ProductType
+2026-02-02T05:53:52.0540875Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:399:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0544493Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:422:22 Unresolved reference: ProductType
+2026-02-02T05:53:52.0547700Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:425:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0550950Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:522:22 Unresolved reference: ProductType
+2026-02-02T05:53:52.0554391Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:529:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0557679Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:582:22 Unresolved reference: ProductType
+2026-02-02T05:53:52.0560950Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:588:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0564382Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:688:22 Unresolved reference: ProductType
+2026-02-02T05:53:52.0567860Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:692:16 'when' expression must be exhaustive, add necessary 'else' branch
+2026-02-02T05:53:52.0571577Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:693:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0574960Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:693:38 Unresolved reference: ProductType
+2026-02-02T05:53:52.0578117Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:694:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0581360Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:694:35 Unresolved reference: ProductType
+2026-02-02T05:53:52.0584712Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:695:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0587955Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:696:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0591199Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:696:37 Unresolved reference: ProductType
+2026-02-02T05:53:52.0594644Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/data/StandardsData.kt:697:13 Unresolved reference: ProductType
+2026-02-02T05:53:52.0598177Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/engineering/AnthropometryToDesignConverter.kt:37:30 Unresolved reference: SeatDimensions
+2026-02-02T05:53:52.0602165Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/engineering/AnthropometryToDesignConverter.kt:50:29 Unresolved reference: HarnessParameters
+2026-02-02T05:53:52.0606064Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/engineering/AnthropometryToDesignConverter.kt:58:28 Unresolved reference: IsofixParameters
+2026-02-02T05:53:52.0609877Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/engineering/AnthropometryToDesignConverter.kt:69:29 Unresolved reference: MaterialSpecifications
+2026-02-02T05:53:52.0613580Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/CrashTestMapping.kt:130:13 Cannot find a parameter with this name: dummyTypes
+2026-02-02T05:53:52.0617280Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/CrashTestMapping.kt:131:13 Cannot find a parameter with this name: criticalPoints
+2026-02-02T05:53:52.0632500Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/CreativeIdea.kt:179:48 Unresolved reference: mainStandards
+2026-02-02T05:53:52.0636362Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/SimplifiedInput.kt:201:59 Unresolved reference: EN_1888
+2026-02-02T05:53:52.0639857Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/SimplifiedInput.kt:295:59 Unresolved reference: EN_1888
+2026-02-02T05:53:52.0643328Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:5:59 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0667347Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:28:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0671022Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:77:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0674705Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:94:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0678224Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:111:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0681717Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:128:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0685584Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:145:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0689310Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:162:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0693350Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:179:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0718268Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:196:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0721988Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:214:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0725798Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:231:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0729436Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:248:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0733077Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/anthropometry/DummySpecification.kt:265:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0736818Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:4:67 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0740582Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:17:27 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0798443Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:33:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0802063Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:50:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0805792Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:67:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0809305Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:84:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0812847Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:101:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0816560Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:119:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0820097Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:136:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0854252Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:153:28 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0857849Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/DummyType.kt:260:27 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0861371Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/EngineeringInput.kt:30:68 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0865112Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/EngineeringInput.kt:39:41 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0869130Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/EngineeringInput.kt:40:26 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type InstallMethod?
+2026-02-02T05:53:52.0873042Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/EngineeringInput.kt:101:32 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0876810Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:3:67 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0880328Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:10:27 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0925169Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:26:52 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0929206Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:27:20 'when' expression must be exhaustive, add necessary 'else' branch
+2026-02-02T05:53:52.0932873Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:28:17 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0936568Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:29:17 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0940105Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:38:36 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0943278Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/IsofixEnvelope.kt:93:36 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0947035Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/TestMatrix.kt:251:20 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0950581Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/TestMatrix.kt:258:49 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0974877Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/TestMatrix.kt:263:32 'when' expression must be exhaustive, add necessary 'else' branch
+2026-02-02T05:53:52.0978704Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/TestMatrix.kt:264:21 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0982048Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/model/engineering/TestMatrix.kt:265:21 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.0986456Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/AIAnalysisService.kt:180:9 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.0989989Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/AIAnalysisService.kt:541:9 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.0992318Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/CreativeService.kt:298:38 Unresolved reference: ValidationResult
+2026-02-02T05:53:52.0995661Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/FMVSSCRSDesignGuideService.kt:304:61 Unresolved reference: isCompliant
+2026-02-02T05:53:52.0999234Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/FMVSSCRSDesignGuideService.kt:305:33 Unresolved reference: isCompliant
+2026-02-02T05:53:52.1002741Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/FMVSSCRSDesignGuideService.kt:306:32 Unresolved reference: issues
+2026-02-02T05:53:52.1006127Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/FMVSSCRSDesignGuideService.kt:306:39 Overload resolution ambiguity: 
+2026-02-02T05:53:52.1008506Z public inline fun <T> Iterable<TypeVariable(T)>.forEach(action: (TypeVariable(T)) -> Unit): Unit defined in kotlin.collections
+2026-02-02T05:53:52.1010466Z public inline fun <K, V> Map<out TypeVariable(K), TypeVariable(V)>.forEach(action: (Map.Entry<TypeVariable(K), TypeVariable(V)>) -> Unit): Unit defined in kotlin.collections
+2026-02-02T05:53:52.1013344Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/FMVSSCRSDesignGuideService.kt:306:77 Unresolved reference: it
+2026-02-02T05:53:52.1016932Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/FMVSSCRSDesignGuideService.kt:373:67 Unresolved reference: isCompliant
+2026-02-02T05:53:52.1021952Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/TechnicalAnalysisEngine.kt:546:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.1027526Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/TechnicalAnalysisEngine.kt:581:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.1031840Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:64:17 Cannot find a parameter with this name: metadata
+2026-02-02T05:53:52.1036030Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:64:28 Unresolved reference: OutputMetadata
+2026-02-02T05:53:52.1039714Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:70:17 Cannot find a parameter with this name: basicInfo
+2026-02-02T05:53:52.1043441Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:70:29 Unresolved reference: BasicInfoSection
+2026-02-02T05:53:52.1047439Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:76:17 Cannot find a parameter with this name: standardMapping
+2026-02-02T05:53:52.1051510Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:76:35 Unresolved reference: StandardMappingSection
+2026-02-02T05:53:52.1055067Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:80:17 Cannot find a parameter with this name: isofixEnvelope
+2026-02-02T05:53:52.1057321Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:81:17 Cannot find a parameter with this name: testMatrix
+2026-02-02T05:53:52.1059547Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:82:17 Cannot find a parameter with this name: safetyThresholds
+2026-02-02T05:53:52.1061773Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:82:36 Unresolved reference: SafetyThresholdsSection
+2026-02-02T05:53:52.1064421Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:86:17 Cannot find a parameter with this name: complianceStatement
+2026-02-02T05:53:52.1067044Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:86:39 Unresolved reference: ComplianceStatementSection
+2026-02-02T05:53:52.1069211Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:90:17 Cannot find a parameter with this name: engineeringNotes
+2026-02-02T05:53:52.1071581Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:90:36 Unresolved reference: EngineeringNotesSection
+2026-02-02T05:53:52.1073864Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:113:23 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1075997Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:114:50 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1078090Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:119:37 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1080179Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:128:41 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1082184Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:142:28 Unresolved reference: type
+2026-02-02T05:53:52.1084375Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:142:36 Unresolved reference: InstallType
+2026-02-02T05:53:52.1086847Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:147:38 Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type InstallMethod?
+2026-02-02T05:53:52.1089160Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:148:31 Unresolved reference: getEnvelopeByDirection
+2026-02-02T05:53:52.1091261Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:179:43 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1093351Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:181:39 Unresolved reference: RoadmateTestCase
+2026-02-02T05:53:52.1095639Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:185:61 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1097765Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:192:13 Cannot find a parameter with this name: standard
+2026-02-02T05:53:52.1099916Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:193:13 Cannot find a parameter with this name: generatedAt
+2026-02-02T05:53:52.1102079Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:194:13 Cannot find a parameter with this name: testCases
+2026-02-02T05:53:52.1104543Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:194:13 No value passed for parameter 'rows'
+2026-02-02T05:53:52.1106633Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:194:13 No value passed for parameter 'metadata'
+2026-02-02T05:53:52.1109187Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:204:20 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1111707Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:205:8 Unresolved reference: RoadmateTestCase
+2026-02-02T05:53:52.1115858Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:207:26 'when' expression must be exhaustive, add necessary 'else' branch
+2026-02-02T05:53:52.1119685Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:208:13 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1124138Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:209:13 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1127610Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:215:26 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1130823Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:220:25 'when' expression must be exhaustive, add necessary 'else' branch
+2026-02-02T05:53:52.1134079Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:221:13 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1137093Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:222:13 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1140025Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:225:16 Unresolved reference: RoadmateTestCase
+2026-02-02T05:53:52.1143130Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:235:26 'when' expression must be exhaustive, add necessary 'else' branch
+2026-02-02T05:53:52.1146296Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:236:17 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1149417Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:237:17 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1152345Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:240:43 Unresolved reference: InstallDirection
+2026-02-02T05:53:52.1155793Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/service/engineering/EngineeringOutputGenerator.kt:256:67 Unresolved reference: heightRange
+2026-02-02T05:53:52.1159203Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/DesignActivity.kt:103:38 Unresolved reference: getErrorSummary
+2026-02-02T05:53:52.1162393Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/DesignActivity.kt:113:38 Unresolved reference: getWarningSummary
+2026-02-02T05:53:52.1165717Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/DesignActivity.kt:132:52 Unresolved reference: getErrorSummary
+2026-02-02T05:53:52.1169656Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:261:33 Unresolved reference: SingleChoiceSegmentedButtonRow
+2026-02-02T05:53:52.1173042Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:262:37 Unresolved reference: SegmentedButton
+2026-02-02T05:53:52.1177015Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:265:49 Unresolved reference: SegmentedButtonDefaults
+2026-02-02T05:53:52.1181070Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:271:41 @Composable invocations can only happen from the context of a @Composable function
+2026-02-02T05:53:52.1203957Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:273:37 Unresolved reference: SegmentedButton
+2026-02-02T05:53:52.1207604Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:276:49 Unresolved reference: SegmentedButtonDefaults
+2026-02-02T05:53:52.1211517Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:282:41 @Composable invocations can only happen from the context of a @Composable function
+2026-02-02T05:53:52.1215779Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:614:5 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1219848Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreen.kt:696:5 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1224494Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreenV2.kt:290:5 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1228879Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreenV2.kt:345:5 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1232991Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/CreativeScreenV2.kt:407:5 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1237477Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/DocumentLearningScreen.kt:415:25 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1241753Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/SafetyScreen.kt:352:13 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1246340Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/TechnicalRecommendationScreen.kt:417:13 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1250449Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/TechnicalRecommendationScreen.kt:445:56 Unresolved reference: standardAbbr
+2026-02-02T05:53:52.1254696Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/TechnicalRecommendationScreen.kt:455:52 Unresolved reference: mainStandards
+2026-02-02T05:53:52.1258416Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/TechnicalRecommendationScreen.kt:506:75 Unresolved reference: mainStandards
+2026-02-02T05:53:52.1262528Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/ui/screens/TechnicalRecommendationScreen.kt:1080:13 This material API is experimental and is likely to change or to be removed in the future.
+2026-02-02T05:53:52.1267581Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/utils/DesignSchemeFormatter.kt:138:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.1272839Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/utils/DesignSchemeFormatter.kt:150:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.1278292Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/utils/DesignSchemeFormatter.kt:162:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.1284023Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/utils/DesignSchemeFormatter.kt:174:16 'when' expression must be exhaustive, add necessary 'CHILD_SAFETY_SEAT', 'CHILD_STROLLER', 'CHILD_HOUSEHOLD_GOODS', 'CHILD_HIGH_CHAIR' branches or 'else' branch instead
+2026-02-02T05:53:52.1288575Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/validator/Validator.kt:79:26 Type mismatch: inferred type is List<Any> but Collection<String> was expected
+2026-02-02T05:53:52.1292531Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/validator/Validator.kt:80:28 Type mismatch: inferred type is List<Any> but Collection<String> was expected
+2026-02-02T05:53:52.1296643Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/validator/Validator.kt:84:26 Type mismatch: inferred type is List<Any> but Collection<String> was expected
+2026-02-02T05:53:52.1300552Z e: file:///home/runner/work/new-child-product-design-assistant/new-child-product-design-assistant/app/src/main/java/com/childproduct/designassistant/validator/Validator.kt:85:28 Type mismatch: inferred type is List<Any> but Collection<String> was expected
+2026-02-02T05:53:52.1302252Z 
+2026-02-02T05:53:52.1302537Z > Task :app:compileDebugKotlin FAILED
+2026-02-02T05:53:52.2224228Z 
+2026-02-02T05:53:52.2232865Z FAILURE: Build failed with an exception.
+2026-02-02T05:53:52.2233804Z 
+2026-02-02T05:53:52.2234144Z * What went wrong:
+2026-02-02T05:53:52.2234697Z Execution failed for task ':app:compileDebugKotlin'.
+2026-02-02T05:53:52.2236315Z > A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2026-02-02T05:53:52.2238153Z    > Compilation error. See log for more details
+2026-02-02T05:53:52.2238509Z 
+2026-02-02T05:53:52.2238627Z * Try:
+2026-02-02T05:53:52.2239160Z > Run with --info or --debug option to get more log output.
+2026-02-02T05:53:52.2239800Z > Run with --scan to get full insights.
+2026-02-02T05:53:52.2240381Z > Get more help at https://help.gradle.org.
+2026-02-02T05:53:52.2240721Z 
+2026-02-02T05:53:52.2240885Z * Exception is:
+2026-02-02T05:53:52.2241788Z org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:compileDebugKotlin'.
+2026-02-02T05:53:52.2243573Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:149)
+2026-02-02T05:53:52.2245201Z 	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:282)
+2026-02-02T05:53:52.2246685Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:147)
+2026-02-02T05:53:52.2248604Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:135)
+2026-02-02T05:53:52.2250664Z 	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+2026-02-02T05:53:52.2252744Z 	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+2026-02-02T05:53:52.2254983Z 	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+2026-02-02T05:53:52.2256796Z 	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+2026-02-02T05:53:52.2258498Z 	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+2026-02-02T05:53:52.2301266Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+2026-02-02T05:53:52.2303009Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+2026-02-02T05:53:52.2305118Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+2026-02-02T05:53:52.2307056Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-02-02T05:53:52.2309209Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+2026-02-02T05:53:52.2311090Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.2312802Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2314701Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.2316427Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2318086Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-02-02T05:53:52.2319760Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+2026-02-02T05:53:52.2321435Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+2026-02-02T05:53:52.2322928Z 	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+2026-02-02T05:53:52.2324819Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:337)
+2026-02-02T05:53:52.2326792Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:324)
+2026-02-02T05:53:52.2329173Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:317)
+2026-02-02T05:53:52.2331538Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+2026-02-02T05:53:52.2333339Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+2026-02-02T05:53:52.2334959Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+2026-02-02T05:53:52.2336319Z 	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:116)
+2026-02-02T05:53:52.2451991Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+2026-02-02T05:53:52.2453973Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+2026-02-02T05:53:52.2455604Z 	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+2026-02-02T05:53:52.2457130Z 	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+2026-02-02T05:53:52.2458996Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+2026-02-02T05:53:52.2461318Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+2026-02-02T05:53:52.2463517Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-02-02T05:53:52.2465933Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+2026-02-02T05:53:52.2467891Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.2469606Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2471632Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.2473378Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2475302Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-02-02T05:53:52.2477032Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+2026-02-02T05:53:52.2478928Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+2026-02-02T05:53:52.2480955Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:264)
+2026-02-02T05:53:52.2482788Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-02-02T05:53:52.2484733Z 	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+2026-02-02T05:53:52.2486252Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+2026-02-02T05:53:52.2487759Z 	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+2026-02-02T05:53:52.2489546Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:255)
+2026-02-02T05:53:52.2491534Z 	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+2026-02-02T05:53:52.2493372Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:249)
+2026-02-02T05:53:52.2495260Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:109)
+2026-02-02T05:53:52.2497178Z 	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+2026-02-02T05:53:52.2498725Z 	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+2026-02-02T05:53:52.2500374Z 	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:200)
+2026-02-02T05:53:52.2502042Z 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+2026-02-02T05:53:52.2564193Z 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+2026-02-02T05:53:52.2566961Z Caused by: org.gradle.workers.internal.DefaultWorkerExecutor$WorkExecutionException: A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+2026-02-02T05:53:52.2569513Z 	at org.gradle.workers.internal.DefaultWorkerExecutor$WorkItemExecution.waitForCompletion(DefaultWorkerExecutor.java:283)
+2026-02-02T05:53:52.2571384Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.lambda$waitForItemsAndGatherFailures$2(DefaultAsyncWorkTracker.java:130)
+2026-02-02T05:53:52.2572849Z 	at org.gradle.internal.Factories$1.create(Factories.java:31)
+2026-02-02T05:53:52.2574204Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:321)
+2026-02-02T05:53:52.2575851Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLocks(DefaultWorkerLeaseService.java:304)
+2026-02-02T05:53:52.2577432Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withoutLock(DefaultWorkerLeaseService.java:309)
+2026-02-02T05:53:52.2579121Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:126)
+2026-02-02T05:53:52.2580989Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForItemsAndGatherFailures(DefaultAsyncWorkTracker.java:92)
+2026-02-02T05:53:52.2582587Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForAll(DefaultAsyncWorkTracker.java:78)
+2026-02-02T05:53:52.2584638Z 	at org.gradle.internal.work.DefaultAsyncWorkTracker.waitForCompletion(DefaultAsyncWorkTracker.java:66)
+2026-02-02T05:53:52.2586088Z 	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:256)
+2026-02-02T05:53:52.2587585Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+2026-02-02T05:53:52.2589226Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+2026-02-02T05:53:52.2590850Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.2592476Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2655336Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.2657162Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2658838Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+2026-02-02T05:53:52.2660486Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:68)
+2026-02-02T05:53:52.2662028Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:233)
+2026-02-02T05:53:52.2663481Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:216)
+2026-02-02T05:53:52.2665416Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:199)
+2026-02-02T05:53:52.2666809Z 	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:166)
+2026-02-02T05:53:52.2668532Z 	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+2026-02-02T05:53:52.2669928Z 	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+2026-02-02T05:53:52.2671160Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+2026-02-02T05:53:52.2672357Z 	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+2026-02-02T05:53:52.2674276Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-02-02T05:53:52.2676284Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+2026-02-02T05:53:52.2678059Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.2679766Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2681457Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.2683148Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2710090Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-02-02T05:53:52.2711726Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+2026-02-02T05:53:52.2713120Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+2026-02-02T05:53:52.2714430Z 	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+2026-02-02T05:53:52.2715881Z 	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+2026-02-02T05:53:52.2717577Z 	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+2026-02-02T05:53:52.2719136Z 	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:41)
+2026-02-02T05:53:52.2720929Z 	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:74)
+2026-02-02T05:53:52.2722238Z 	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+2026-02-02T05:53:52.2723553Z 	at org.gradle.internal.execution.steps.CreateOutputsStep.execute(CreateOutputsStep.java:50)
+2026-02-02T05:53:52.2725181Z 	at org.gradle.internal.execution.steps.CreateOutputsStep.execute(CreateOutputsStep.java:28)
+2026-02-02T05:53:52.2727192Z 	at org.gradle.internal.execution.steps.CaptureStateAfterExecutionStep.executeDelegateBroadcastingChanges(CaptureStateAfterExecutionStep.java:100)
+2026-02-02T05:53:52.2729353Z 	at org.gradle.internal.execution.steps.CaptureStateAfterExecutionStep.execute(CaptureStateAfterExecutionStep.java:72)
+2026-02-02T05:53:52.2731227Z 	at org.gradle.internal.execution.steps.CaptureStateAfterExecutionStep.execute(CaptureStateAfterExecutionStep.java:50)
+2026-02-02T05:53:52.2732922Z 	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+2026-02-02T05:53:52.2764819Z 	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+2026-02-02T05:53:52.2766418Z 	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:179)
+2026-02-02T05:53:52.2767972Z 	at org.gradle.internal.execution.steps.BuildCacheStep.executeAndStoreInCache(BuildCacheStep.java:139)
+2026-02-02T05:53:52.2769605Z 	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$4(BuildCacheStep.java:106)
+2026-02-02T05:53:52.2771194Z 	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$executeWithCache$5(BuildCacheStep.java:106)
+2026-02-02T05:53:52.2772291Z 	at org.gradle.internal.Try$Success.map(Try.java:164)
+2026-02-02T05:53:52.2773396Z 	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithCache(BuildCacheStep.java:80)
+2026-02-02T05:53:52.2775259Z 	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$0(BuildCacheStep.java:69)
+2026-02-02T05:53:52.2776350Z 	at org.gradle.internal.Either$Left.fold(Either.java:115)
+2026-02-02T05:53:52.2777351Z 	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:59)
+2026-02-02T05:53:52.2778596Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:68)
+2026-02-02T05:53:52.2779883Z 	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:46)
+2026-02-02T05:53:52.2781426Z 	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:36)
+2026-02-02T05:53:52.2782945Z 	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:25)
+2026-02-02T05:53:52.2784485Z 	at org.gradle.internal.execution.steps.RecordOutputsStep.execute(RecordOutputsStep.java:36)
+2026-02-02T05:53:52.2785789Z 	at org.gradle.internal.execution.steps.RecordOutputsStep.execute(RecordOutputsStep.java:22)
+2026-02-02T05:53:52.2787124Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:91)
+2026-02-02T05:53:52.2788539Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:55)
+2026-02-02T05:53:52.2789939Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:55)
+2026-02-02T05:53:52.2791264Z 	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:37)
+2026-02-02T05:53:52.2792612Z 	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+2026-02-02T05:53:52.2818440Z 	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+2026-02-02T05:53:52.2820323Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+2026-02-02T05:53:52.2822506Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+2026-02-02T05:53:52.2824826Z 	at org.gradle.internal.execution.steps.ResolveCachingStateStep.execute(ResolveCachingStateStep.java:77)
+2026-02-02T05:53:52.2826472Z 	at org.gradle.internal.execution.steps.ResolveCachingStateStep.execute(ResolveCachingStateStep.java:38)
+2026-02-02T05:53:52.2827886Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:94)
+2026-02-02T05:53:52.2829103Z 	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:49)
+2026-02-02T05:53:52.2830691Z 	at org.gradle.internal.execution.steps.CaptureStateBeforeExecutionStep.execute(CaptureStateBeforeExecutionStep.java:71)
+2026-02-02T05:53:52.2832618Z 	at org.gradle.internal.execution.steps.CaptureStateBeforeExecutionStep.execute(CaptureStateBeforeExecutionStep.java:45)
+2026-02-02T05:53:52.2834641Z 	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.executeWithNonEmptySources(SkipEmptyWorkStep.java:177)
+2026-02-02T05:53:52.2836210Z 	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.execute(SkipEmptyWorkStep.java:86)
+2026-02-02T05:53:52.2837704Z 	at org.gradle.internal.execution.steps.SkipEmptyWorkStep.execute(SkipEmptyWorkStep.java:53)
+2026-02-02T05:53:52.2839409Z 	at org.gradle.internal.execution.steps.RemoveUntrackedExecutionStateStep.execute(RemoveUntrackedExecutionStateStep.java:32)
+2026-02-02T05:53:52.2841383Z 	at org.gradle.internal.execution.steps.RemoveUntrackedExecutionStateStep.execute(RemoveUntrackedExecutionStateStep.java:21)
+2026-02-02T05:53:52.2843430Z 	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+2026-02-02T05:53:52.2875808Z 	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+2026-02-02T05:53:52.2877708Z 	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+2026-02-02T05:53:52.2879756Z 	at org.gradle.internal.execution.steps.CleanupStaleOutputsStep.execute(CleanupStaleOutputsStep.java:75)
+2026-02-02T05:53:52.2881386Z 	at org.gradle.internal.execution.steps.CleanupStaleOutputsStep.execute(CleanupStaleOutputsStep.java:41)
+2026-02-02T05:53:52.2882985Z 	at org.gradle.internal.execution.steps.AssignWorkspaceStep.lambda$execute$0(AssignWorkspaceStep.java:32)
+2026-02-02T05:53:52.2884698Z 	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:293)
+2026-02-02T05:53:52.2886181Z 	at org.gradle.internal.execution.steps.AssignWorkspaceStep.execute(AssignWorkspaceStep.java:30)
+2026-02-02T05:53:52.2887651Z 	at org.gradle.internal.execution.steps.AssignWorkspaceStep.execute(AssignWorkspaceStep.java:21)
+2026-02-02T05:53:52.2889061Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:37)
+2026-02-02T05:53:52.2890416Z 	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:27)
+2026-02-02T05:53:52.2891699Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:47)
+2026-02-02T05:53:52.2892893Z 	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:34)
+2026-02-02T05:53:52.2894511Z 	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:64)
+2026-02-02T05:53:52.2896319Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:146)
+2026-02-02T05:53:52.2898209Z 	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:135)
+2026-02-02T05:53:52.2900087Z 	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+2026-02-02T05:53:52.2902055Z 	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+2026-02-02T05:53:52.2934272Z 	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+2026-02-02T05:53:52.2936416Z 	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+2026-02-02T05:53:52.2938172Z 	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+2026-02-02T05:53:52.2939948Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+2026-02-02T05:53:52.2941610Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+2026-02-02T05:53:52.2943200Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+2026-02-02T05:53:52.2945254Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-02-02T05:53:52.2947412Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+2026-02-02T05:53:52.2949327Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.2950988Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2952613Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.2954429Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.2956058Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-02-02T05:53:52.2957713Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+2026-02-02T05:53:52.2959373Z 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+2026-02-02T05:53:52.2961140Z 	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+2026-02-02T05:53:52.2962848Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:337)
+2026-02-02T05:53:52.2990838Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:324)
+2026-02-02T05:53:52.2992989Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:317)
+2026-02-02T05:53:52.2995369Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+2026-02-02T05:53:52.2997184Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+2026-02-02T05:53:52.2998645Z 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+2026-02-02T05:53:52.2999969Z 	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:116)
+2026-02-02T05:53:52.3001547Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:138)
+2026-02-02T05:53:52.3003243Z 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:123)
+2026-02-02T05:53:52.3005112Z 	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+2026-02-02T05:53:52.3006551Z 	at org.gradle.execution.DryRunBuildExecutionAction.execute(DryRunBuildExecutionAction.java:51)
+2026-02-02T05:53:52.3008309Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+2026-02-02T05:53:52.3010367Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+2026-02-02T05:53:52.3012500Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-02-02T05:53:52.3015049Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+2026-02-02T05:53:52.3016917Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.3018550Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.3020182Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.3021838Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.3023438Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-02-02T05:53:52.3025226Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+2026-02-02T05:53:52.3027112Z 	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+2026-02-02T05:53:52.3029225Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$10(DefaultBuildLifecycleController.java:264)
+2026-02-02T05:53:52.3030951Z 	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:266)
+2026-02-02T05:53:52.3032590Z 	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$8(StateTransitionController.java:177)
+2026-02-02T05:53:52.3034178Z 	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:44)
+2026-02-02T05:53:52.3035611Z 	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:177)
+2026-02-02T05:53:52.3037521Z 	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:255)
+2026-02-02T05:53:52.3039511Z 	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+2026-02-02T05:53:52.3041413Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:249)
+2026-02-02T05:53:52.3043025Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:109)
+2026-02-02T05:53:52.3044750Z 	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:181)
+2026-02-02T05:53:52.3046213Z 	at org.gradle.composite.internal.DefaultBuildController.access$000(DefaultBuildController.java:50)
+2026-02-02T05:53:52.3047757Z 	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:200)
+2026-02-02T05:53:52.3051594Z 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+2026-02-02T05:53:52.3053137Z 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+2026-02-02T05:53:52.3054984Z Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilation error. See log for more details
+2026-02-02T05:53:52.3056626Z 	at org.jetbrains.kotlin.gradle.tasks.TasksUtilsKt.throwExceptionIfCompilationFailed(tasksUtils.kt:20)
+2026-02-02T05:53:52.3058206Z 	at org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.run(GradleKotlinCompilerWork.kt:141)
+2026-02-02T05:53:52.3060202Z 	at org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction.execute(GradleCompilerRunnerWithWorkers.kt:73)
+2026-02-02T05:53:52.3061977Z 	at org.gradle.workers.internal.DefaultWorkerServer.execute(DefaultWorkerServer.java:63)
+2026-02-02T05:53:52.3063371Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:66)
+2026-02-02T05:53:52.3065005Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1$1.create(NoIsolationWorkerFactory.java:62)
+2026-02-02T05:53:52.3066730Z 	at org.gradle.internal.classloader.ClassLoaderUtils.executeInClassloader(ClassLoaderUtils.java:100)
+2026-02-02T05:53:52.3068285Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.lambda$execute$0(NoIsolationWorkerFactory.java:62)
+2026-02-02T05:53:52.3069602Z 	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:44)
+2026-02-02T05:53:52.3070935Z 	at org.gradle.workers.internal.AbstractWorker$1.call(AbstractWorker.java:41)
+2026-02-02T05:53:52.3072563Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:204)
+2026-02-02T05:53:52.3074782Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:199)
+2026-02-02T05:53:52.3076642Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+2026-02-02T05:53:52.3078333Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.3101497Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+2026-02-02T05:53:52.3103348Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+2026-02-02T05:53:52.3105282Z 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+2026-02-02T05:53:52.3107041Z 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+2026-02-02T05:53:52.3108759Z 	at org.gradle.workers.internal.AbstractWorker.executeWrappedInBuildOperation(AbstractWorker.java:41)
+2026-02-02T05:53:52.3110353Z 	at org.gradle.workers.internal.NoIsolationWorkerFactory$1.execute(NoIsolationWorkerFactory.java:59)
+2026-02-02T05:53:52.3112238Z 	at org.gradle.workers.internal.DefaultWorkerExecutor.lambda$submitWork$0(DefaultWorkerExecutor.java:170)
+2026-02-02T05:53:52.3114348Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runExecution(DefaultConditionalExecutionQueue.java:187)
+2026-02-02T05:53:52.3116488Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.access$700(DefaultConditionalExecutionQueue.java:120)
+2026-02-02T05:53:52.3118471Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner$1.run(DefaultConditionalExecutionQueue.java:162)
+2026-02-02T05:53:52.3119833Z 	at org.gradle.internal.Factories$1.create(Factories.java:31)
+2026-02-02T05:53:52.3121069Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:249)
+2026-02-02T05:53:52.3122726Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:109)
+2026-02-02T05:53:52.3124646Z 	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:114)
+2026-02-02T05:53:52.3126573Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.runBatch(DefaultConditionalExecutionQueue.java:157)
+2026-02-02T05:53:52.3128584Z 	at org.gradle.internal.work.DefaultConditionalExecutionQueue$ExecutionRunner.run(DefaultConditionalExecutionQueue.java:126)
+2026-02-02T05:53:52.3129683Z 	... 2 more
+2026-02-02T05:53:52.3129877Z 
+2026-02-02T05:53:52.3129892Z 
+2026-02-02T05:53:52.3130092Z BUILD FAILED in 5m 17s
+2026-02-02T05:53:52.3130641Z 27 actionable tasks: 25 executed, 2 from cache
+2026-02-02T05:53:52.6697908Z ##[error]Process completed with exit code 1.

@@ -2,7 +2,7 @@ package com.childproduct.designassistant.model.anthropometry
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.childproduct.designassistant.model.engineering.InstallDirection
+import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
 
 /**
  * 假人规格实体

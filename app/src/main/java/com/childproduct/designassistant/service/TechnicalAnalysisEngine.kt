@@ -4,7 +4,7 @@ import com.childproduct.designassistant.data.BrandDatabase
 import com.childproduct.designassistant.data.HeightAgeGroupMapper
 import com.childproduct.designassistant.data.StandardDatabase
 import com.childproduct.designassistant.model.*
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*

@@ -1,7 +1,7 @@
 package com.childproduct.designassistant.utils
 
 import com.childproduct.designassistant.model.*
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 
 /**
  * 设计方案格式化工具

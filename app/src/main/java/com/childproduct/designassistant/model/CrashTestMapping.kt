@@ -126,9 +126,7 @@ object CrashTestMapping {
         return ValidationResult(
             isValid = errors.isEmpty(),
             errors = errors,
-            warnings = warnings,
-            dummyTypes = dummies,
-            criticalPoints = coveredCriticalPoints
+            warnings = warnings
         )
     }
 

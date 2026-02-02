@@ -66,4 +66,30 @@ data class ValidationResult(
             warnings = warnings
         )
     }
+
+    /**
+     * 获取错误摘要（最多显示指定数量的错误）
+     */
+    fun getErrorSummary(maxCount: Int = 3): String {
+        if (errorMessage != null) return errorMessage
+        val errorList = errors.take(maxCount)
+        return when {
+            errorList.isEmpty() -> "无错误"
+            errorList.size < errors.size -> errorList.joinToString("; ") { it.toString() } + "; ..."
+            else -> errorList.joinToString("; ") { it.toString() }
+        }
+    }
+
+    /**
+     * 获取警告摘要（最多显示指定数量的警告）
+     */
+    fun getWarningSummary(maxCount: Int = 3): String {
+        if (warningMessage != null) return warningMessage
+        val warningList = warnings.take(maxCount)
+        return when {
+            warningList.isEmpty() -> "无警告"
+            warningList.size < warnings.size -> warningList.joinToString("; ") { it.toString() } + "; ..."
+            else -> warningList.joinToString("; ") { it.toString() }
+        }
+    }
 }

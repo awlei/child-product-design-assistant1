@@ -3,7 +3,7 @@ package com.childproduct.designassistant.database.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Index
-import com.childproduct.designassistant.model.InstallDirection
+import com.childproduct.designassistant.model.EnhancedProductType.InstallDirection
 
 /**
  * 假人类型实体

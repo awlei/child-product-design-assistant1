@@ -1,6 +1,6 @@
 package com.childproduct.designassistant.model
 
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 
 /**
  * 设计建议报告

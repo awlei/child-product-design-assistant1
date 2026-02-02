@@ -1,6 +1,6 @@
 package com.childproduct.designassistant.data
 
-import com.childproduct.designassistant.model.engineering.ProductType
+import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.model.StandardRegion
 
 /**
