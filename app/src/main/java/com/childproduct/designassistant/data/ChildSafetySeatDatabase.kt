@@ -66,21 +66,21 @@ data class AustralianDummyData(
     val sittingHeight: Double,
     val shoulderWidth: Double,
     val trunkLength: Double,
-
+    
     // 关键设计参数
     val headrestHeightRange: String,
     val seatWidthRange: String,
     val backrestDepthRange: String,
     val sideProtectionArea: String,
-
+    
     // 安全阈值（澳标AS/NZS 1754）
     val hicLimit: Int,
     val chestAccelerationLimit: Int,
     val headExcursionLimit: Int,
-
+    
     // 安装方向
     val installationDirection: String,
-
+    
     // 材料测试标准
     val materialStandard: String
 ) {
@@ -110,21 +110,21 @@ data class JapaneseDummyData(
     val sittingHeight: Double,
     val shoulderWidth: Double,
     val trunkLength: Double,
-
+    
     // 关键设计参数
     val headrestHeightRange: String,
     val seatWidthRange: String,
     val backrestDepthRange: String,
     val sideProtectionArea: String,
-
+    
     // 安全阈值（日标JIS D 1601）
     val hicLimit: Int,
     val chestAccelerationLimit: Int,
     val headExcursionLimit: Int,
-
+    
     // 安装方向
     val installationDirection: String,
-
+    
     // 材料测试标准
     val materialStandard: String
 ) {
@@ -301,6 +301,7 @@ object ChildSafetySeatDatabase {
             heightMin = 105.0,
             heightMax = 125.0,
             weightMin = 18.0,
+            maxWeight = 30.0,
             sittingHeight = 600.0,
             shoulderWidth = 215.0,
             trunkLength = 435.0,
@@ -477,6 +478,7 @@ object ChildSafetySeatDatabase {
             heightMin = 108.0,
             heightMax = 128.0,
             weightMin = 19.0,
+            maxWeight = 31.0,
             sittingHeight = 605.0,
             shoulderWidth = 220.0,
             trunkLength = 440.0,

@@ -705,7 +705,7 @@ class R129r4eStandardDatabase {
     /**
      * 实例方法：获取生产一致性要求
      */
-    fun getProductionConformityList(): List<TestItem> = PRODUCTION_CONFORMITY.testItems
+    fun getProductionConformityList(): List<com.childproduct.designassistant.data.model.TestItem> = PRODUCTION_CONFORMITY.testItems
 
     /**
      * 实例方法：获取生产一致性控制（完整对象）

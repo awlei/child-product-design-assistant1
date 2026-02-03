@@ -43,23 +43,31 @@ fun StandardOutputCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = when (standardType) {
-                com.childproduct.designassistant.data.StandardType.ECE_R129 -> 
+                com.childproduct.designassistant.data.StandardType.ECE_R129 ->
                     MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
-                com.childproduct.designassistant.data.StandardType.FMVSS_213 -> 
+                com.childproduct.designassistant.data.StandardType.FMVSS_213 ->
                     Color(0xFFE3F2FD).copy(alpha = 0.5f)
-                com.childproduct.designassistant.data.StandardType.GB_27887 -> 
+                com.childproduct.designassistant.data.StandardType.GB_27887 ->
                     Color(0xFFFFF3E0).copy(alpha = 0.5f)
+                com.childproduct.designassistant.data.StandardType.AUSTRALIAN ->
+                    Color(0xFFFFEBEE).copy(alpha = 0.5f)
+                com.childproduct.designassistant.data.StandardType.JAPANESE ->
+                    Color(0xFFF3E5F5).copy(alpha = 0.5f)
             }
         ),
         border = BorderStroke(
             width = 1.dp,
             color = when (standardType) {
-                com.childproduct.designassistant.data.StandardType.ECE_R129 -> 
+                com.childproduct.designassistant.data.StandardType.ECE_R129 ->
                     MaterialTheme.colorScheme.primary
-                com.childproduct.designassistant.data.StandardType.FMVSS_213 -> 
+                com.childproduct.designassistant.data.StandardType.FMVSS_213 ->
                     Color(0xFF1976D2)
-                com.childproduct.designassistant.data.StandardType.GB_27887 -> 
+                com.childproduct.designassistant.data.StandardType.GB_27887 ->
                     Color(0xFFFF6F00)
+                com.childproduct.designassistant.data.StandardType.AUSTRALIAN ->
+                    Color(0xFFD32F2F)
+                com.childproduct.designassistant.data.StandardType.JAPANESE ->
+                    Color(0xFF7B1FA2)
             }
         )
     ) {
@@ -93,12 +101,16 @@ fun StandardLabel(standardType: com.childproduct.designassistant.data.StandardTy
     Surface(
         shape = RoundedCornerShape(4.dp),
         color = when (standardType) {
-            com.childproduct.designassistant.data.StandardType.ECE_R129 -> 
+            com.childproduct.designassistant.data.StandardType.ECE_R129 ->
                 MaterialTheme.colorScheme.primary
-            com.childproduct.designassistant.data.StandardType.FMVSS_213 -> 
+            com.childproduct.designassistant.data.StandardType.FMVSS_213 ->
                 Color(0xFF1976D2)
-            com.childproduct.designassistant.data.StandardType.GB_27887 -> 
+            com.childproduct.designassistant.data.StandardType.GB_27887 ->
                 Color(0xFFFF6F00)
+            com.childproduct.designassistant.data.StandardType.AUSTRALIAN ->
+                Color(0xFFD32F2F)
+            com.childproduct.designassistant.data.StandardType.JAPANESE ->
+                Color(0xFF7B1FA2)
         }
     ) {
         Text(
@@ -289,6 +301,22 @@ fun StandardComplianceConstraintsBlock(
                     TreeItem(
                         label = "  正面HIC≤324",
                         value = "GB 27887-2024 §6.4.1",
+                        level = 1,
+                        isLast = isLast
+                    )
+                }
+                com.childproduct.designassistant.data.StandardType.AUSTRALIAN -> {
+                    TreeItem(
+                        label = "  正面HIC≤${dummy.safetyThresholds.hicLimit}",
+                        value = "AS/NZS 1754 §5.2",
+                        level = 1,
+                        isLast = isLast
+                    )
+                }
+                com.childproduct.designassistant.data.StandardType.JAPANESE -> {
+                    TreeItem(
+                        label = "  正面HIC≤${dummy.safetyThresholds.hicLimit}",
+                        value = "JIS D 1601 §5.2",
                         level = 1,
                         isLast = isLast
                     )

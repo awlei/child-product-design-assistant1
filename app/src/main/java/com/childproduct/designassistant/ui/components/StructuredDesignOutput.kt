@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.CreativeIdea
 import com.childproduct.designassistant.data.GPS028Database
 import com.childproduct.designassistant.data.OtherProductTypesDatabase
-import com.childproduct.designassistant.data.DatabaseManager
+import com.childproduct.designassistant.data.StrollerStandardDatabase
 
 /**
  * 结构化设计输出状态
@@ -361,15 +361,12 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val minHeightCm = heightRangeParts.getOrNull(0)?.toIntOrNull() ?: 40
     val maxHeightCm = heightRangeParts.getOrNull(1)?.toIntOrNull() ?: 150
     
-    // 从统一数据库管理器获取匹配的假人（包含所有标准：GPS-028/美标/欧标/国标/澳标/日标）
-    val allDummiesResult = DatabaseManager.getSafetySeatDummiesByHeight(minHeightCm, maxHeightCm)
+    // 从GPS028数据库获取匹配的假人
+    val gpsDummies = GPS028Database.getDummyByHeightRange(minHeightCm, maxHeightCm)
     
-    // 合并所有标准的假人数据
+    // 合并所有匹配的假人数据
     val allMatchedDummies = mutableListOf<GPS028DummyData>()
-    allMatchedDummies.addAll(allDummiesResult.gpsDummies)
-    // 将澳标和日标假人转换为GPS028格式
-    allMatchedDummies.addAll(allDummiesResult.australianDummies.map { it.toGPS028DummyData() })
-    allMatchedDummies.addAll(allDummiesResult.japaneseDummies.map { it.toGPS028DummyData() })
+    allMatchedDummies.addAll(gpsDummies)
     
     // 获取用户选择的标准类型
     val selectedStandards = getSelectedStandards(creativeIdea)
@@ -729,9 +726,9 @@ private fun getSideProtection(heightRange: String): String {
  */
 @Composable
 private fun StrollerOutputContent(creativeIdea: CreativeIdea) {
-    // 从统一数据库管理器获取婴儿推车的综合数据
+    // 从StrollerStandardDatabase获取婴儿推车的综合数据
     // 默认查询中国市场单人推车的数据
-    val comprehensiveData = DatabaseManager.getStrollerComprehensiveRequirements(
+    val comprehensiveData = StrollerStandardDatabase.getComprehensiveRequirements(
         productType = "单人推车（≤18kg）",
         targetRegion = "China"
     )
@@ -1561,7 +1558,7 @@ fun getSelectedStandards(creativeIdea: CreativeIdea): Set<com.childproduct.desig
 /**
  * 将澳标假人数据转换为GPS028假人数据格式
  */
-private fun com.childproduct.designassistant.data.ChildSafetySeatDatabase.AustralianDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
+private fun com.childproduct.designassistant.data.AustralianDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
     return com.childproduct.designassistant.data.GPS028DummyData(
         dummyType = com.childproduct.designassistant.data.ComplianceDummy.Q3, // 使用一个默认值
         displayName = this.displayName,
@@ -1604,7 +1601,7 @@ private fun com.childproduct.designassistant.data.ChildSafetySeatDatabase.Austra
 /**
  * 将日标假人数据转换为GPS028假人数据格式
  */
-private fun com.childproduct.designassistant.data.ChildSafetySeatDatabase.JapaneseDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
+private fun com.childproduct.designassistant.data.JapaneseDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
     return com.childproduct.designassistant.data.GPS028DummyData(
         dummyType = com.childproduct.designassistant.data.ComplianceDummy.Q3, // 使用一个默认值
         displayName = this.displayName,
