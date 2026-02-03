@@ -213,6 +213,7 @@ class DesignAssistantService private constructor() {
  * 聊天消息
  */
 data class ChatMessage(
+    val id: String = java.util.UUID.randomUUID().toString(),
     val role: ChatRole,
     val content: String,
     val timestamp: Long = System.currentTimeMillis()
