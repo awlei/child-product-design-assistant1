@@ -65,7 +65,7 @@ fun CreativeScreen(
 
     // 参数验证函数
     fun validateAndSetResult() {
-        selectedStandard?.let { standard ->
+        selectedStandards.firstOrNull()?.let { standard ->
             when (standard.inputItem.inputType) {
                 InputType.HEIGHT_RANGE -> {
                     val minH = minHeight.toDoubleOrNull()
@@ -118,9 +118,9 @@ fun CreativeScreen(
                                    uiState !is UiState.Loading
 
     // 合规组合显示
-    val complianceCombination = remember(selectedProductType, selectedStandard, paramValidationResult) {
+    val complianceCombination = remember(selectedProductType, selectedStandards, paramValidationResult) {
         val productType = selectedProductType
-        val standard = selectedStandard
+        val standard = selectedStandards.firstOrNull()
         val validationResult = paramValidationResult
 
         if (productType != null && standard != null && validationResult?.isValid == true) {
@@ -326,9 +326,9 @@ fun CreativeScreen(
                         InputType.HEIGHT_RANGE -> {
                             // 身高范围输入
                             ParameterInputRow(
-                                label = standard.inputItem.inputLabel,
-                                unit = standard.inputItem.unit,
-                                placeholder = standard.inputItem.placeholder,
+                                label = firstStandard.inputItem.inputLabel,
+                                unit = firstStandard.inputItem.unit,
+                                placeholder = firstStandard.inputItem.placeholder,
                                 minValue = minHeight,
                                 maxValue = maxHeight,
                                 onMinValueChange = {
@@ -379,9 +379,9 @@ fun CreativeScreen(
                                 Spacer(modifier = Modifier.height(8.dp))
                                 
                                 ParameterInputRow(
-                                    label = standard.inputItem.inputLabel,
+                                    label = firstStandard.inputItem.inputLabel,
                                     unit = weightUnit,
-                                    placeholder = standard.inputItem.placeholder,
+                                    placeholder = firstStandard.inputItem.placeholder,
                                     minValue = minWeight,
                                     maxValue = maxWeight,
                                     onMinValueChange = {
@@ -398,9 +398,9 @@ fun CreativeScreen(
                         InputType.AGE_RANGE -> {
                             // 年龄范围输入
                             ParameterInputRow(
-                                label = standard.inputItem.inputLabel,
-                                unit = standard.inputItem.unit,
-                                placeholder = standard.inputItem.placeholder,
+                                label = firstStandard.inputItem.inputLabel,
+                                unit = firstStandard.inputItem.unit,
+                                placeholder = firstStandard.inputItem.placeholder,
                                 minValue = minAge,
                                 maxValue = maxAge,
                                 onMinValueChange = {
@@ -463,8 +463,8 @@ fun CreativeScreen(
 
                 // ========== 5. Tether类型选择（仅儿童安全座椅ECE R129标准显示）==========
                 val isShowTetherSelector = selectedProductType == ProductType.SAFETY_SEAT &&
-                                         selectedStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true
-                
+                                         selectedStandards.any { it.standardCode == "ECE_R129" }
+
                 if (isShowTetherSelector) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
@@ -750,7 +750,7 @@ fun ProductTypeAccordion(
                 ) {
                     Icon(
                         imageVector = when (productType) {
-                            ProductType.CHILD_SAFETY_SEAT -> Icons.Default.CarSeat
+                            ProductType.CHILD_SAFETY_SEAT -> Icons.Default.Car
                             ProductType.CHILD_STROLLER -> Icons.Default.DirectionsWalk
                             ProductType.CHILD_HOUSEHOLD_GOODS -> Icons.Default.Toys
                             ProductType.CHILD_HIGH_CHAIR -> Icons.Default.Chair
@@ -905,13 +905,6 @@ fun StandardCheckbox(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (isChecked) FontWeight.Bold else FontWeight.Normal
                 )
-                standard.standardDescription?.let { desc ->
-                    Text(
-                        text = desc,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
             }
         }
     }
