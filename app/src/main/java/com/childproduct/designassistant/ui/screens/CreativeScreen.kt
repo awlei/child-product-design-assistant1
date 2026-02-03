@@ -162,7 +162,7 @@ fun CreativeScreen(
             )
             Text(
                 text = "标准适配设计",
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -182,13 +182,44 @@ fun CreativeScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
-                
-                ProductType.values().forEach { productType ->
+
+                // 出行类
+                Text(
+                    text = "出行类",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                listOf(ProductType.CHILD_SAFETY_SEAT, ProductType.CHILD_STROLLER).forEach { productType ->
                     ProductTypeCard(
                         productType = productType,
                         isSelected = selectedProductType == productType,
                         standardConfigs = ProductTypeConfigManager.getConfigByProductType(productType)?.standards ?: emptyList(),
-                        onSelected = { 
+                        onSelected = {
+                            selectedProductType = productType
+                            selectedStandard = null  // 重置标准选择
+                            selectedTetherType = TetherType.SUPPORT_LEG  // 重置Tether类型选择
+                            paramValidationResult = null  // 重置验证结果
+                            validationError = null
+                        }
+                    )
+                }
+
+                // 家居类
+                Text(
+                    text = "家居类",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                listOf(ProductType.CHILD_HOUSEHOLD_GOODS, ProductType.CHILD_HIGH_CHAIR, ProductType.CRIB).forEach { productType ->
+                    ProductTypeCard(
+                        productType = productType,
+                        isSelected = selectedProductType == productType,
+                        standardConfigs = ProductTypeConfigManager.getConfigByProductType(productType)?.standards ?: emptyList(),
+                        onSelected = {
                             selectedProductType = productType
                             selectedStandard = null  // 重置标准选择
                             selectedTetherType = TetherType.SUPPORT_LEG  // 重置Tether类型选择
@@ -560,6 +591,22 @@ fun CreativeScreen(
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
+                }
+
+                // 提示信息
+                if (!isGenerateButtonEnabled) {
+                    Text(
+                        text = when {
+                            selectedProductType == null -> "请先选择产品类型"
+                            selectedStandard == null -> "请选择产品标准"
+                            paramValidationResult?.isValid != true -> "请输入有效的参数"
+                            uiState is UiState.Loading -> "正在生成..."
+                            else -> ""
+                        },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
