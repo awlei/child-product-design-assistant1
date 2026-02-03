@@ -65,6 +65,7 @@ data class ParamRule(
 data class StandardConfig(
     val standardId: String,
     val standardName: String,
+    val region: String,  // 地区标识：DOMESTIC（国内）、INTERNATIONAL（国际）
     val inputItem: InputItemConfig,
     val paramRule: ParamRule,
     val coreRequirements: String
@@ -120,9 +121,11 @@ object ProductTypeConfigManager {
             productTypeId = "CHILD_SAFETY_SEAT",
             productTypeName = "儿童安全座椅",
             standards = listOf(
+                // 欧标+国标
                 StandardConfig(
                     standardId = "ECE_R129_GB27887",
                     standardName = "ECE R129 / GB 27887-2024",
+                    region = "INTERNATIONAL",
                     inputItem = InputItemConfig(
                         inputType = InputType.HEIGHT_RANGE,
                         inputLabel = "身高范围（cm）",
@@ -143,11 +146,13 @@ object ProductTypeConfigManager {
                         ),
                         errorTip = "当前标准要求身高范围为40-150cm，请调整输入"
                     ),
-                    coreRequirements = "适配对应dummy（Q0-Q10）、后向安装至4岁、HIC≤1000"
+                    coreRequirements = "适配对应dummy（Q0-Q10）、后向安装至4岁、HIC≤1000、侧面碰撞胸部压缩量≤44mm"
                 ),
+                // 美标
                 StandardConfig(
                     standardId = "FMVSS_213",
                     standardName = "FMVSS 213（美标）",
+                    region = "INTERNATIONAL",
                     inputItem = InputItemConfig(
                         inputType = InputType.WEIGHT_RANGE,
                         inputLabel = "体重范围（lb/kg）",
@@ -163,11 +168,62 @@ object ProductTypeConfigManager {
                         weightIntervals = listOf(
                             WeightInterval(5.0, 20.0, 2.3, 9.0, "0-2岁"),
                             WeightInterval(20.0, 40.0, 9.0, 18.0, "2-4岁"),
-                            WeightInterval(40.0, 80.0, 18.0, 36.0, "4-10岁")
+                            WeightInterval(40.0, 65.0, 18.0, 29.0, "4-8岁"),
+                            WeightInterval(65.0, 80.0, 29.0, 36.0, "8-10岁")
                         ),
                         errorTip = "当前标准要求体重范围为5-80lb（2.3-36kg），请调整输入"
                     ),
-                    coreRequirements = "正面碰撞HIC≤1000、织带断裂强度≥11000N、侧面碰撞胸部压缩量≤23mm"
+                    coreRequirements = "正面碰撞HIC≤1000、织带断裂强度≥11000N、侧面碰撞胸部压缩量≤23mm、头部加速度≤50g"
+                ),
+                // 澳标
+                StandardConfig(
+                    standardId = "AS_NZS_1754",
+                    standardName = "AS/NZS 1754（澳标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.HEIGHT_RANGE,
+                        inputLabel = "身高范围（cm）",
+                        unit = "cm",
+                        editable = true,
+                        placeholder = "请输入40-145之间的范围，如40-100"
+                    ),
+                    paramRule = ParamRule(
+                        minValue = 40.0,
+                        maxValue = 145.0,
+                        intervals = listOf(
+                            ParamInterval(40.0, 70.0, "0-2岁", CrashTestDummy.Q0),
+                            ParamInterval(70.0, 80.0, "2-3岁", CrashTestDummy.Q1),
+                            ParamInterval(80.0, 95.0, "3-4岁", CrashTestDummy.Q3),
+                            ParamInterval(95.0, 115.0, "4-6岁", CrashTestDummy.Q3_S),
+                            ParamInterval(115.0, 145.0, "6-8岁", CrashTestDummy.Q6)
+                        ),
+                        errorTip = "当前标准要求身高范围为40-145cm，请调整输入"
+                    ),
+                    coreRequirements = "后向安装至6个月、侧面碰撞头部位移≤550mm、动态测试加速度≤60g、ISOFIX锚点强度≥8kN"
+                ),
+                // 日标
+                StandardConfig(
+                    standardId = "JIS_D_1601",
+                    standardName = "JIS D 1601（日标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（kg）",
+                        unit = "kg",
+                        editable = true,
+                        placeholder = "请输入9-36kg之间的范围，如9-18"
+                    ),
+                    paramRule = ParamRule(
+                        minValueKg = 9.0,
+                        maxValueKg = 36.0,
+                        weightIntervals = listOf(
+                            WeightInterval(18.0, 25.0, 8.2, 11.3, "1-3岁"),
+                            WeightInterval(25.0, 30.0, 11.3, 13.6, "3-5岁"),
+                            WeightInterval(30.0, 36.0, 13.6, 16.3, "5-8岁")
+                        ),
+                        errorTip = "当前标准要求体重范围为9-36kg，请调整输入"
+                    ),
+                    coreRequirements = "后向安装至2岁、正面碰撞胸部加速度≤60g、侧面碰撞胸部位移≤30mm、织带锁止≤15mm"
                 )
             )
         ),
@@ -176,22 +232,105 @@ object ProductTypeConfigManager {
             productTypeId = "BABY_STROLLER",
             productTypeName = "婴儿推车",
             standards = listOf(
+                // 欧标
                 StandardConfig(
-                    standardId = "EN_1888_GB14748",
-                    standardName = "EN 1888 / GB 14748-2020",
+                    standardId = "EN_1888",
+                    standardName = "EN 1888（欧标）",
+                    region = "INTERNATIONAL",
                     inputItem = InputItemConfig(
-                        inputType = InputType.HEIGHT_RANGE,
-                        inputLabel = "身高范围（cm）",
-                        unit = "cm",
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（kg）",
+                        unit = "kg",
                         editable = true,
-                        placeholder = "请输入≤100的数值，如50-90"
+                        placeholder = "请输入0-22kg之间的范围，如0-15"
                     ),
                     paramRule = ParamRule(
-                        minValue = 0.0,
-                        maxValue = 100.0,
-                        errorTip = "当前标准要求婴儿推车适配身高≤100cm，请调整输入"
+                        minValueKg = 0.0,
+                        maxValueKg = 22.0,
+                        weightIntervals = listOf(
+                            WeightInterval(0.0, 9.0, 0.0, 9.0, "0-9个月"),
+                            WeightInterval(9.0, 13.0, 9.0, 13.0, "9-18个月"),
+                            WeightInterval(13.0, 15.0, 13.0, 15.0, "1.5-3岁"),
+                            WeightInterval(15.0, 22.0, 15.0, 22.0, "3-4岁")
+                        ),
+                        errorTip = "当前标准要求体重范围为0-22kg，请调整输入"
                     ),
-                    coreRequirements = "制动距离≤50cm、折叠后无锐边、推把强度≥1000N"
+                    coreRequirements = "制动距离≤100cm（10°斜坡）、推把强度≥600N、折叠机构防止意外触发、警告标识清晰可见"
+                ),
+                // 国标
+                StandardConfig(
+                    standardId = "GB_14748",
+                    standardName = "GB 14748-2006（国标）",
+                    region = "DOMESTIC",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（kg）",
+                        unit = "kg",
+                        editable = true,
+                        placeholder = "请输入0-15kg之间的范围，如0-9"
+                    ),
+                    paramRule = ParamRule(
+                        minValueKg = 0.0,
+                        maxValueKg = 15.0,
+                        weightIntervals = listOf(
+                            WeightInterval(0.0, 9.0, 0.0, 9.0, "0-9个月"),
+                            WeightInterval(9.0, 13.0, 9.0, 13.0, "9-18个月"),
+                            WeightInterval(13.0, 15.0, 13.0, 15.0, "1.5-3岁")
+                        ),
+                        errorTip = "当前标准要求体重范围为0-15kg，请调整输入"
+                    ),
+                    coreRequirements = "制动距离≤50cm（5°斜坡）、稳定性测试无倾倒、束缚带宽度≥20mm、折叠后锁定牢固"
+                ),
+                // 美标
+                StandardConfig(
+                    standardId = "ASTM_F833",
+                    standardName = "ASTM F833（美标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（lb/kg）",
+                        unit = "lb/kg",
+                        editable = true,
+                        placeholder = "请输入0-50lb（0-22.7kg）之间的范围，如0-25"
+                    ),
+                    paramRule = ParamRule(
+                        minValueLb = 0.0,
+                        maxValueLb = 50.0,
+                        minValueKg = 0.0,
+                        maxValueKg = 22.7,
+                        weightIntervals = listOf(
+                            WeightInterval(0.0, 20.0, 0.0, 9.0, "0-9个月"),
+                            WeightInterval(20.0, 30.0, 9.0, 13.6, "9-18个月"),
+                            WeightInterval(30.0, 40.0, 13.6, 18.1, "1.5-3岁"),
+                            WeightInterval(40.0, 50.0, 18.1, 22.7, "3-4岁")
+                        ),
+                        errorTip = "当前标准要求体重范围为0-50lb（0-22.7kg），请调整输入"
+                    ),
+                    coreRequirements = "制动距离≤36英寸（10°斜坡）、五点式安全带、扶手间距≤45cm、停车制动器可靠"
+                ),
+                // 澳标
+                StandardConfig(
+                    standardId = "AS_NZS_2088",
+                    standardName = "AS/NZS 2088（澳标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（kg）",
+                        unit = "kg",
+                        editable = true,
+                        placeholder = "请输入0-17kg之间的范围，如0-9"
+                    ),
+                    paramRule = ParamRule(
+                        minValueKg = 0.0,
+                        maxValueKg = 17.0,
+                        weightIntervals = listOf(
+                            WeightInterval(0.0, 9.0, 0.0, 9.0, "0-9个月"),
+                            WeightInterval(9.0, 13.0, 9.0, 13.0, "9-18个月"),
+                            WeightInterval(13.0, 17.0, 13.0, 17.0, "1.5-3岁")
+                        ),
+                        errorTip = "当前标准要求体重范围为0-17kg，请调整输入"
+                    ),
+                    coreRequirements = "制动距离≤120cm（12°斜坡）、稳定性测试通过、五点式安全带锁定装置、可调节靠背角度"
                 )
             )
         ),
@@ -224,9 +363,11 @@ object ProductTypeConfigManager {
             productTypeId = "CHILD_HIGH_CHAIR",
             productTypeName = "儿童高脚椅",
             standards = listOf(
+                // 国际标准+国标
                 StandardConfig(
                     standardId = "ISO_8124_GB28007",
                     standardName = "ISO 8124-3 / GB 28007-2011",
+                    region = "INTERNATIONAL",
                     inputItem = InputItemConfig(
                         inputType = InputType.AGE_RANGE,
                         inputLabel = "适用年龄（岁）",
@@ -237,9 +378,64 @@ object ProductTypeConfigManager {
                     paramRule = ParamRule(
                         minValue = 1.0,
                         maxValue = 6.0,
+                        intervals = listOf(
+                            ParamInterval(1.0, 2.0, "1-2岁"),
+                            ParamInterval(2.0, 3.0, "2-3岁"),
+                            ParamInterval(3.0, 4.0, "3-4岁"),
+                            ParamInterval(4.0, 6.0, "4-6岁")
+                        ),
                         errorTip = "当前标准要求高脚椅适用年龄为1-6岁，请调整输入"
                     ),
-                    coreRequirements = "稳定性测试无倾倒、束缚带强度≥150N、边缘圆角≥2mm"
+                    coreRequirements = "稳定性测试无倾倒、束缚带强度≥150N、边缘圆角≥2mm、可调节高度锁定可靠"
+                ),
+                // 欧标
+                StandardConfig(
+                    standardId = "EN_14988",
+                    standardName = "EN 14988（欧标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（kg）",
+                        unit = "kg",
+                        editable = true,
+                        placeholder = "请输入9-15kg之间的范围，如9-12"
+                    ),
+                    paramRule = ParamRule(
+                        minValueKg = 9.0,
+                        maxValueKg = 15.0,
+                        weightIntervals = listOf(
+                            WeightInterval(9.0, 11.0, 9.0, 11.0, "9-11kg"),
+                            WeightInterval(11.0, 13.0, 11.0, 13.0, "11-13kg"),
+                            WeightInterval(13.0, 15.0, 13.0, 15.0, "13-15kg")
+                        ),
+                        errorTip = "当前标准要求体重范围为9-15kg，请调整输入"
+                    ),
+                    coreRequirements = "向前/向后倾斜30°不倾倒、托盘强度≥120N、五点式安全带、座垫抗撕裂≥25N"
+                ),
+                // 美标
+                StandardConfig(
+                    standardId = "ASTM_F404",
+                    standardName = "ASTM F404（美标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.WEIGHT_RANGE,
+                        inputLabel = "体重范围（lb/kg）",
+                        unit = "lb/kg",
+                        editable = true,
+                        placeholder = "请输入≤50lb（≤22.7kg），如15-30"
+                    ),
+                    paramRule = ParamRule(
+                        maxValueLb = 50.0,
+                        maxValueKg = 22.7,
+                        weightIntervals = listOf(
+                            WeightInterval(0.0, 20.0, 0.0, 9.0, "0-20lb"),
+                            WeightInterval(20.0, 30.0, 9.0, 13.6, "20-30lb"),
+                            WeightInterval(30.0, 40.0, 13.6, 18.1, "30-40lb"),
+                            WeightInterval(40.0, 50.0, 18.1, 22.7, "40-50lb")
+                        ),
+                        errorTip = "当前标准要求体重不超过50lb（22.7kg），请调整输入"
+                    ),
+                    coreRequirements = "托盘锁定强度≥50lb、C型扣带强度≥133N、五点式安全带、稳定性测试通过"
                 )
             )
         )

@@ -843,18 +843,69 @@ fun ProductTypeAccordion(
                         }
                     }
 
-                    // 标准列表
-                    standards.forEach { standard ->
-                        StandardCheckbox(
-                            standard = standard,
-                            isChecked = standard in selectedStandards,
-                            onCheckedChange = { checked ->
-                                if (checked) {
-                                    onSelectProduct()
-                                }
-                                onSelectStandard(standard, checked)
+                    // 标准列表（按地区分组）
+                    val domesticStandards = standards.filter { it.region == "DOMESTIC" }
+                    val internationalStandards = standards.filter { it.region == "INTERNATIONAL" }
+
+                    // 滚动区域
+                    Column(
+                        modifier = Modifier
+                            .height(200.dp)
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        // 国内标准
+                        if (domesticStandards.isNotEmpty()) {
+                            Text(
+                                text = "国内标准",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                            domesticStandards.forEach { standard ->
+                                StandardCheckbox(
+                                    standard = standard,
+                                    isChecked = standard in selectedStandards,
+                                    onCheckedChange = { checked ->
+                                        if (checked) {
+                                            onSelectProduct()
+                                        }
+                                        onSelectStandard(standard, checked)
+                                    }
+                                )
                             }
-                        )
+
+                            // 添加分隔线
+                            if (internationalStandards.isNotEmpty()) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                    thickness = 0.5.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant
+                                )
+                            }
+                        }
+
+                        // 国际标准
+                        if (internationalStandards.isNotEmpty()) {
+                            Text(
+                                text = "国际标准",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
+                            internationalStandards.forEach { standard ->
+                                StandardCheckbox(
+                                    standard = standard,
+                                    isChecked = standard in selectedStandards,
+                                    onCheckedChange = { checked ->
+                                        if (checked) {
+                                            onSelectProduct()
+                                        }
+                                        onSelectStandard(standard, checked)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -903,8 +954,10 @@ fun StandardCheckbox(
             ) {
                 Text(
                     text = standard.standardName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (isChecked) FontWeight.Bold else FontWeight.Normal
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                    fontWeight = if (isChecked) FontWeight.Bold else FontWeight.Normal,
+                    lineHeight = 18.sp,
+                    maxLines = 2
                 )
             }
         }
