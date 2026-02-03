@@ -366,6 +366,18 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     // 获取用户选择的标准类型
     val selectedStandards = getSelectedStandards(creativeIdea)
     
+    // 根据用户选择的标准类型过滤假人
+    val filteredDummies = if (selectedStandards.size == 1) {
+        // 如果只选择了一个标准，只显示该标准的假人
+        allMatchedDummies.filter { it.standardType == selectedStandards.first() }
+    } else {
+        // 如果选择了多个标准或未选择，显示所有假人
+        allMatchedDummies
+    }
+    
+    // 获取标准名称用于标题
+    val standardNames = selectedStandards.joinToString("/") { it.displayName }
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -383,9 +395,9 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
         SectionBlock(
             icon = Icons.Default.Straighten,
             title = "核心设计参数（按假人分组）",
-            subtitle = "来自GPS-028 Dummies表"
+            subtitle = "来自GPS-028 Dummies表${if (standardNames.isNotEmpty()) " · $standardNames" else ""}"
         ) {
-            allMatchedDummies.forEachIndexed { index, dummy ->
+            filteredDummies.forEachIndexed { index, dummy ->
                 val isLast = index == allMatchedDummies.size - 1
                 
                 TreeItem(
@@ -424,12 +436,12 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
         // 合规约束（分龄精准匹配）
         SectionBlock(
             icon = Icons.Default.Verified,
-            title = "合规约束（分龄对应ECE R129/GB 27887-2024）",
+            title = "合规约束（分龄对应${if (standardNames.isNotEmpty()) standardNames else "ECE R129/GB 27887-2024"}）",
             subtitle = "按年龄段精准匹配"
         ) {
             // 按年龄段分组假人
-            val lowAgeDummies = allMatchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.LOW_AGE }
-            val highAgeDummies = allMatchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
+            val lowAgeDummies = filteredDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.LOW_AGE }
+            val highAgeDummies = filteredDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
             
             // 低龄段（Q0-Q1.5）
             if (lowAgeDummies.isNotEmpty()) {
@@ -529,7 +541,7 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             title = "材料选型（带测试标准）",
             subtitle = "绑定测试标准"
         ) {
-            allMatchedDummies.firstOrNull()?.let { dummy ->
+            filteredDummies.firstOrNull()?.let { dummy ->
                 TreeItem(
                     label = "主体框架",
                     value = "食品级PP（抗冲击强度${dummy.materialTestStandards.mainFrameImpactStrength}，${dummy.materialTestStandards.mainFrameTestStandard}）",
