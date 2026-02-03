@@ -264,11 +264,13 @@ ${context?.let { "- 附加信息：$it" } ?: ""}
 - 原因1：[描述]
 - 原因2：[描述]
 
-${standards?.isNotEmpty() == true ? """
+${if (standards?.isNotEmpty() == true) {
+"""
 #### 标准合规性
 - 是否符合 $standardContext 标准：[是/否]
 - 违反的条款（如有）：[条款编号] - [违规内容]
-""" : ""}
+"""
+} else ""}
 
 ### 4. 解决方案
 #### 修复方案
@@ -295,15 +297,27 @@ ${standards?.isNotEmpty() == true ? """
 - [优化建议2]
 
 ⚠️ **注意事项**：
-${standards?.isNotEmpty() == true ? "- 本诊断仅基于用户选择的标准：$standardContext\n- 请勿引用其他标准的内容" : "- 未指定标准，仅提供通用技术建议"}
+${if (standards?.isNotEmpty() == true) {
+"- 本诊断仅基于用户选择的标准：$standardContext\n- 请勿引用其他标准的内容"
+} else "- 未指定标准，仅提供通用技术建议"}
 - 如需更精确的诊断，请提供更多上下文信息
         """.trimIndent()
     }
 
     /**
-     * 获取系统提示词
+     * 生成通用聊天的Prompt
      */
-    fun getSystemPrompt(): String {
-        return SYSTEM_PROMPT
+    fun generateChatPrompt(
+        message: String,
+        context: String? = null
+    ): String {
+        return """
+## 对话
+
+${context?.let { "上下文信息：\n$context\n\n" } ?: ""}
+用户消息：$message
+
+请友好、专业地回应用户，提供有帮助的信息。
+        """.trimIndent()
     }
 }
