@@ -393,6 +393,8 @@ fun CreativeScreen(
                         }
                         InputType.WEIGHT_RANGE -> {
                             // 体重范围输入（支持lb/kg切换）
+                            
+                            // 单位选择器
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically
@@ -425,25 +427,26 @@ fun CreativeScreen(
                                         Text("kg")
                                     }
                                 }
-                                
-                                Spacer(modifier = Modifier.height(8.dp))
-                                
-                                ParameterInputRow(
-                                    label = firstStandard.inputItem.inputLabel,
-                                    unit = weightUnit,
-                                    placeholder = firstStandard.inputItem.placeholder,
-                                    minValue = minWeight,
-                                    maxValue = maxWeight,
-                                    onMinValueChange = {
-                                        minWeight = it
-                                        validateAndSetResult()
-                                    },
-                                    onMaxValueChange = {
-                                        maxWeight = it
-                                        validateAndSetResult()
-                                    }
-                                )
                             }
+                            
+                            Spacer(modifier = Modifier.height(8.dp))
+                            
+                            // 参数输入
+                            ParameterInputRow(
+                                label = firstStandard.inputItem.inputLabel,
+                                unit = weightUnit,
+                                placeholder = firstStandard.inputItem.placeholder,
+                                minValue = minWeight,
+                                maxValue = maxWeight,
+                                onMinValueChange = {
+                                    minWeight = it
+                                    validateAndSetResult()
+                                },
+                                onMaxValueChange = {
+                                    maxWeight = it
+                                    validateAndSetResult()
+                                }
+                            )
                         }
                         InputType.AGE_RANGE -> {
                             // 年龄范围输入
