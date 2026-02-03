@@ -297,11 +297,11 @@ object GPS028Database {
     fun getDummyData(dummyType: ComplianceDummy): GPS028DummyData? {
         return when (dummyType) {
             ComplianceDummy.Q0 -> getQ0Dummy()
-            ComplianceDummy.Q0_PLUS -> getQ0PlusDummy()
+            ComplianceDummy.Q0PLUS -> getQ0PlusDummy()
             ComplianceDummy.Q1 -> getQ1Dummy()
             ComplianceDummy.Q1_5 -> getQ1_5Dummy()
             ComplianceDummy.Q3 -> getQ3Dummy()
-            ComplianceDummy.Q3_S -> getQ3sDummy()
+            ComplianceDummy.Q3S -> getQ3sDummy()
             ComplianceDummy.Q6 -> getQ6Dummy()
             ComplianceDummy.Q10 -> getQ10Dummy()
             else -> null
