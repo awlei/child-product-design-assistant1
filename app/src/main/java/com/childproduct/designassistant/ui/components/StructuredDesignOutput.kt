@@ -386,7 +386,7 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             subtitle = "来自GPS-028 Dummies表"
         ) {
             allMatchedDummies.forEachIndexed { index, dummy ->
-                val isLast = index == matchedDummies.size - 1
+                val isLast = index == allMatchedDummies.size - 1
                 
                 TreeItem(
                     label = "🔽 ${dummy.displayName}",
