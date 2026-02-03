@@ -312,14 +312,63 @@ fun CreativeScreen(
                     )
                 }
 
+                // ========== 补充标准引导提示 ==========
+                if (selectedProductType != null && selectedStandards.isEmpty()) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Info,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(
+                                    text = "请补充选择标准",
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "点击产品类型卡片展开，选择1个或多个适用的安全标准",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+                        }
+                    }
+                }
+
                 // ========== 2. 参数输入（仅在有选中标准后显示） ==========
                 if (selectedStandards.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "2. 参数输入",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "2. 参数输入",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = " *",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
                     // 使用第一个选中的标准来确定输入类型
                     val firstStandard = selectedStandards.first()
@@ -445,6 +494,48 @@ fun CreativeScreen(
                                     color = MaterialTheme.colorScheme.secondary,
                                     modifier = Modifier.padding(top = 2.dp)
                                 )
+                            }
+                        }
+                    }
+
+                    // 显示选中标准的核心约束
+                    if (selectedStandards.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.tertiaryContainer
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(12.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(bottom = 8.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Info,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.tertiary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = "标准核心约束",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.tertiary
+                                    )
+                                }
+                                selectedStandards.forEach { standard ->
+                                    Text(
+                                        text = "• ${standard.standardName}: ${standard.coreRequirements}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                                        modifier = Modifier.padding(vertical = 2.dp)
+                                    )
+                                }
                             }
                         }
                     }
@@ -654,16 +745,22 @@ fun CreativeScreen(
 
                 // 提示信息
                 if (!isGenerateButtonEnabled) {
+                    val hintText = when {
+                        selectedProductType == null -> "请先选择产品类型"
+                        selectedStandards.isEmpty() -> "⚠️ 请至少选择1个产品标准"
+                        paramValidationResult?.isValid != true -> "⚠️ 请输入有效的参数范围"
+                        uiState is UiState.Loading -> "正在生成..."
+                        else -> ""
+                    }
+                    
                     Text(
-                        text = when {
-                            selectedProductType == null -> "请先选择产品类型"
-                            selectedStandards.isEmpty() -> "请选择产品标准"
-                            paramValidationResult?.isValid != true -> "请输入有效的参数"
-                            uiState is UiState.Loading -> "正在生成..."
-                            else -> ""
-                        },
+                        text = hintText,
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = if (hintText.contains("⚠️")) {
+                            MaterialTheme.colorScheme.error
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -978,11 +1075,21 @@ fun ParameterInputRow(
     onMinValueChange: (String) -> Unit,
     onMaxValueChange: (String) -> Unit
 ) {
-    Text(
-        text = label,
-        style = MaterialTheme.typography.bodyMedium,
-        fontWeight = FontWeight.Medium
-    )
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium
+        )
+        Text(
+            text = " *",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.error,
+            fontWeight = FontWeight.Bold
+        )
+    }
     
     Row(
         modifier = Modifier.fillMaxWidth(),
