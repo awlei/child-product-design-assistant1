@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.CreativeIdea
 import com.childproduct.designassistant.data.GPS028Database
 import com.childproduct.designassistant.data.OtherProductTypesDatabase
+import com.childproduct.designassistant.data.DatabaseManager
 
 /**
  * 结构化设计输出状态
@@ -360,8 +361,15 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val minHeightCm = heightRangeParts.getOrNull(0)?.toIntOrNull() ?: 40
     val maxHeightCm = heightRangeParts.getOrNull(1)?.toIntOrNull() ?: 150
     
-    // 从GPS-028数据库获取匹配的假人
-    val allMatchedDummies = GPS028Database.getDummiesByHeightRange(minHeightCm, maxHeightCm)
+    // 从统一数据库管理器获取匹配的假人（包含所有标准：GPS-028/美标/欧标/国标/澳标/日标）
+    val allDummiesResult = DatabaseManager.getSafetySeatDummiesByHeight(minHeightCm, maxHeightCm)
+    
+    // 合并所有标准的假人数据
+    val allMatchedDummies = mutableListOf<GPS028DummyData>()
+    allMatchedDummies.addAll(allDummiesResult.gpsDummies)
+    // 将澳标和日标假人转换为GPS028格式
+    allMatchedDummies.addAll(allDummiesResult.australianDummies.map { it.toGPS028DummyData() })
+    allMatchedDummies.addAll(allDummiesResult.japaneseDummies.map { it.toGPS028DummyData() })
     
     // 获取用户选择的标准类型
     val selectedStandards = getSelectedStandards(creativeIdea)
@@ -711,126 +719,251 @@ private fun getSideProtection(heightRange: String): String {
  * 4. 材料性能：绑定测试标准
  */
 @Composable
+/**
+ * 婴儿推车输出内容（使用StrollerStandardDatabase综合数据库）
+ * 优化说明：
+ * 1. 使用StrollerStandardDatabase获取全球最新标准数据
+ * 2. 支持多地区标准查询（中国、欧盟、美国、日本、巴西、澳新等）
+ * 3. 包含ISO 8124-2:2025、GB 46516—2025等最新标准
+ * 4. 提供完整的测试项目、合规阈值、材料要求、设计要求
+ */
+@Composable
 private fun StrollerOutputContent(creativeIdea: CreativeIdea) {
-    val params = OtherProductTypesDatabase.getStrollerParameters()
+    // 从统一数据库管理器获取婴儿推车的综合数据
+    // 默认查询中国市场单人推车的数据
+    val comprehensiveData = DatabaseManager.getStrollerComprehensiveRequirements(
+        productType = "单人推车（≤18kg）",
+        targetRegion = "China"
+    )
     
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 基础适配数据
+        // 标准基础信息
         SectionBlock(
-            icon = Icons.Default.BarChart,
-            title = "基础适配数据（精准对应GPS-028假人）",
-            subtitle = "匹配Q0-Q3假人"
+            icon = Icons.Default.Description,
+            title = "适用标准",
+            subtitle = "来自StrollerStandardDatabase（2024-2026最新标准）"
         ) {
-            TreeItem(
-                label = "适配年龄",
-                value = params.ageRange,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "身高范围",
-                value = params.heightRange,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "体重范围",
-                value = params.weightRange,
-                level = 0,
-                isLast = true
-            )
+            comprehensiveData?.standardInfos?.forEachIndexed { index, standard ->
+                val isLast = index == comprehensiveData.standardInfos.size - 1
+                TreeItem(
+                    label = "标准编号",
+                    value = standard.standardId,
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  标准名称",
+                    value = standard.standardName,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  标准类型",
+                    value = standard.standardType.displayName,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  适用地区",
+                    value = standard.applicableRegion,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  适用体重",
+                    value = standard.applicableWeight,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  适用年龄",
+                    value = standard.applicableAge,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  生效日期",
+                    value = standard.effectiveDate,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  数据来源",
+                    value = standard.dataSource,
+                    level = 1,
+                    isLast = isLast
+                )
+            }
         }
         
-        // 核心设计参数（来自GPS-028）
-        SectionBlock(
-            icon = Icons.Default.Straighten,
-            title = "核心设计参数（来自GPS-028 Dummies表）",
-            subtitle = "带数据追溯"
-        ) {
-            TreeItem(
-                label = "扶手高度",
-                value = params.handleHeightRange,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "座宽（Q0-Q3假人肩宽+余量）",
-                value = params.seatWidthRange + "（GPS-028 Dummies表Q0-Q3假人肩宽）",
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "靠背角度（EN 1888要求）",
-                value = params.backrestAngleRange,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "轮距（防侧翻，EN 1888）",
-                value = params.wheelbaseRange,
-                level = 0,
-                isLast = true
-            )
-        }
-        
-        // 合规阈值（分目标市场）
-        SectionBlock(
-            icon = Icons.Default.Verified,
-            title = "合规阈值（分目标市场）",
-            subtitle = "EN 1888 / GB 14748"
-        ) {
-            TreeItem(
-                label = "刹车力（EN 1888 §8.3）",
-                value = params.standardRequirements.brakeForce,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "侧翻角度（EN 1888 §8.4）",
-                value = params.standardRequirements.stabilityAngle,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "手柄强度（ASTM F833）",
-                value = params.standardRequirements.handleStrength,
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "测试标准",
-                value = params.standardRequirements.testStandard,
-                level = 0,
-                isLast = true
-            )
-        }
-        
-        // 材料与验证依据
+        // 测试项目
         SectionBlock(
             icon = Icons.Default.Science,
-            title = "材料与验证依据",
-            subtitle = "带测试标准"
+            title = "测试项目",
+            subtitle = "覆盖机械危害、稳定性、材料安全等维度"
         ) {
-            TreeItem(
-                label = "车架（铝合金）",
-                value = "抗拉强度≥240MPa（ISO 6892-1:2016）",
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "座布（牛津布）",
-                value = "防水等级≥IPX4（GB/T 4744-2013）",
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "数据追溯",
-                value = params.standardRequirements.dataSource,
-                level = 0,
-                isLast = true
-            )
+            comprehensiveData?.testItems?.forEachIndexed { index, testItem ->
+                val isLast = index == comprehensiveData.testItems.size - 1
+                TreeItem(
+                    label = "测试名称",
+                    value = testItem.testName,
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  测试分组",
+                    value = testItem.testGroup,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  测试描述",
+                    value = testItem.testDescription,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  关联风险",
+                    value = testItem.associatedRisk,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  成功标准",
+                    value = testItem.successCriteria,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  适用产品",
+                    value = testItem.applicableProduct ?: "所有类型",
+                    level = 1,
+                    isLast = isLast
+                )
+            }
+        }
+        
+        // 合规阈值
+        SectionBlock(
+            icon = Icons.Default.Verified,
+            title = "合规阈值",
+            subtitle = "量化的安全指标"
+        ) {
+            comprehensiveData?.thresholds?.forEachIndexed { index, threshold ->
+                val isLast = index == comprehensiveData.thresholds.size - 1
+                TreeItem(
+                    label = "测试场景",
+                    value = threshold.testScenario,
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  测试重物",
+                    value = threshold.dummyModel ?: "不适用",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  核心阈值",
+                    value = threshold.keyThreshold,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  阈值说明",
+                    value = threshold.thresholdDescription,
+                    level = 1,
+                    isLast = isLast
+                )
+            }
+        }
+        
+        // 材料性能要求
+        SectionBlock(
+            icon = Icons.Default.Palette,
+            title = "材料性能要求",
+            subtitle = "环保与机械性能指标"
+        ) {
+            comprehensiveData?.materialRequirements?.forEachIndexed { index, materialReq ->
+                val isLast = index == comprehensiveData.materialRequirements.size - 1
+                TreeItem(
+                    label = "材料类型",
+                    value = materialReq.materialType,
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  性能指标",
+                    value = materialReq.performanceIndex,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  要求值",
+                    value = materialReq.requirementValue,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  测试标准",
+                    value = materialReq.testStandard ?: "不适用",
+                    level = 1,
+                    isLast = isLast
+                )
+            }
+        }
+        
+        // 设计与人体工学要求
+        SectionBlock(
+            icon = Icons.Default.Straighten,
+            title = "设计与人体工学要求",
+            subtitle = "基于最新标准与人体工学研究"
+        ) {
+            comprehensiveData?.designRequirements?.forEachIndexed { index, designReq ->
+                val isLast = index == comprehensiveData.designRequirements.size - 1
+                TreeItem(
+                    label = "设计项目",
+                    value = designReq.designItem,
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  适用场景",
+                    value = designReq.applicableScenario ?: "所有场景",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  设计要求值",
+                    value = designReq.requirementValue,
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  设计依据",
+                    value = designReq.rationale,
+                    level = 1,
+                    isLast = isLast
+                )
+            }
+        }
+        
+        // 特殊说明
+        if (!comprehensiveData?.note.isNullOrEmpty()) {
+            SectionBlock(
+                icon = Icons.Default.Info,
+                title = "特殊说明",
+                subtitle = "补充信息"
+            ) {
+                TreeItem(
+                    label = "备注",
+                    value = comprehensiveData?.note ?: "",
+                    level = 0,
+                    isLast = true
+                )
+            }
         }
     }
 }
@@ -1403,6 +1536,10 @@ fun getSelectedStandards(creativeIdea: CreativeIdea): Set<com.childproduct.desig
                 standards.add(com.childproduct.designassistant.data.StandardType.ECE_R129)
             ref.mainStandard.contains("GB 27887") -> 
                 standards.add(com.childproduct.designassistant.data.StandardType.GB_27887)
+            ref.mainStandard.contains("AS/NZS 1754") -> 
+                standards.add(com.childproduct.designassistant.data.StandardType.AUSTRALIAN)
+            ref.mainStandard.contains("JIS D 1601") -> 
+                standards.add(com.childproduct.designassistant.data.StandardType.JAPANESE)
             else -> {
                 // 未匹配到任何标准，使用默认的欧标
             }
@@ -1415,4 +1552,94 @@ fun getSelectedStandards(creativeIdea: CreativeIdea): Set<com.childproduct.desig
     }
     
     return standards
+}
+
+// ============================================================================
+// 扩展函数：将澳标和日标数据转换为GPS028DummyData格式
+// ============================================================================
+
+/**
+ * 将澳标假人数据转换为GPS028假人数据格式
+ */
+private fun com.childproduct.designassistant.data.ChildSafetySeatDatabase.AustralianDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
+    return com.childproduct.designassistant.data.GPS028DummyData(
+        dummyType = com.childproduct.designassistant.data.ComplianceDummy.Q3, // 使用一个默认值
+        displayName = this.displayName,
+        ageYears = this.ageYears,
+        heightMin = this.heightMin.toInt(),
+        heightMax = this.heightMax.toInt(),
+        weightMin = this.minWeight,
+        weightMax = this.maxWeight,
+        sittingHeight = this.sittingHeight.toInt(),
+        shoulderWidth = this.shoulderWidth.toInt(),
+        trunkLength = this.trunkLength.toInt(),
+        designParameters = com.childproduct.designassistant.data.GPS028DesignParameters(
+            headrestHeightRange = "${this.sittingHeight.toInt()}-${this.sittingHeight.toInt() + 50}",
+            headrestDataSource = "AS/NZS 1754",
+            headrestDataItem = "§5.2",
+            seatWidthRange = "${this.shoulderWidth.toInt()}-${this.shoulderWidth.toInt() + 30}",
+            seatWidthDataSource = "AS/NZS 1754",
+            seatWidthDataItem = "§5.2",
+            backrestDepthRange = "${this.trunkLength.toInt()}-${this.trunkLength.toInt() + 50}",
+            backrestDataSource = "AS/NZS 1754",
+            backrestDataItem = "§5.2",
+            sideProtectionArea = this.sideProtectionArea,
+            sideProtectionDataSource = "AS/NZS 1754",
+            sideProtectionDataItem = "§5.2"
+        ),
+        safetyThresholds = com.childproduct.designassistant.data.GPS028SafetyThresholds(
+            ageGroup = com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE,
+            hicLimit = this.hicLimit,
+            chestAccelerationLimit = this.chestAccelerationLimit,
+            neckTensionLimit = 0, // 澳标未定义
+            neckCompressionLimit = 0, // 澳标未定义
+            headExcursionLimit = this.headExcursionLimit,
+            kneeExcursionLimit = 0, // 澳标未定义
+            chestDeflectionLimit = 0 // 澳标未定义
+        ),
+        standardType = com.childproduct.designassistant.data.StandardType.AUSTRALIAN
+    )
+}
+
+/**
+ * 将日标假人数据转换为GPS028假人数据格式
+ */
+private fun com.childproduct.designassistant.data.ChildSafetySeatDatabase.JapaneseDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
+    return com.childproduct.designassistant.data.GPS028DummyData(
+        dummyType = com.childproduct.designassistant.data.ComplianceDummy.Q3, // 使用一个默认值
+        displayName = this.displayName,
+        ageYears = this.ageYears,
+        heightMin = this.heightMin.toInt(),
+        heightMax = this.heightMax.toInt(),
+        weightMin = this.minWeight,
+        weightMax = this.maxWeight,
+        sittingHeight = this.sittingHeight.toInt(),
+        shoulderWidth = this.shoulderWidth.toInt(),
+        trunkLength = this.trunkLength.toInt(),
+        designParameters = com.childproduct.designassistant.data.GPS028DesignParameters(
+            headrestHeightRange = "${this.sittingHeight.toInt()}-${this.sittingHeight.toInt() + 50}",
+            headrestDataSource = "JIS D 1601",
+            headrestDataItem = "§5.2",
+            seatWidthRange = "${this.shoulderWidth.toInt()}-${this.shoulderWidth.toInt() + 30}",
+            seatWidthDataSource = "JIS D 1601",
+            seatWidthDataItem = "§5.2",
+            backrestDepthRange = "${this.trunkLength.toInt()}-${this.trunkLength.toInt() + 50}",
+            backrestDataSource = "JIS D 1601",
+            backrestDataItem = "§5.2",
+            sideProtectionArea = this.sideProtectionArea,
+            sideProtectionDataSource = "JIS D 1601",
+            sideProtectionDataItem = "§5.2"
+        ),
+        safetyThresholds = com.childproduct.designassistant.data.GPS028SafetyThresholds(
+            ageGroup = com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE,
+            hicLimit = this.hicLimit,
+            chestAccelerationLimit = this.chestAccelerationLimit,
+            neckTensionLimit = 0, // 日标未定义
+            neckCompressionLimit = 0, // 日标未定义
+            headExcursionLimit = this.headExcursionLimit,
+            kneeExcursionLimit = 0, // 日标未定义
+            chestDeflectionLimit = 0 // 日标未定义
+        ),
+        standardType = com.childproduct.designassistant.data.StandardType.JAPANESE
+    )
 }
