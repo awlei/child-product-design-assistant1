@@ -160,6 +160,8 @@ object DesignOutputGenerator {
         installDirections: InstallDirectionsMap
     ): String {
         val testItems = mutableListOf<Roadmate360TestItem>()
+        // 使用用户选择的标准代码（如果选择了多个，使用第一个）
+        val standardCode = input.standards.firstOrNull()?.code ?: "R129"
 
         dummyMappings.forEach { mapping ->
             val direction = installDirections.entries.firstOrNull {
@@ -174,7 +176,8 @@ object DesignOutputGenerator {
                 installation = input.installMethod!!.fixedType,
                 productConfig = "Upright",
                 topTetherSupportLeg = if (direction == InstallDirection.REARWARD) "With" else "With",
-                tt = if (direction == InstallDirection.REARWARD) "no" else "yes"
+                tt = if (direction == InstallDirection.REARWARD) "no" else "yes",
+                standardCode = standardCode
             ))
 
             // 后向碰撞测试（仅后向安装）
@@ -186,7 +189,8 @@ object DesignOutputGenerator {
                     installation = input.installMethod!!.fixedType,
                     productConfig = "Upright",
                     topTetherSupportLeg = "With",
-                    tt = "no"
+                    tt = "no",
+                    standardCode = standardCode
                 ))
             }
 
@@ -198,7 +202,8 @@ object DesignOutputGenerator {
                 installation = input.installMethod!!.fixedType,
                 productConfig = "Upright",
                 topTetherSupportLeg = if (direction == InstallDirection.REARWARD) "With" else "no",
-                tt = if (direction == InstallDirection.REARWARD) "no" else "no"
+                tt = if (direction == InstallDirection.REARWARD) "no" else "no",
+                standardCode = standardCode
             ))
         }
 
@@ -228,10 +233,11 @@ object DesignOutputGenerator {
         installation: String,
         productConfig: String,
         topTetherSupportLeg: String,
-        tt: String
+        tt: String,
+        standardCode: String = "R129"
     ): Roadmate360TestItem {
         return Roadmate360TestItem(
-            sample = "R129",
+            sample = standardCode,
             pulse = pulse,
             impact = dummy,
             dummy = dummy,
@@ -265,26 +271,62 @@ object DesignOutputGenerator {
             appendLine("| 测试项目 | 标准要求 | 适用假人 | 单位 | 标准条款 |")
             appendLine("|----------|----------|----------|------|----------|")
 
-            // 根据标准生成阈值（此处简化，实际需按标准映射）
-            val thresholds = listOf(
+            // 根据用户选择的标准生成阈值
+            standards.forEach { standard ->
+                val thresholds = getThresholdsForStandard(standard)
+                thresholds.forEach { threshold ->
+                    appendLine(
+                        "| ${threshold.testItem} | ${threshold.standardRequirement} | " +
+                                "${threshold.applicableDummy} | ${threshold.unit} | ${threshold.standardSource} |"
+                    )
+                }
+            }
+
+            appendLine()
+            appendLine("> ⚠️ **阈值说明**：")
+            standards.forEach { standard ->
+                appendLine("> - **${standard.code}**：${getThresholdDescription(standard)}")
+            }
+            appendLine()
+        }
+    }
+
+    /**
+     * 根据标准获取安全阈值
+     * 确保只输出用户选择的标准相关内容，不混用其他标准
+     */
+    private fun getThresholdsForStandard(standard: InternationalStandard): List<SafetyThreshold> {
+        return when (standard.code) {
+            "ECE R129" -> listOf(
                 SafetyThreshold("HIC15/HIC36", "≤390(Q0-Q1.5)/≤1000(Q3-Q10)", "Q0-Q10", "-", "ECE R129 §7.1.2"),
                 SafetyThreshold("胸部合成加速度(3ms)", "≤55g(Q0-Q1.5)/≤60g(Q3-Q10)", "Q0-Q10", "g", "ECE R129 §7.1.3"),
                 SafetyThreshold("颈部张力", "≤1800N(Q0-Q1.5)/≤2000N(Q3-Q10)", "Q0-Q10", "N", "ECE R129 §7.1.4"),
                 SafetyThreshold("头部位移", "≤550mm", "Q0-Q10", "mm", "ECE R129 §7.1.5"),
                 SafetyThreshold("膝部位移", "≤650mm", "Q0-Q10", "mm", "ECE R129 §7.1.5")
             )
+            "FMVSS 213" -> listOf(
+                SafetyThreshold("HIC15", "≤1000", "6岁假人", "-", "FMVSS 213 §S6.1"),
+                SafetyThreshold("胸部合成加速度(3ms)", "≤60g", "6岁假人", "g", "FMVSS 213 §S6.2"),
+                SafetyThreshold("头部位移", "≤720mm", "6岁假人", "mm", "FMVSS 213 §S6.3")
+            )
+            "GB 27887" -> listOf(
+                SafetyThreshold("HIC15", "≤1000", "Q0-Q10", "-", "GB 27887-2011 §5.2.1"),
+                SafetyThreshold("胸部合成加速度(3ms)", "≤60g", "Q0-Q10", "g", "GB 27887-2011 §5.2.2"),
+                SafetyThreshold("头部位移", "≤550mm", "Q0-Q10", "mm", "GB 27887-2011 §5.2.3")
+            )
+            else -> emptyList()
+        }
+    }
 
-            thresholds.forEach { threshold ->
-                appendLine(
-                    "| ${threshold.testItem} | ${threshold.standardRequirement} | " +
-                            "${threshold.applicableDummy} | ${threshold.unit} | ${threshold.standardSource} |"
-                )
-            }
-            appendLine()
-            appendLine("> ⚠️ **阈值说明**：")
-            appendLine("> - Q0-Q1.5（40-87cm）：更严格阈值（HIC15≤390，胸部≤55g）")
-            appendLine("> - Q3-Q10（87-150cm）：标准阈值（HIC36≤1000，胸部≤60g）")
-            appendLine()
+    /**
+     * 获取阈值描述
+     */
+    private fun getThresholdDescription(standard: InternationalStandard): String {
+        return when (standard.code) {
+            "ECE R129" -> "Q0-Q1.5（40-87cm）更严格（HIC15≤390，胸部≤55g）；Q3-Q10（87-150cm）标准阈值（HIC36≤1000，胸部≤60g）"
+            "FMVSS 213" -> "基于6岁假人（Hybrid III）测试，HIC15≤1000，胸部≤60g"
+            "GB 27887" -> "参考ECE R129标准，HIC15≤1000，胸部≤60g，头部位移≤550mm"
+            else -> "参见标准文档"
         }
     }
 
@@ -356,13 +398,18 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- 便携性：轻量化设计（整车重量≤8kg）")
             appendLine()
 
-            appendLine("**安全阈值**：")
+            // 根据用户选择的标准生成安全阈值，不混用其他标准
+            appendLine("**安全阈值**（仅显示用户选择的标准）：")
             appendLine("| 测试项目 | 标准要求 | 适用标准 |")
             appendLine("|----------|----------|----------|")
-            appendLine("| 制动性能 | 在10°斜面上不滑行 | GB 14748-2020 §5.4 |")
-            appendLine("| 折叠机构安全 | 手指探针不能插入 | EN 1888-2 §4.2 |")
-            appendLine("| 静态强度 | 座椅承受100kg重量不变形 | EN 1888-2 §5.3 |")
-            appendLine("| 锁定装置 | 手动释放力≥50N | GB 14748-2020 §5.5 |")
+
+            input.standards.forEach { standard ->
+                val strollerThresholds = getStrollerThresholdsForStandard(standard)
+                strollerThresholds.forEach { threshold ->
+                    appendLine("| ${threshold.testItem} | ${threshold.standardRequirement} | ${threshold.standardSource} |")
+                }
+            }
+
             appendLine()
 
             appendLine("**安全注意事项**：")
@@ -372,6 +419,30 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- 使用警示：禁止在台阶、斜坡上使用")
             appendLine("- 载重限制：最大承重15kg")
             appendLine()
+        }
+    }
+
+    /**
+     * 根据标准获取婴儿推车安全阈值
+     */
+    private fun getStrollerThresholdsForStandard(standard: InternationalStandard): List<SafetyThreshold> {
+        return when (standard.code) {
+            "GB 14748-2020" -> listOf(
+                SafetyThreshold("制动性能", "在10°斜面上不滑行", "GB 14748-2020", "-", "GB 14748-2020 §5.4"),
+                SafetyThreshold("折叠机构安全", "手指探针不能插入", "GB 14748-2020", "-", "GB 14748-2020 §5.5"),
+                SafetyThreshold("静态强度", "座椅承受100kg重量不变形", "GB 14748-2020", "-", "GB 14748-2020 §5.3")
+            )
+            "EN 1888-2" -> listOf(
+                SafetyThreshold("制动性能", "在10°斜面上不滑行", "EN 1888-2", "-", "EN 1888-2 §5.4"),
+                SafetyThreshold("折叠机构安全", "手指探针不能插入", "EN 1888-2", "-", "EN 1888-2 §4.2"),
+                SafetyThreshold("静态强度", "座椅承受100kg重量不变形", "EN 1888-2", "-", "EN 1888-2 §5.3")
+            )
+            "ASTM F833" -> listOf(
+                SafetyThreshold("制动性能", "在10°斜面上不滑行", "ASTM F833", "-", "ASTM F833 §5.1"),
+                SafetyThreshold("折叠机构安全", "手指探针不能插入", "ASTM F833", "-", "ASTM F833 §5.2"),
+                SafetyThreshold("静态强度", "座椅承受100kg重量不变形", "ASTM F833", "-", "ASTM F833 §5.3")
+            )
+            else -> emptyList()
         }
     }
 
@@ -391,13 +462,18 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- 稳定性：防倾倒设计（重心降低+防滑脚垫）")
             appendLine()
 
-            appendLine("**安全阈值**：")
+            // 根据用户选择的标准生成安全阈值，不混用其他标准
+            appendLine("**安全阈值**（仅显示用户选择的标准）：")
             appendLine("| 测试项目 | 标准要求 | 适用标准 |")
             appendLine("|----------|----------|----------|")
-            appendLine("| 稳定性测试 | 倾斜10°不倾倒 | GB 22793-2008 §5.2 |")
-            appendLine("| 锁定装置 | 锁定力≥50N | GB 22793-2008 §5.3 |")
-            appendLine("| 静态强度 | 托盘承重≥30kg | GB 22793-2008 §5.4 |")
-            appendLine("| 背板强度 | 背板承重≥60kg | GB 22793-2008 §5.5 |")
+
+            input.standards.forEach { standard ->
+                val highChairThresholds = getHighChairThresholdsForStandard(standard)
+                highChairThresholds.forEach { threshold ->
+                    appendLine("| ${threshold.testItem} | ${threshold.standardRequirement} | ${threshold.standardSource} |")
+                }
+            }
+
             appendLine()
 
             appendLine("**安全注意事项**：")
@@ -408,6 +484,31 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- 载重限制：最大承重15kg")
             appendLine("- 使用警示：必须有成人监护")
             appendLine()
+        }
+    }
+
+    /**
+     * 根据标准获取儿童高脚椅安全阈值
+     */
+    private fun getHighChairThresholdsForStandard(standard: InternationalStandard): List<SafetyThreshold> {
+        return when (standard.code) {
+            "GB 22793-2008" -> listOf(
+                SafetyThreshold("稳定性测试", "倾斜10°不倾倒", "GB 22793-2008", "-", "GB 22793-2008 §5.2"),
+                SafetyThreshold("锁定装置", "锁定力≥50N", "GB 22793-2008", "-", "GB 22793-2008 §5.3"),
+                SafetyThreshold("静态强度", "托盘承重≥30kg", "GB 22793-2008", "-", "GB 22793-2008 §5.4"),
+                SafetyThreshold("背板强度", "背板承重≥60kg", "GB 22793-2008", "-", "GB 22793-2008 §5.5")
+            )
+            "EN 14988" -> listOf(
+                SafetyThreshold("稳定性测试", "倾斜10°不倾倒", "EN 14988", "-", "EN 14988 §5.2"),
+                SafetyThreshold("锁定装置", "锁定力≥50N", "EN 14988", "-", "EN 14988 §5.3"),
+                SafetyThreshold("静态强度", "托盘承重≥30kg", "EN 14988", "-", "EN 14988 §5.4")
+            )
+            "ASTM F404" -> listOf(
+                SafetyThreshold("稳定性测试", "倾斜10°不倾倒", "ASTM F404", "-", "ASTM F404 §5.1"),
+                SafetyThreshold("锁定装置", "锁定力≥50N", "ASTM F404", "-", "ASTM F404 §5.2"),
+                SafetyThreshold("静态强度", "托盘承重≥30kg", "ASTM F404", "-", "ASTM F404 §5.3")
+            )
+            else -> emptyList()
         }
     }
 
@@ -427,13 +528,18 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- 耐用性：实木材质，承重≥30kg")
             appendLine()
 
-            appendLine("**安全阈值**：")
+            // 根据用户选择的标准生成安全阈值，不混用其他标准
+            appendLine("**安全阈值**（仅显示用户选择的标准）：")
             appendLine("| 测试项目 | 标准要求 | 适用标准 |")
             appendLine("|----------|----------|----------|")
-            appendLine("| 围栏间距 | ≤6cm（防卡住） | ASTM F1169 |")
-            appendLine("| 床板强度 | 承重≥50kg不变形 | ASTM F1169 |")
-            appendLine("| 油漆安全 | 无铅无有害物质 | EN 71-3 |")
-            appendLine("| 锁定装置 | 锁定力≥30N | ASTM F1169 |")
+
+            input.standards.forEach { standard ->
+                val cribThresholds = getCribThresholdsForStandard(standard)
+                cribThresholds.forEach { threshold ->
+                    appendLine("| ${threshold.testItem} | ${threshold.standardRequirement} | ${threshold.standardSource} |")
+                }
+            }
+
             appendLine()
 
             appendLine("**安全注意事项**：")
@@ -443,6 +549,31 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- 载重限制：最大承重30kg")
             appendLine("- 床垫厚度：≤15cm（防攀爬）")
             appendLine()
+        }
+    }
+
+    /**
+     * 根据标准获取婴儿床安全阈值
+     */
+    private fun getCribThresholdsForStandard(standard: InternationalStandard): List<SafetyThreshold> {
+        return when (standard.code) {
+            "ASTM F1169" -> listOf(
+                SafetyThreshold("围栏间距", "≤6cm（防卡住）", "ASTM F1169", "-", "ASTM F1169 §5.1"),
+                SafetyThreshold("床板强度", "承重≥50kg不变形", "ASTM F1169", "-", "ASTM F1169 §5.2"),
+                SafetyThreshold("油漆安全", "无铅无有害物质", "ASTM F1169", "-", "ASTM F1169 §5.3"),
+                SafetyThreshold("锁定装置", "锁定力≥30N", "ASTM F1169", "-", "ASTM F1169 §5.4")
+            )
+            "EN 1130" -> listOf(
+                SafetyThreshold("围栏间距", "≤6cm（防卡住）", "EN 1130", "-", "EN 1130 §5.1"),
+                SafetyThreshold("床板强度", "承重≥50kg不变形", "EN 1130", "-", "EN 1130 §5.2"),
+                SafetyThreshold("油漆安全", "无铅无有害物质", "EN 1130", "-", "EN 1130 §5.3")
+            )
+            "GB 28007-2011" -> listOf(
+                SafetyThreshold("围栏间距", "≤6cm（防卡住）", "GB 28007-2011", "-", "GB 28007-2011 §5.1"),
+                SafetyThreshold("床板强度", "承重≥50kg不变形", "GB 28007-2011", "-", "GB 28007-2011 §5.2"),
+                SafetyThreshold("油漆安全", "无铅无有害物质", "GB 28007-2011", "-", "GB 28007-2011 §5.3")
+            )
+            else -> emptyList()
         }
     }
 
