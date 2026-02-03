@@ -247,7 +247,7 @@ private fun ProductTypeCard(
  * 区块组件（带图标的层级）
  */
 @Composable
-private fun SectionBlock(
+internal fun SectionBlock(
     icon: ImageVector,
     title: String,
     subtitle: String? = null,
@@ -305,7 +305,7 @@ private fun SectionBlock(
  * 数据项组件（树状结构）
  */
 @Composable
-private fun TreeItem(
+internal fun TreeItem(
     label: String,
     value: String,
     level: Int = 0,
@@ -385,7 +385,7 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             title = "核心设计参数（按假人分组）",
             subtitle = "来自GPS-028 Dummies表"
         ) {
-            matchedDummies.forEachIndexed { index, dummy ->
+            allMatchedDummies.forEachIndexed { index, dummy ->
                 val isLast = index == matchedDummies.size - 1
                 
                 TreeItem(
@@ -428,8 +428,8 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             subtitle = "按年龄段精准匹配"
         ) {
             // 按年龄段分组假人
-            val lowAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.LOW_AGE }
-            val highAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
+            val lowAgeDummies = allMatchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.LOW_AGE }
+            val highAgeDummies = allMatchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
             
             // 低龄段（Q0-Q1.5）
             if (lowAgeDummies.isNotEmpty()) {
@@ -529,7 +529,7 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             title = "材料选型（带测试标准）",
             subtitle = "绑定测试标准"
         ) {
-            matchedDummies.firstOrNull()?.let { dummy ->
+            allMatchedDummies.firstOrNull()?.let { dummy ->
                 TreeItem(
                     label = "主体框架",
                     value = "食品级PP（抗冲击强度${dummy.materialTestStandards.mainFrameImpactStrength}，${dummy.materialTestStandards.mainFrameTestStandard}）",
@@ -612,7 +612,7 @@ private fun getDummyCoverage(minHeight: Int, maxHeight: Int): String {
 /**
  * 获取年龄段分段
  */
-private fun getAgeSegments(ageGroup: com.childproduct.designassistant.model.AgeGroup): String {
+internal fun getAgeSegments(ageGroup: com.childproduct.designassistant.model.AgeGroup): String {
     return when (ageGroup) {
         com.childproduct.designassistant.model.AgeGroup.ALL -> "0-12岁（分6段：0-1/1-2/2-3/3-4/4-6/6-12岁）"
         com.childproduct.designassistant.model.AgeGroup.INFANT -> "0-3岁（分3段：0-1/1-2/2-3岁）"
@@ -1391,6 +1391,9 @@ fun getSelectedStandards(creativeIdea: CreativeIdea): Set<com.childproduct.desig
                 standards.add(com.childproduct.designassistant.data.StandardType.ECE_R129)
             ref.mainStandard.contains("GB 27887") -> 
                 standards.add(com.childproduct.designassistant.data.StandardType.GB_27887)
+            else -> {
+                // 未匹配到任何标准，使用默认的欧标
+            }
         }
     }
     
