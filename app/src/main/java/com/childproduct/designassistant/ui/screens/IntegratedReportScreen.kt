@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
+import com.childproduct.designassistant.ui.components.DesignOutputTree
 import com.childproduct.designassistant.utils.ComplianceParamsData
 import com.childproduct.designassistant.utils.DesignSchemeFormatter
 import com.childproduct.designassistant.utils.SchemeCardData
@@ -141,8 +142,7 @@ fun SchemeDetailTab(
         // 结构化设计方案展示（新增）
         creativeIdea?.let { idea ->
             item {
-                val cardData = DesignSchemeFormatter.formatToCardData(idea)
-                StructuredDesignSchemeCard(cardData = cardData)
+                DesignOutputTree(creativeIdea = idea)
             }
         }
         
