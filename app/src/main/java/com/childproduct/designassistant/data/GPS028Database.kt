@@ -11,12 +11,28 @@ package com.childproduct.designassistant.data
  * - Envelope数据（5th、50th、95th百分位）
  * - 每个假人的安全阈值（分龄）
  * - 每个假人的适配条件（身高、体重、年龄）
- * - ECE R129 标准条款关联
+ * - 假人标准归属（美标/欧标/国标）
+ * - 标准条款关联
  * 
  * @see GPS-028 Big Infant Anthro表
  * @see GPS-028 Dummies表
  * @see ECE R129 Annex 8
+ * @see FMVSS 213
  */
+
+/**
+ * 标准类型枚举
+ * 用于区分不同的安全标准
+ */
+enum class StandardType(
+    val displayName: String,
+    val colorName: String,
+    val shortName: String
+) {
+    ECE_R129("ECE R129", "green", "欧标"),
+    FMVSS_213("FMVSS 213", "blue", "美标"),
+    GB_27887("GB 27887-2024", "orange", "国标")
+}
 
 /**
  * GPS-028 假人类型枚举
@@ -25,16 +41,18 @@ package com.childproduct.designassistant.data
  */
 enum class ComplianceDummy(
     val code: String,
-    val description: String
+    val description: String,
+    val standardType: StandardType,  // 标准归属
+    val standardClauses: List<String> // 关联的标准条款
 ) {
-    Q0("Q0", "新生儿假人（0-6个月）"),
-    Q0PLUS("Q0+", "婴儿假人（0-10个月）"),
-    Q1("Q1", "9个月假人（6-12个月）"),
-    Q1_5("Q1.5", "18个月假人（12-24个月）"),
-    Q3("Q3", "3岁假人（24-48个月）"),
-    Q3S("Q3s", "3岁假人专用（24-48个月，侧撞测试）"),
-    Q6("Q6", "6岁假人（48-84个月）"),
-    Q10("Q10", "10岁假人（84-150cm）")
+    Q0("Q0", "新生儿假人（0-6个月）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.2")),
+    Q0PLUS("Q0+", "婴儿假人（0-10个月）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.2")),
+    Q1("Q1", "9个月假人（6-12个月）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.2")),
+    Q1_5("Q1.5", "18个月假人（12-24个月）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.2")),
+    Q3("Q3", "3岁假人（24-48个月）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.3")),
+    Q3S("Q3s", "3岁假人专用（24-48个月，侧撞测试）", StandardType.FMVSS_213, listOf("FMVSS 213 §S5", "FMVSS 213 §S5.3", "FMVSS 213 §S5.4")),
+    Q6("Q6", "6岁假人（48-84个月）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.3")),
+    Q10("Q10", "10岁假人（84-150cm）", StandardType.ECE_R129, listOf("ECE R129 §5.2", "ECE R129 §7.1.3"))
 }
 
 /**
@@ -46,6 +64,7 @@ data class GPS028DummyData(
     val displayName: String,                  // 显示名称
     val ageMonths: Int,                       // 年龄（月）
     val ageYears: Double,                     // 年龄（年）
+    val standardType: StandardType,           // 标准归属（美标/欧标/国标）
     
     // GPS-028 工作表和数据来源追溯
     val dataSource: String,                   // 数据来源：GPS-028工作表名称
@@ -332,6 +351,7 @@ object GPS028Database {
             displayName = "Q0（新生儿）",
             ageMonths = 0,
             ageYears = 0.0,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             // GPS-028 工作表和数据来源追溯
             dataSource = "GPS-028 Big Infant Anthro表",
@@ -470,6 +490,7 @@ object GPS028Database {
             displayName = "Q0+（6-9个月）",
             ageMonths = 9,
             ageYears = 0.75,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q0+假人5th-95th百分位数据",
@@ -571,6 +592,7 @@ object GPS028Database {
             displayName = "Q1（1岁）",
             ageMonths = 18,
             ageYears = 1.5,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q1假人5th-95th百分位数据",
@@ -672,6 +694,7 @@ object GPS028Database {
             displayName = "Q1.5（1.5岁）",
             ageMonths = 36,
             ageYears = 3.0,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q1.5假人5th-95th百分位数据",
@@ -773,6 +796,7 @@ object GPS028Database {
             displayName = "Q3（3岁）",
             ageMonths = 48,
             ageYears = 4.0,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q3假人5th-95th百分位数据",
@@ -874,6 +898,7 @@ object GPS028Database {
             displayName = "Q3s（3岁-美标侧撞）",
             ageMonths = 48,
             ageYears = 4.0,
+            standardType = StandardType.FMVSS_213,  // 美标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q3s假人5th-95th百分位数据（FMVSS 213a）",
@@ -975,6 +1000,7 @@ object GPS028Database {
             displayName = "Q6（6岁）",
             ageMonths = 84,
             ageYears = 7.0,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q6假人5th-95th百分位数据",
@@ -1076,6 +1102,7 @@ object GPS028Database {
             displayName = "Q10（10岁）",
             ageMonths = 120,
             ageYears = 10.0,
+            standardType = StandardType.ECE_R129,  // 欧标
             
             dataSource = "GPS-028 Big Infant Anthro表",
             dataReference = "Q10假人5th-95th百分位数据",
