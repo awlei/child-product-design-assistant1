@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,8 +35,8 @@ fun AIAssistantScreen(
     onBackClick: () -> Unit = {}
 ) {
     val viewModel = remember { AIAssistantViewModel() }
-    val messages by viewModel.messages.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
+    val messages by viewModel.messages
+    val isLoading by viewModel.isLoading
     val listState = rememberLazyListState()
 
     // 自动滚动到底部
@@ -97,7 +96,7 @@ fun AIAssistantScreen(
 
                 // 聊天消息
                 items(
-                    items = messages,
+                    messages,
                     key = { it.id }
                 ) { message ->
                     ChatMessageItem(
@@ -311,11 +310,7 @@ private fun ChatInput(
                 modifier = Modifier.weight(1f),
                 placeholder = { Text("输入您的问题...") },
                 maxLines = 4,
-                shape = RoundedCornerShape(24.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.outline
-                )
+                shape = RoundedCornerShape(24.dp)
             )
 
             IconButton(

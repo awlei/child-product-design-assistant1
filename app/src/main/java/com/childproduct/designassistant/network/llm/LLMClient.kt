@@ -189,8 +189,8 @@ class LLMException(
     override fun toString(): String {
         return buildString {
             append("LLMException: $message")
-            if (code != null) append(" (code: $code)")
-            if (type != null) append(" (type: $type)")
+            if (errorCode != null) append(" (code: $errorCode)")
+            if (errorType != null) append(" (type: $errorType)")
             cause?.let { append("\nCaused by: $it") }
         }
     }
