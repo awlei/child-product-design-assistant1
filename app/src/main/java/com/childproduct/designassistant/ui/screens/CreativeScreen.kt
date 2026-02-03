@@ -34,7 +34,8 @@ fun CreativeScreen(
 
     // 状态管理
     var selectedProductType by remember { mutableStateOf<ProductType?>(null) }
-    var selectedStandard by remember { mutableStateOf<StandardConfig?>(null) }
+    var selectedStandards by remember { mutableStateOf<Set<StandardConfig>>(emptySet()) }
+    var expandedProductTypes by remember { mutableStateOf<Set<ProductType>>(emptySet()) }
     
     // 身高范围输入
     var minHeight by remember { mutableStateOf("") }
@@ -112,7 +113,7 @@ fun CreativeScreen(
 
     // 生成按钮激活条件
     val isGenerateButtonEnabled = selectedProductType != null &&
-                                   selectedStandard != null &&
+                                   selectedStandards.isNotEmpty() &&
                                    paramValidationResult?.isValid == true &&
                                    uiState !is UiState.Loading
 
@@ -184,83 +185,144 @@ fun CreativeScreen(
                 )
 
                 // 出行类
-                Text(
-                    text = "出行类",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(top = 8.dp)
-                )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.TravelExplore,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "出行类",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 listOf(ProductType.CHILD_SAFETY_SEAT, ProductType.CHILD_STROLLER).forEach { productType ->
-                    ProductTypeCard(
+                    val standards = ProductTypeConfigManager.getConfigByProductType(productType)?.standards ?: emptyList()
+                    ProductTypeAccordion(
                         productType = productType,
+                        isExpanded = expandedProductTypes.contains(productType),
                         isSelected = selectedProductType == productType,
-                        standardConfigs = ProductTypeConfigManager.getConfigByProductType(productType)?.standards ?: emptyList(),
-                        onSelected = {
+                        selectedStandards = selectedStandards.filter { it in standards }.toSet(),
+                        standards = standards,
+                        onToggleExpand = {
+                            expandedProductTypes = if (expandedProductTypes.contains(productType)) {
+                                expandedProductTypes - productType
+                            } else {
+                                expandedProductTypes + productType
+                            }
+                        },
+                        onSelectProduct = {
                             selectedProductType = productType
-                            selectedStandard = null  // 重置标准选择
-                            selectedTetherType = TetherType.SUPPORT_LEG  // 重置Tether类型选择
-                            paramValidationResult = null  // 重置验证结果
+                            // 切换产品时，重置已选择的标准
+                            selectedStandards = emptySet()
+                            selectedTetherType = TetherType.SUPPORT_LEG
+                            paramValidationResult = null
+                            validationError = null
+                        },
+                        onSelectStandard = { standard, selected ->
+                            selectedStandards = if (selected) {
+                                selectedStandards + standard
+                            } else {
+                                selectedStandards - standard
+                            }
+                            paramValidationResult = null
+                            validationError = null
+                        },
+                        onSelectAllStandards = {
+                            selectedStandards = standards.toSet()
+                            paramValidationResult = null
+                            validationError = null
+                        },
+                        onDeselectAllStandards = {
+                            selectedStandards = emptySet()
+                            paramValidationResult = null
                             validationError = null
                         }
                     )
                 }
 
                 // 家居类
-                Text(
-                    text = "家居类",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "家居类",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
                 listOf(ProductType.CHILD_HOUSEHOLD_GOODS, ProductType.CHILD_HIGH_CHAIR, ProductType.CRIB).forEach { productType ->
-                    ProductTypeCard(
+                    val standards = ProductTypeConfigManager.getConfigByProductType(productType)?.standards ?: emptyList()
+                    ProductTypeAccordion(
                         productType = productType,
+                        isExpanded = expandedProductTypes.contains(productType),
                         isSelected = selectedProductType == productType,
-                        standardConfigs = ProductTypeConfigManager.getConfigByProductType(productType)?.standards ?: emptyList(),
-                        onSelected = {
+                        selectedStandards = selectedStandards.filter { it in standards }.toSet(),
+                        standards = standards,
+                        onToggleExpand = {
+                            expandedProductTypes = if (expandedProductTypes.contains(productType)) {
+                                expandedProductTypes - productType
+                            } else {
+                                expandedProductTypes + productType
+                            }
+                        },
+                        onSelectProduct = {
                             selectedProductType = productType
-                            selectedStandard = null  // 重置标准选择
-                            selectedTetherType = TetherType.SUPPORT_LEG  // 重置Tether类型选择
-                            paramValidationResult = null  // 重置验证结果
+                            selectedStandards = emptySet()
+                            selectedTetherType = TetherType.SUPPORT_LEG
+                            paramValidationResult = null
+                            validationError = null
+                        },
+                        onSelectStandard = { standard, selected ->
+                            selectedStandards = if (selected) {
+                                selectedStandards + standard
+                            } else {
+                                selectedStandards - standard
+                            }
+                            paramValidationResult = null
+                            validationError = null
+                        },
+                        onSelectAllStandards = {
+                            selectedStandards = standards.toSet()
+                            paramValidationResult = null
+                            validationError = null
+                        },
+                        onDeselectAllStandards = {
+                            selectedStandards = emptySet()
+                            paramValidationResult = null
                             validationError = null
                         }
                     )
                 }
 
-                // ========== 2. 标准选择（仅在选中产品类型后显示） ==========
-                if (productConfig != null) {
+                // ========== 2. 参数输入（仅在有选中标准后显示） ==========
+                if (selectedStandards.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        text = "2. 标准（${productConfig.productTypeName}）",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    
-                    productConfig.standards.forEach { standard ->
-                        StandardCard(
-                            standard = standard,
-                            isSelected = selectedStandard == standard,
-                            onSelected = { 
-                                selectedStandard = standard
-                                paramValidationResult = null  // 重置验证结果
-                                validationError = null
-                            }
-                        )
-                    }
-                }
-
-                // ========== 3. 参数输入（仅在选中标准后显示） ==========
-                selectedStandard?.let { standard ->
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "3. 参数输入",
+                        text = "2. 参数输入",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
 
-                    when (standard.inputItem.inputType) {
+                    // 使用第一个选中的标准来确定输入类型
+                    val firstStandard = selectedStandards.first()
+                    when (firstStandard.inputItem.inputType) {
                         InputType.HEIGHT_RANGE -> {
                             // 身高范围输入
                             ParameterInputRow(
@@ -387,14 +449,8 @@ fun CreativeScreen(
                     }
                 }
 
-                // ========== 合规组合显示 ==========
-                complianceCombination?.let { combination ->
-                    Spacer(modifier = Modifier.height(8.dp))
-                    ComplianceCombinationCard(combination = combination)
-                }
-
-                // ========== 4. 设计主题（可选） ==========
-                if (selectedStandard != null) {
+                // ========== 3. 设计主题（可选） ==========
+                if (selectedStandards.isNotEmpty()) {
                     OutlinedTextField(
                         value = theme,
                         onValueChange = { theme = it },
@@ -502,7 +558,9 @@ fun CreativeScreen(
                             null
                         }
                         
-                        when (selectedStandard?.inputItem?.inputType) {
+                        // 使用第一个选中的标准来确定输入类型
+                        val firstStandard = selectedStandards.first()
+                        when (firstStandard.inputItem.inputType) {
                             InputType.HEIGHT_RANGE -> {
                                 val minH = minHeight.toIntOrNull() ?: 0
                                 val maxH = maxHeight.toIntOrNull() ?: 0
@@ -533,10 +591,9 @@ fun CreativeScreen(
                                 
                                 // 检查是否是儿童安全座椅且选择了ECE R129标准
                                 val currentProductType = selectedProductType
-                                val currentStandard = selectedStandard
+                                val hasECE_R129 = selectedStandards.any { it.standardCode == "ECE_R129" }
 
-                                if (currentProductType == ProductType.SAFETY_SEAT &&
-                                    currentStandard?.standardName?.contains("ECE R129", ignoreCase = true) == true) {
+                                if (currentProductType == ProductType.SAFETY_SEAT && hasECE_R129) {
                                     // 使用Roadmate360OutputGenerator生成ROADMATE 360格式输出
                                     val finalTheme = theme.ifEmpty { "标准设计" }
                                     formattedOutput = com.childproduct.designassistant.utils.Roadmate360OutputGenerator.generateOutput(
@@ -598,7 +655,7 @@ fun CreativeScreen(
                     Text(
                         text = when {
                             selectedProductType == null -> "请先选择产品类型"
-                            selectedStandard == null -> "请选择产品标准"
+                            selectedStandards.isEmpty() -> "请选择产品标准"
                             paramValidationResult?.isValid != true -> "请输入有效的参数"
                             uiState is UiState.Loading -> "正在生成..."
                             else -> ""
@@ -649,15 +706,21 @@ fun CreativeScreen(
 }
 
 /**
- * 产品类型卡片
+ * 产品类型折叠卡片
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductTypeCard(
+fun ProductTypeAccordion(
     productType: ProductType,
+    isExpanded: Boolean,
     isSelected: Boolean,
-    standardConfigs: List<StandardConfig>,
-    onSelected: () -> Unit
+    selectedStandards: Set<StandardConfig>,
+    standards: List<StandardConfig>,
+    onToggleExpand: () -> Unit,
+    onSelectProduct: () -> Unit,
+    onSelectStandard: (StandardConfig, Boolean) -> Unit,
+    onSelectAllStandards: () -> Unit,
+    onDeselectAllStandards: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -665,65 +728,131 @@ fun ProductTypeCard(
             defaultElevation = if (isSelected) 4.dp else 1.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
+            containerColor = when {
+                isSelected -> MaterialTheme.colorScheme.primaryContainer
+                isExpanded -> MaterialTheme.colorScheme.surfaceVariant
+                else -> MaterialTheme.colorScheme.surface
             }
-        ),
-        onClick = onSelected
+        )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+        Column {
+            // 头部：产品类型选择 + 展开/折叠按钮
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(
-                        selected = isSelected,
-                        onClick = onSelected
+                    Icon(
+                        imageVector = when (productType) {
+                            ProductType.CHILD_SAFETY_SEAT -> Icons.Default.CarSeat
+                            ProductType.CHILD_STROLLER -> Icons.Default.DirectionsWalk
+                            ProductType.CHILD_HOUSEHOLD_GOODS -> Icons.Default.Toys
+                            ProductType.CHILD_HIGH_CHAIR -> Icons.Default.Chair
+                            ProductType.CRIB -> Icons.Default.Bed
+                            else -> Icons.Default.Category
+                        },
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = productType.displayName,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
                 }
-                if (isSelected) {
-                    Icon(
-                        imageVector = Icons.Default.CheckCircle,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                    IconButton(
+                        onClick = onToggleExpand
+                    ) {
+                        Icon(
+                            imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                            contentDescription = if (isExpanded) "收起" else "展开",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
 
-            // 标准列表（默认折叠）
-            if (isSelected) {
+            // 展开后的标准列表
+            if (isExpanded) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant
+                )
+
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 32.dp, top = 4.dp),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = "可用标准:",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    standardConfigs.forEach { standard ->
-                        Text(
-                            text = "• ${standard.standardName}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    // 全选/取消全选按钮
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        if (selectedStandards.size == standards.size) {
+                            TextButton(
+                                onClick = onDeselectAllStandards,
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.error
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ClearAll,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("取消全选", style = MaterialTheme.typography.bodySmall)
+                            }
+                        } else {
+                            TextButton(
+                                onClick = onSelectAllStandards,
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.primary
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.SelectAll,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("全选", style = MaterialTheme.typography.bodySmall)
+                            }
+                        }
+                    }
+
+                    // 标准列表
+                    standards.forEach { standard ->
+                        StandardCheckbox(
+                            standard = standard,
+                            isChecked = standard in selectedStandards,
+                            onCheckedChange = { checked ->
+                                if (checked) {
+                                    onSelectProduct()
+                                }
+                                onSelectStandard(standard, checked)
+                            }
                         )
                     }
                 }
@@ -733,44 +862,60 @@ fun ProductTypeCard(
 }
 
 /**
- * 标准卡片
+ * 标准复选框
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StandardCard(
+fun StandardCheckbox(
     standard: StandardConfig,
-    isSelected: Boolean,
-    onSelected: () -> Unit
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 1.dp
+            defaultElevation = if (isChecked) 2.dp else 0.dp
         ),
         colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
+            containerColor = if (isChecked) {
                 MaterialTheme.colorScheme.secondaryContainer
             } else {
                 MaterialTheme.colorScheme.surfaceVariant
             }
-        ),
-        onClick = onSelected
+        )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(10.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                RadioButton(
-                    selected = isSelected,
-                    onClick = onSelected
+            Checkbox(
+                checked = isChecked,
+                onCheckedChange = onCheckedChange,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = MaterialTheme.colorScheme.primary
                 )
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = standard.standardName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (isChecked) FontWeight.Bold else FontWeight.Normal
+                )
+                standard.standardDescription?.let { desc ->
+                    Text(
+                        text = desc,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+        }
+    }
+}
                 Text(
                     text = standard.standardName,
                     style = MaterialTheme.typography.bodyMedium
