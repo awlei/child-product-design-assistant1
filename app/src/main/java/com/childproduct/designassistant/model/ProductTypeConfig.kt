@@ -104,7 +104,8 @@ data class ParamInputResult(
     val isValid: Boolean,
     val errorMessage: String? = null,
     val matchedDummy: CrashTestDummy? = null,
-    val matchedInterval: String? = null
+    val matchedInterval: String? = null,
+    val matchedDummies: List<CrashTestDummy>? = null  // 支持多个假人类型
 )
 
 /**
@@ -582,20 +583,48 @@ object ProductTypeConfigManager {
             return ParamInputResult(
                 isValid = true,
                 matchedDummy = null,  // null表示全假人
-                matchedInterval = "全年龄段（0-12岁）"
+                matchedInterval = "全年龄段（0-12岁）",
+                matchedDummies = null
             )
         }
 
-        // 查找匹配的区间和假人类型
-        val middleHeight = (minHeight + maxHeight) / 2
-        val matchedInterval = rule.intervals.find { interval ->
-            middleHeight >= interval.start && middleHeight < interval.end
+        // 查找所有匹配的区间和假人类型（支持跨多个区间）
+        val matchedDummies = mutableListOf<CrashTestDummy>()
+        val matchedIntervals = mutableListOf<String>()
+        
+        rule.intervals.forEach { interval ->
+            // 判断输入范围是否与当前区间有重叠
+            val hasOverlap = minHeight < interval.end && maxHeight > interval.start
+            if (hasOverlap) {
+                interval.dummyType?.let { matchedDummies.add(it) }
+                matchedIntervals.add(interval.desc)
+            }
+        }
+
+        // 如果有多个匹配的假人，返回第一个假人类型（用于向后兼容），但保留所有假人列表
+        val firstDummy = matchedDummies.firstOrNull()
+        
+        // 生成年龄区间描述
+        val intervalDesc = when {
+            matchedDummies.isEmpty() -> "未知"
+            matchedDummies.size == 1 -> matchedIntervals.first()
+            else -> {
+                // 合并多个区间描述
+                val ages = matchedIntervals.map { 
+                    it.replace("（", "").replace("）", "").replace("岁", "").replace("新生儿", "0-1岁")
+                }.flatMap { it.split("-") }.map { it.trim() }
+                
+                val minAge = ages.minOrNull()?.toIntOrNull() ?: 0
+                val maxAge = ages.maxOrNull()?.toIntOrNull() ?: 12
+                "${minAge}-${maxAge}岁"
+            }
         }
 
         return ParamInputResult(
             isValid = true,
-            matchedDummy = matchedInterval?.dummyType,
-            matchedInterval = matchedInterval?.desc
+            matchedDummy = firstDummy,
+            matchedInterval = intervalDesc,
+            matchedDummies = matchedDummies.ifEmpty { null }
         )
     }
 

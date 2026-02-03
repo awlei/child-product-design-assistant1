@@ -483,9 +483,19 @@ fun CreativeScreen(
                     // 显示匹配的假人类型/区间信息
                     paramValidationResult?.let { result ->
                         if (result.isValid) {
-                            result.matchedDummy?.let { dummy ->
+                            // 显示匹配的假人类型（支持多个假人）
+                            result.matchedDummies?.let { dummies ->
+                                val dummyNames = dummies.joinToString(", ") { it.name }
                                 Text(
-                                    text = "匹配假人类型: ${dummy.displayName} (${dummy.heightRange})",
+                                    text = "匹配假人类型: $dummyNames",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            } ?: result.matchedDummy?.let { dummy ->
+                                // 单个假人类型（向后兼容）
+                                Text(
+                                    text = "匹配假人类型: ${dummy.name} (${dummy.heightRange})",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.padding(top = 4.dp)
@@ -661,20 +671,22 @@ fun CreativeScreen(
                             InputType.HEIGHT_RANGE -> {
                                 val minH = minHeight.toIntOrNull() ?: 0
                                 val maxH = maxHeight.toIntOrNull() ?: 0
+                                
+                                // 使用 matchedInterval 来确定年龄段（已修复）
                                 val ageGroup = if (minH <= 40 && maxH >= 150) {
                                     // 覆盖整个标准范围（40-150cm）对应全年龄段（0-12岁）
                                     AgeGroup.ALL
                                 } else {
-                                    // 其他身高范围按假人类型推断
-                                    val dummyType = paramValidationResult?.matchedDummy
-                                    when (dummyType) {
-                                        CrashTestDummy.Q0, CrashTestDummy.Q0_PLUS, CrashTestDummy.Q1 -> AgeGroup.INFANT
-                                        CrashTestDummy.Q1_5 -> AgeGroup.TODDLER
-                                        CrashTestDummy.Q3 -> AgeGroup.PRESCHOOL
-                                        CrashTestDummy.Q3_S -> AgeGroup.SCHOOL_AGE
-                                        CrashTestDummy.Q6 -> AgeGroup.SCHOOL_AGE
+                                    // 使用已修复的 matchedInterval 来推断年龄段
+                                    val intervalDesc = paramValidationResult?.matchedInterval ?: ""
+                                    when {
+                                        intervalDesc.contains("0-1岁") || intervalDesc.contains("新生儿") -> AgeGroup.INFANT
+                                        intervalDesc.contains("1-2岁") || intervalDesc.contains("1-3岁") -> AgeGroup.TODDLER
+                                        intervalDesc.contains("3-4岁") || intervalDesc.contains("2-3岁") -> AgeGroup.PRESCHOOL
+                                        intervalDesc.contains("4-6岁") -> AgeGroup.SCHOOL_AGE
+                                        intervalDesc.contains("6-10岁") -> AgeGroup.SCHOOL_AGE
                                         else -> {
-                                            // 如果假人类型无法确定，根据身高范围推断
+                                            // 如果无法从区间描述推断，根据身高范围推断
                                             when {
                                                 maxH <= 87 -> AgeGroup.INFANT
                                                 maxH <= 105 -> AgeGroup.TODDLER
@@ -686,9 +698,11 @@ fun CreativeScreen(
                                     }
                                 }
                                 
-                                // 检查是否是儿童安全座椅且选择了ECE R129标准
+                                // 检查是否是儿童安全座椅且选择了ECE R129标准（修复标准ID）
                                 val currentProductType = selectedProductType
-                                val hasECE_R129 = selectedStandards.any { it.standardId == "ECE_R129" }
+                                val hasECE_R129 = selectedStandards.any { 
+                                    it.standardId == "ECE_R129_GB27887" || it.standardId.contains("ECE_R129")
+                                }
 
                                 // 总是生成 CreativeIdea 对象（用于 DesignOutputTree 组件）
                                 viewModel.generateCreativeIdea(ageGroup, currentProductType!!, theme)
