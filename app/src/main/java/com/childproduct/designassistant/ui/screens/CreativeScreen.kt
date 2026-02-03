@@ -916,21 +916,6 @@ fun StandardCheckbox(
         }
     }
 }
-                Text(
-                    text = standard.standardName,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            if (isSelected) {
-                Icon(
-                    imageVector = Icons.Default.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-            }
-        }
-    }
-}
 
 /**
  * 参数输入行
