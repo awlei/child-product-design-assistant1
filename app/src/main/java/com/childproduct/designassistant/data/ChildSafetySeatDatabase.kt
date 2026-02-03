@@ -66,32 +66,32 @@ data class AustralianDummyData(
     val sittingHeight: Double,
     val shoulderWidth: Double,
     val trunkLength: Double,
-    
+
     // 关键设计参数
     val headrestHeightRange: String,
     val seatWidthRange: String,
     val backrestDepthRange: String,
     val sideProtectionArea: String,
-    
+
     // 安全阈值（澳标AS/NZS 1754）
     val hicLimit: Int,
     val chestAccelerationLimit: Int,
     val headExcursionLimit: Int,
-    
-    // 适配条件
-    val minHeight: Double,
-    val maxHeight: Double,
-    val minWeight: Double,
-    val maxWeight: Double,
-    val minAge: Double,
-    val maxAge: Double,
-    
+
     // 安装方向
     val installationDirection: String,
-    
+
     // 材料测试标准
     val materialStandard: String
-)
+) {
+    // 适配条件从身体测量数据推导
+    val minHeight: Double get() = heightMin
+    val maxHeight: Double get() = heightMax
+    val minWeight: Double get() = weightMin
+    val maxWeight: Double get() = weightMax
+    val minAge: Double get() = ageYears - 0.25
+    val maxAge: Double get() = ageYears + 0.25
+}
 
 /**
  * 日标假人数据
@@ -110,32 +110,32 @@ data class JapaneseDummyData(
     val sittingHeight: Double,
     val shoulderWidth: Double,
     val trunkLength: Double,
-    
+
     // 关键设计参数
     val headrestHeightRange: String,
     val seatWidthRange: String,
     val backrestDepthRange: String,
     val sideProtectionArea: String,
-    
+
     // 安全阈值（日标JIS D 1601）
     val hicLimit: Int,
     val chestAccelerationLimit: Int,
     val headExcursionLimit: Int,
-    
-    // 适配条件
-    val minHeight: Double,
-    val maxHeight: Double,
-    val minWeight: Double,
-    val maxWeight: Double,
-    val minAge: Double,
-    val maxAge: Double,
-    
+
     // 安装方向
     val installationDirection: String,
-    
+
     // 材料测试标准
     val materialStandard: String
-)
+) {
+    // 适配条件从身体测量数据推导
+    val minHeight: Double get() = heightMin
+    val maxHeight: Double get() = heightMax
+    val minWeight: Double get() = weightMin
+    val maxWeight: Double get() = weightMax
+    val minAge: Double get() = ageYears - 0.25
+    val maxAge: Double get() = ageYears + 0.25
+}
 
 /**
  * 儿童安全座椅综合数据库
@@ -170,12 +170,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 40.0,
-            maxHeight = 50.0,
-            minWeight = 2.5,
-            maxWeight = 5.0,
-            minAge = 0.0,
-            maxAge = 0.5,
             
             installationDirection = "后向",
             materialStandard = "AS/NZS 1754.5:2007"
@@ -205,12 +199,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 50.0,
-            maxHeight = 65.0,
-            minWeight = 5.0,
-            maxWeight = 8.0,
-            minAge = 0.5,
-            maxAge = 1.0,
             
             installationDirection = "后向",
             materialStandard = "AS/NZS 1754.5:2007"
@@ -240,12 +228,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 60.0,
-            maxHeight = 75.0,
-            minWeight = 7.0,
-            maxWeight = 10.0,
-            minAge = 0.75,
-            maxAge = 1.25,
             
             installationDirection = "后向",
             materialStandard = "AS/NZS 1754.5:2007"
@@ -275,12 +257,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 70.0,
-            maxHeight = 80.0,
-            minWeight = 8.0,
-            maxWeight = 11.0,
-            minAge = 1.0,
-            maxAge = 1.5,
             
             installationDirection = "后向或双向",
             materialStandard = "AS/NZS 1754.5:2007"
@@ -310,12 +286,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 85.0,
-            maxHeight = 105.0,
-            minWeight = 12.0,
-            maxWeight = 18.0,
-            minAge = 2.5,
-            maxAge = 4.0,
             
             installationDirection = "双向可选",
             materialStandard = "AS/NZS 1754.5:2007"
@@ -331,7 +301,6 @@ object ChildSafetySeatDatabase {
             heightMin = 105.0,
             heightMax = 125.0,
             weightMin = 18.0,
-            maxWeight = 30.0,
             sittingHeight = 600.0,
             shoulderWidth = 215.0,
             trunkLength = 435.0,
@@ -345,12 +314,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 105.0,
-            maxHeight = 125.0,
-            minWeight = 18.0,
-            maxWeight = 30.0,
-            minAge = 5.0,
-            maxAge = 7.0,
             
             installationDirection = "正向",
             materialStandard = "AS/NZS 1754.5:2007"
@@ -383,12 +346,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 40.0,
-            maxHeight = 52.0,
-            minWeight = 2.5,
-            maxWeight = 5.5,
-            minAge = 0.0,
-            maxAge = 0.6,
             
             installationDirection = "后向",
             materialStandard = "JIS D 1601:2007"
@@ -418,12 +375,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 52.0,
-            maxHeight = 68.0,
-            minWeight = 5.5,
-            maxWeight = 8.5,
-            minAge = 0.6,
-            maxAge = 1.1,
             
             installationDirection = "后向",
             materialStandard = "JIS D 1601:2007"
@@ -453,12 +404,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 68.0,
-            maxHeight = 82.0,
-            minWeight = 8.5,
-            maxWeight = 11.5,
-            minAge = 1.1,
-            maxAge = 1.6,
             
             installationDirection = "后向或双向",
             materialStandard = "JIS D 1601:2007"
@@ -488,12 +433,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 75.0,
-            maxHeight = 90.0,
-            minWeight = 9.5,
-            maxWeight = 13.0,
-            minAge = 1.6,
-            maxAge = 2.1,
             
             installationDirection = "双向可选",
             materialStandard = "JIS D 1601:2007"
@@ -523,12 +462,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 88.0,
-            maxHeight = 108.0,
-            minWeight = 13.0,
-            maxWeight = 19.0,
-            minAge = 2.5,
-            maxAge = 4.0,
             
             installationDirection = "双向可选",
             materialStandard = "JIS D 1601:2007"
@@ -544,7 +477,6 @@ object ChildSafetySeatDatabase {
             heightMin = 108.0,
             heightMax = 128.0,
             weightMin = 19.0,
-            maxWeight = 31.0,
             sittingHeight = 605.0,
             shoulderWidth = 220.0,
             trunkLength = 440.0,
@@ -558,12 +490,6 @@ object ChildSafetySeatDatabase {
             chestAccelerationLimit = 60,
             headExcursionLimit = 550,
             
-            minHeight = 108.0,
-            maxHeight = 128.0,
-            minWeight = 19.0,
-            maxWeight = 31.0,
-            minAge = 5.0,
-            maxAge = 7.0,
             
             installationDirection = "正向",
             materialStandard = "JIS D 1601:2007"
