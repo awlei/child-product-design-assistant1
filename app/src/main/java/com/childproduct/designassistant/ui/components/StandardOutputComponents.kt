@@ -376,6 +376,22 @@ fun StandardTestItemsBlock(
                     isLast = true
                 )
             }
+            com.childproduct.designassistant.data.StandardType.AUSTRALIAN -> {
+                TreeItem(
+                    label = "  动态碰撞",
+                    value = "正面53km/h（AS/NZS 1754测试方法）",
+                    level = 1,
+                    isLast = true
+                )
+            }
+            com.childproduct.designassistant.data.StandardType.JAPANESE -> {
+                TreeItem(
+                    label = "  动态碰撞",
+                    value = "正面50km/h（JIS D 1601测试方法）",
+                    level = 1,
+                    isLast = true
+                )
+            }
         }
     }
 }

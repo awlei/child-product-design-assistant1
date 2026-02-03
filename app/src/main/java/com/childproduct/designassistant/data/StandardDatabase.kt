@@ -1,6 +1,7 @@
 package com.childproduct.designassistant.data
 
 import com.childproduct.designassistant.model.*
+import com.childproduct.designassistant.model.StandardCategory
 
 /**
  * 本地标准数据库
@@ -372,7 +373,7 @@ object StandardDatabase {
     fun findMatchingGroups(
         heightRange: String,  // 如 "60-120cm"
         weightRange: String,  // 如 "9-36kg"
-        category: StandardCategory
+        category: com.childproduct.designassistant.model.StandardCategory
     ): List<Pair<TechnicalStandard, StandardGroup>> {
         val results = mutableListOf<Pair<TechnicalStandard, StandardGroup>>()
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.CreativeIdea
 import com.childproduct.designassistant.data.GPS028Database
+import com.childproduct.designassistant.data.GPS028DummyData
 import com.childproduct.designassistant.data.OtherProductTypesDatabase
 import com.childproduct.designassistant.data.StrollerStandardDatabase
 
@@ -362,7 +363,7 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val maxHeightCm = heightRangeParts.getOrNull(1)?.toIntOrNull() ?: 150
     
     // 从GPS028数据库获取匹配的假人
-    val gpsDummies = GPS028Database.getDummyByHeightRange(minHeightCm, maxHeightCm)
+    val gpsDummies = GPS028Database.getDummiesByHeightRange(minHeightCm, maxHeightCm)
     
     // 合并所有匹配的假人数据
     val allMatchedDummies = mutableListOf<GPS028DummyData>()
@@ -1549,94 +1550,4 @@ fun getSelectedStandards(creativeIdea: CreativeIdea): Set<com.childproduct.desig
     }
     
     return standards
-}
-
-// ============================================================================
-// 扩展函数：将澳标和日标数据转换为GPS028DummyData格式
-// ============================================================================
-
-/**
- * 将澳标假人数据转换为GPS028假人数据格式
- */
-private fun com.childproduct.designassistant.data.AustralianDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
-    return com.childproduct.designassistant.data.GPS028DummyData(
-        dummyType = com.childproduct.designassistant.data.ComplianceDummy.Q3, // 使用一个默认值
-        displayName = this.displayName,
-        ageYears = this.ageYears,
-        heightMin = this.heightMin.toInt(),
-        heightMax = this.heightMax.toInt(),
-        weightMin = this.minWeight,
-        weightMax = this.maxWeight,
-        sittingHeight = this.sittingHeight.toInt(),
-        shoulderWidth = this.shoulderWidth.toInt(),
-        trunkLength = this.trunkLength.toInt(),
-        designParameters = com.childproduct.designassistant.data.GPS028DesignParameters(
-            headrestHeightRange = "${this.sittingHeight.toInt()}-${this.sittingHeight.toInt() + 50}",
-            headrestDataSource = "AS/NZS 1754",
-            headrestDataItem = "§5.2",
-            seatWidthRange = "${this.shoulderWidth.toInt()}-${this.shoulderWidth.toInt() + 30}",
-            seatWidthDataSource = "AS/NZS 1754",
-            seatWidthDataItem = "§5.2",
-            backrestDepthRange = "${this.trunkLength.toInt()}-${this.trunkLength.toInt() + 50}",
-            backrestDataSource = "AS/NZS 1754",
-            backrestDataItem = "§5.2",
-            sideProtectionArea = this.sideProtectionArea,
-            sideProtectionDataSource = "AS/NZS 1754",
-            sideProtectionDataItem = "§5.2"
-        ),
-        safetyThresholds = com.childproduct.designassistant.data.GPS028SafetyThresholds(
-            ageGroup = com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE,
-            hicLimit = this.hicLimit,
-            chestAccelerationLimit = this.chestAccelerationLimit,
-            neckTensionLimit = 0, // 澳标未定义
-            neckCompressionLimit = 0, // 澳标未定义
-            headExcursionLimit = this.headExcursionLimit,
-            kneeExcursionLimit = 0, // 澳标未定义
-            chestDeflectionLimit = 0 // 澳标未定义
-        ),
-        standardType = com.childproduct.designassistant.data.StandardType.AUSTRALIAN
-    )
-}
-
-/**
- * 将日标假人数据转换为GPS028假人数据格式
- */
-private fun com.childproduct.designassistant.data.JapaneseDummyData.toGPS028DummyData(): com.childproduct.designassistant.data.GPS028DummyData {
-    return com.childproduct.designassistant.data.GPS028DummyData(
-        dummyType = com.childproduct.designassistant.data.ComplianceDummy.Q3, // 使用一个默认值
-        displayName = this.displayName,
-        ageYears = this.ageYears,
-        heightMin = this.heightMin.toInt(),
-        heightMax = this.heightMax.toInt(),
-        weightMin = this.minWeight,
-        weightMax = this.maxWeight,
-        sittingHeight = this.sittingHeight.toInt(),
-        shoulderWidth = this.shoulderWidth.toInt(),
-        trunkLength = this.trunkLength.toInt(),
-        designParameters = com.childproduct.designassistant.data.GPS028DesignParameters(
-            headrestHeightRange = "${this.sittingHeight.toInt()}-${this.sittingHeight.toInt() + 50}",
-            headrestDataSource = "JIS D 1601",
-            headrestDataItem = "§5.2",
-            seatWidthRange = "${this.shoulderWidth.toInt()}-${this.shoulderWidth.toInt() + 30}",
-            seatWidthDataSource = "JIS D 1601",
-            seatWidthDataItem = "§5.2",
-            backrestDepthRange = "${this.trunkLength.toInt()}-${this.trunkLength.toInt() + 50}",
-            backrestDataSource = "JIS D 1601",
-            backrestDataItem = "§5.2",
-            sideProtectionArea = this.sideProtectionArea,
-            sideProtectionDataSource = "JIS D 1601",
-            sideProtectionDataItem = "§5.2"
-        ),
-        safetyThresholds = com.childproduct.designassistant.data.GPS028SafetyThresholds(
-            ageGroup = com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE,
-            hicLimit = this.hicLimit,
-            chestAccelerationLimit = this.chestAccelerationLimit,
-            neckTensionLimit = 0, // 日标未定义
-            neckCompressionLimit = 0, // 日标未定义
-            headExcursionLimit = this.headExcursionLimit,
-            kneeExcursionLimit = 0, // 日标未定义
-            chestDeflectionLimit = 0 // 日标未定义
-        ),
-        standardType = com.childproduct.designassistant.data.StandardType.JAPANESE
-    )
 }

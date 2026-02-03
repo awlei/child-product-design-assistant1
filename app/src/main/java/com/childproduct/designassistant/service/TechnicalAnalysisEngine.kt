@@ -5,6 +5,7 @@ import com.childproduct.designassistant.data.HeightAgeGroupMapper
 import com.childproduct.designassistant.data.StandardDatabase
 import com.childproduct.designassistant.model.*
 import com.childproduct.designassistant.model.ProductType
+import com.childproduct.designassistant.model.StandardCategory as ModelStandardCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -89,7 +90,7 @@ class TechnicalAnalysisEngine {
     private fun matchStandards(
         heightRange: String,
         weightRange: String,
-        category: StandardCategory
+        category: ModelStandardCategory
     ): List<StandardMatch> {
         val matchedGroups = standardDatabase.findMatchingGroups(heightRange, weightRange, category)
         val results = mutableListOf<StandardMatch>()
