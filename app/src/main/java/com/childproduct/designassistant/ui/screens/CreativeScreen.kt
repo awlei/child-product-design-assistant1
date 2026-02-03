@@ -18,6 +18,7 @@ import com.childproduct.designassistant.model.*
 import com.childproduct.designassistant.model.ProductType
 import com.childproduct.designassistant.ui.MainViewModel
 import com.childproduct.designassistant.ui.UiState
+import com.childproduct.designassistant.ui.components.DesignOutputTree
 import com.childproduct.designassistant.utils.TetherType
 
 /**
@@ -689,8 +690,11 @@ fun CreativeScreen(
                                 val currentProductType = selectedProductType
                                 val hasECE_R129 = selectedStandards.any { it.standardId == "ECE_R129" }
 
+                                // 总是生成 CreativeIdea 对象（用于 DesignOutputTree 组件）
+                                viewModel.generateCreativeIdea(ageGroup, currentProductType!!, theme)
+                                
                                 if (currentProductType == ProductType.SAFETY_SEAT && hasECE_R129) {
-                                    // 使用Roadmate360OutputGenerator生成ROADMATE 360格式输出
+                                    // 同时生成 ROADMATE 360 格式输出（用于文本显示）
                                     val finalTheme = theme.ifEmpty { "标准设计" }
                                     formattedOutput = com.childproduct.designassistant.utils.Roadmate360OutputGenerator.generateOutput(
                                         minHeightCm = minH,
@@ -700,8 +704,8 @@ fun CreativeScreen(
                                         tetherType = selectedTetherType
                                     )
                                 } else {
-                                    // 其他情况使用原有的生成逻辑
-                                    viewModel.generateCreativeIdea(ageGroup, currentProductType!!, theme)
+                                    // 其他情况清空 formattedOutput，只使用 CreativeIdea
+                                    formattedOutput = null
                                 }
                             }
                             InputType.WEIGHT_RANGE -> {
@@ -773,36 +777,9 @@ fun CreativeScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // 显示生成的结果
-        if (formattedOutput != null) {
-            // 显示ROADMATE 360格式输出
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "设计方案输出",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Text(
-                        text = formattedOutput!!,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        } else {
-            // 显示原有格式（CreativeIdea）
-            creativeIdea?.let { idea ->
-                CreativeIdeaCard(idea = idea)
-            }
+        creativeIdea?.let { idea ->
+            // 使用优化后的 DesignOutputTree 组件显示层级树状结构
+            DesignOutputTree(creativeIdea = idea)
         }
     }
 }

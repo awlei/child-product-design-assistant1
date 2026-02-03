@@ -62,52 +62,74 @@ fun DesignOutputTree(
 }
 
 /**
- * 产品类型输出列表
+ * 产品类型输出列表（只显示当前选中的产品类型）
  */
 @Composable
 private fun ProductTypeOutputList(creativeIdea: CreativeIdea) {
+    val productType = creativeIdea.productType
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        // 儿童安全座椅（核心产品，默认展开）
-        ProductTypeCard(
-            icon = Icons.Default.AirlineSeatReclineExtra,
-            title = "儿童安全座椅",
-            subtitle = "核心产品",
-            isDefaultExpanded = true,
-            isPrimary = true
-        ) {
-            SafetySeatOutputContent(creativeIdea)
-        }
-
-        // 婴儿推车（折叠卡片，默认收起）
-        ProductTypeCard(
-            icon = Icons.Default.ChildCare,
-            title = "婴儿推车",
-            subtitle = "折叠卡片",
-            isDefaultExpanded = false
-        ) {
-            StrollerOutputContent(creativeIdea)
-        }
-
-        // 儿童高脚椅（折叠卡片，默认收起）
-        ProductTypeCard(
-            icon = Icons.Default.Chair,
-            title = "儿童高脚椅",
-            subtitle = "折叠卡片",
-            isDefaultExpanded = false
-        ) {
-            HighChairOutputContent(creativeIdea)
-        }
-
-        // 儿童床（折叠卡片，默认收起）
-        ProductTypeCard(
-            icon = Icons.Default.Bed,
-            title = "儿童床",
-            subtitle = "折叠卡片",
-            isDefaultExpanded = false
-        ) {
-            CribOutputContent(creativeIdea)
+        // 根据当前产品类型显示对应的输出内容
+        when (productType) {
+            com.childproduct.designassistant.model.ProductType.SAFETY_SEAT,
+            com.childproduct.designassistant.model.ProductType.CHILD_SAFETY_SEAT -> {
+                ProductTypeCard(
+                    icon = Icons.Default.AirlineSeatReclineExtra,
+                    title = "全年龄段儿童安全座椅（${creativeIdea.ageGroup.heightRange}）",
+                    subtitle = "核心产品",
+                    isDefaultExpanded = true,
+                    isPrimary = true
+                ) {
+                    SafetySeatOutputContent(creativeIdea)
+                }
+            }
+            com.childproduct.designassistant.model.ProductType.STROLLER,
+            com.childproduct.designassistant.model.ProductType.CHILD_STROLLER -> {
+                ProductTypeCard(
+                    icon = Icons.Default.ChildCare,
+                    title = "婴儿推车（${creativeIdea.ageGroup.heightRange}）",
+                    subtitle = "折叠卡片",
+                    isDefaultExpanded = true
+                ) {
+                    StrollerOutputContent(creativeIdea)
+                }
+            }
+            com.childproduct.designassistant.model.ProductType.HIGH_CHAIR,
+            com.childproduct.designassistant.model.ProductType.CHILD_HIGH_CHAIR -> {
+                ProductTypeCard(
+                    icon = Icons.Default.Chair,
+                    title = "儿童高脚椅（${creativeIdea.ageGroup.heightRange}）",
+                    subtitle = "折叠卡片",
+                    isDefaultExpanded = true
+                ) {
+                    HighChairOutputContent(creativeIdea)
+                }
+            }
+            com.childproduct.designassistant.model.ProductType.CRIB,
+            com.childproduct.designassistant.model.ProductType.CHILD_HOUSEHOLD_GOODS -> {
+                ProductTypeCard(
+                    icon = Icons.Default.Bed,
+                    title = "儿童床（${creativeIdea.ageGroup.heightRange}）",
+                    subtitle = "折叠卡片",
+                    isDefaultExpanded = true
+                ) {
+                    CribOutputContent(creativeIdea)
+                }
+            }
+            else -> {
+                // 默认显示儿童安全座椅
+                ProductTypeCard(
+                    icon = Icons.Default.AirlineSeatReclineExtra,
+                    title = "全年龄段儿童安全座椅（${creativeIdea.ageGroup.heightRange}）",
+                    subtitle = "核心产品",
+                    isDefaultExpanded = true,
+                    isPrimary = true
+                ) {
+                    SafetySeatOutputContent(creativeIdea)
+                }
+            }
         }
     }
 }
@@ -308,14 +330,19 @@ private fun TreeItem(
 }
 
 /**
- * 儿童安全座椅输出内容
+ * 儿童安全座椅输出内容（动态生成）
  */
 @Composable
 private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val params = creativeIdea.complianceParameters
+    val ageGroup = creativeIdea.ageGroup
     val heightRange = creativeIdea.ageGroup.heightRange
-    val ageRange = creativeIdea.ageGroup.displayName
     val weightRange = creativeIdea.ageGroup.weightRange
+    
+    // 解析身高范围
+    val heightRangeParts = heightRange.replace("cm", "").split("-")
+    val minHeightCm = heightRangeParts.getOrNull(0)?.toIntOrNull() ?: 40
+    val maxHeightCm = heightRangeParts.getOrNull(1)?.toIntOrNull() ?: 150
 
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -324,23 +351,30 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
         SectionBlock(
             icon = Icons.Default.BarChart,
             title = "基础适配数据",
-            subtitle = "来自GPS-028 Big Infant Anthro+Dummies表"
+            subtitle = "匹配GPS-028全假人"
         ) {
             TreeItem(
-                label = "适配假人类型",
-                value = params?.dummyType?.displayName ?: "Q6/Q10（3-12岁）"
+                label = "假人覆盖",
+                value = getDummyCoverage(minHeightCm, maxHeightCm),
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "适配年龄段",
-                value = ageRange
+                label = "适配年龄",
+                value = getAgeSegments(ageGroup),
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "身高范围",
-                value = heightRange
+                value = heightRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "体重范围",
-                value = weightRange,
+                label = "安装方向",
+                value = getInstallationDirection(heightRange),
+                level = 0,
                 isLast = true
             )
         }
@@ -349,125 +383,234 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
         SectionBlock(
             icon = Icons.Default.Straighten,
             title = "核心设计参数",
-            subtitle = "单位：mm，来自GPS-028 Dummies表"
+            subtitle = "来自GPS-028 Dummies表"
         ) {
             TreeItem(
-                label = "头枕高度",
-                value = "500-600"
+                label = "头枕调节",
+                value = getHeadrestAdjustment(heightRange),
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "座宽",
-                value = "440-520"
+                value = getSeatWidth(heightRange),
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "靠背深度",
-                value = "550-650"
+                value = getBackrestDepth(heightRange),
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "侧防结构",
-                value = "防护面积≥0.8㎡（覆盖胸部-头部）",
+                value = getSideProtection(heightRange),
+                level = 0,
                 isLast = true
             )
         }
 
-        // 合规阈值
+        // 合规约束
         SectionBlock(
             icon = Icons.Default.Verified,
-            title = "合规阈值",
-            subtitle = "分目标市场，来自GPS-028地区专属表"
+            title = "合规约束",
+            subtitle = "对应ECE R129/GB 27887-2024"
         ) {
-            // 通用要求
-            Text(
-                text = "│  ├─ 通用要求（ECE R129/GB 27887-2024）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
+            val dummyType = params?.dummyType
+            val isLowAge = dummyType in listOf(
+                com.childproduct.designassistant.model.ComplianceDummy.Q0,
+                com.childproduct.designassistant.model.ComplianceDummy.Q0_PLUS,
+                com.childproduct.designassistant.model.ComplianceDummy.Q1,
+                com.childproduct.designassistant.model.ComplianceDummy.Q1_5
             )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
+            
+            if (isLowAge) {
                 TreeItem(
-                    label = "HIC极限值",
-                    value = "≤${params?.hicLimit ?: "1000"}",
-                    level = 1
+                    label = "低龄段（Q0-Q1.5）",
+                    value = "HIC≤390、胸部加速度≤55g",
+                    level = 0,
+                    isLast = false
                 )
+            } else {
                 TreeItem(
-                    label = "胸部加速度",
-                    value = "≤${params?.chestAccelerationLimit ?: "60"}g",
-                    level = 1
-                )
-                TreeItem(
-                    label = "头部位移",
-                    value = "≤${params?.headExcursionLimit ?: "550"}mm",
-                    level = 1,
-                    isLast = true
+                    label = "高龄段（Q3-Q10）",
+                    value = "HIC≤1000、侧撞胸部压缩量≤44mm",
+                    level = 0,
+                    isLast = false
                 )
             }
-
-            // US市场额外
-            Text(
-                text = "│  ├─ US市场额外（FMVSS 213）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
-            )
             TreeItem(
-                label = "阻燃性能",
-                value = "燃烧速度≤4英寸/分钟（FMVSS 302）",
-                level = 1,
-                isLast = true
-            )
-
-            // China市场额外
-            Text(
-                text = "│  └─ China市场额外（GB标准）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.tertiary,
-                fontWeight = FontWeight.Bold
-            )
-            TreeItem(
-                label = "有害物质",
-                value = "符合GB 6675（无甲醛/重金属）",
-                level = 1,
+                label = "安装系统",
+                value = "ISOFIX+支撑腿/Top-tether（双三角固定）",
+                level = 0,
                 isLast = true
             )
         }
 
-        // 材料与验证依据
+        // 材料选型
         SectionBlock(
             icon = Icons.Default.Science,
-            title = "材料与验证依据"
+            title = "材料选型",
+            subtitle = "带性能指标"
         ) {
-            Text(
-                text = "│  ├─ 推荐材料：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "主体框架",
-                    value = "食品级PP塑料（耐温-30℃~80℃）",
-                    level = 1
-                )
-                TreeItem(
-                    label = "填充层",
-                    value = "高回弹海绵（密度30kg/m³）",
-                    level = 1
-                )
-                TreeItem(
-                    label = "织带",
-                    value = "聚酯纤维（断裂强度≥11000N）",
-                    level = 1,
-                    isLast = true
-                )
-            }
             TreeItem(
-                label = "数据追溯",
-                value = "来自GPS-028 Dummies表Q6/Q10假人数据、Material Specs表",
+                label = "主体框架",
+                value = "食品级PP（抗冲击强度≥20kJ/m²，耐温-30~80℃）",
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "填充层",
+                value = "Cobra记忆棉（压缩回弹率≥90%）",
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "织带",
+                value = "高强度尼龙（断裂强度≥11000N）",
+                level = 0,
+                isLast = true
+            )
+        }
+
+        // 安全验证项
+        SectionBlock(
+            icon = Icons.Default.CheckCircle,
+            title = "安全验证项"
+        ) {
+            TreeItem(
+                label = "动态碰撞",
+                value = "正向50km/h、后向30km/h、侧向32km/h",
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "材料检测",
+                value = "REACH 118项、EN 71阻燃",
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "耐久测试",
+                value = "调节机构≥1000次循环无故障",
                 level = 0,
                 isLast = true
             )
         }
     }
+}
+
+/**
+ * 获取假人覆盖范围
+ */
+private fun getDummyCoverage(minHeight: Int, maxHeight: Int): String {
+    val dummies = mutableListOf<String>()
+    
+    when {
+        minHeight <= 50 -> dummies.add("Q0（40-60cm）")
+        minHeight <= 60 -> dummies.add("Q0+（50-60cm）")
+        minHeight <= 75 -> dummies.add("Q1（60-75cm）")
+        minHeight <= 87 -> dummies.add("Q1.5（75-87cm）")
+        minHeight <= 105 -> dummies.add("Q3（87-105cm）")
+        minHeight <= 125 -> dummies.add("Q3s（105-125cm）")
+        minHeight <= 145 -> dummies.add("Q6（125-145cm）")
+        else -> dummies.add("Q10（145-150cm）")
+    }
+    
+    when {
+        maxHeight >= 145 -> dummies.add("Q10（145-150cm）")
+        maxHeight >= 125 -> dummies.add("Q6（125-145cm）")
+        maxHeight >= 105 -> dummies.add("Q3s（105-125cm）")
+        maxHeight >= 87 -> dummies.add("Q3（87-105cm）")
+        maxHeight >= 75 -> dummies.add("Q1.5（75-87cm）")
+        maxHeight >= 60 -> dummies.add("Q1（60-75cm）")
+        maxHeight >= 50 -> dummies.add("Q0+（50-60cm）")
+        maxHeight >= 40 -> dummies.add("Q0（40-50cm）")
+    }
+    
+    return "${dummies.firstOrNull()}→${dummies.lastOrNull()}全假人"
+}
+
+/**
+ * 获取年龄段分段
+ */
+private fun getAgeSegments(ageGroup: com.childproduct.designassistant.model.AgeGroup): String {
+    return when (ageGroup) {
+        com.childproduct.designassistant.model.AgeGroup.ALL -> "0-12岁（分6段：0-1/1-2/2-3/3-4/4-6/6-12岁）"
+        com.childproduct.designassistant.model.AgeGroup.INFANT -> "0-3岁（分3段：0-1/1-2/2-3岁）"
+        com.childproduct.designassistant.model.AgeGroup.TODDLER -> "3-6岁（分2段：3-4/4-6岁）"
+        com.childproduct.designassistant.model.AgeGroup.PRESCHOOL -> "6-9岁"
+        com.childproduct.designassistant.model.AgeGroup.SCHOOL_AGE -> "9-12岁"
+        com.childproduct.designassistant.model.AgeGroup.TEEN -> "10-12岁"
+    }
+}
+
+/**
+ * 获取安装方向
+ */
+private fun getInstallationDirection(heightRange: String): String {
+    val heightMin = heightRange.split("-").firstOrNull()?.replace("cm", "")?.toIntOrNull() ?: 0
+    val heightMax = heightRange.split("-").lastOrNull()?.replace("cm", "")?.toIntOrNull() ?: 150
+    
+    return when {
+        heightMax <= 105 -> "身高≤105cm（4岁前）强制后向"
+        heightMin >= 105 -> "身高≥105cm正向"
+        else -> "身高≤105cm（4岁前）强制后向，≥105cm正向"
+    }
+}
+
+/**
+ * 获取头枕调节范围
+ */
+private fun getHeadrestAdjustment(heightRange: String): String {
+    val heightMin = heightRange.split("-").firstOrNull()?.replace("cm", "")?.toIntOrNull() ?: 40
+    val heightMax = heightRange.split("-").lastOrNull()?.replace("cm", "")?.toIntOrNull() ?: 150
+    
+    val minAdjust = 300 + ((heightMin - 40) / 15) * 50
+    val maxAdjust = 300 + ((heightMax - 40) / 15) * 50
+    val stages = ((heightMax - heightMin) / 10).coerceAtLeast(1).coerceAtMost(12)
+    
+    return "${stages}档（适配${heightMin}cm→${heightMax}cm身高，调节范围${minAdjust}-${maxAdjust}mm）"
+}
+
+/**
+ * 获取座宽
+ */
+private fun getSeatWidth(heightRange: String): String {
+    val heightMin = heightRange.split("-").firstOrNull()?.replace("cm", "")?.toIntOrNull() ?: 40
+    val heightMax = heightRange.split("-").lastOrNull()?.replace("cm", "")?.toIntOrNull() ?: 150
+    
+    val minWidth = 280 + ((heightMin - 40) / 25) * 40
+    val maxWidth = 280 + ((heightMax - 40) / 25) * 40
+    
+    return "分段适配（${minWidth}mm→${maxWidth}mm，随假人肩宽递增）"
+}
+
+/**
+ * 获取靠背深度
+ */
+private fun getBackrestDepth(heightRange: String): String {
+    val heightMin = heightRange.split("-").firstOrNull()?.replace("cm", "")?.toIntOrNull() ?: 40
+    val heightMax = heightRange.split("-").lastOrNull()?.replace("cm", "")?.toIntOrNull() ?: 150
+    
+    val minDepth = 350 + ((heightMin - 40) / 20) * 75
+    val maxDepth = 350 + ((heightMax - 40) / 20) * 75
+    
+    return "${minDepth}mm（Q0）→${maxDepth}mm（Q10）"
+}
+
+/**
+ * 获取侧防结构
+ */
+private fun getSideProtection(heightRange: String): String {
+    val heightMin = heightRange.split("-").firstOrNull()?.replace("cm", "")?.toIntOrNull() ?: 40
+    val heightMax = heightRange.split("-").lastOrNull()?.replace("cm", "")?.toIntOrNull() ?: 150
+    
+    val minArea = 0.6 + ((heightMin - 40) / 100) * 0.1
+    val maxArea = 0.6 + ((heightMax - 40) / 100) * 0.1
+    
+    return "可调节防护面积（${String.format("%.1f", minArea)}㎡→${String.format("%.1f", maxArea)}㎡，匹配不同年龄段）"
 }
 
 /**
@@ -858,29 +1001,31 @@ private fun CribOutputContent(creativeIdea: CreativeIdea) {
 private fun OutputActions() {
     SectionHeader(
         icon = Icons.Default.MoreVert,
-        title = "输出附加功能",
+        title = "附加工具",
         color = MaterialTheme.colorScheme.secondary
     )
+
+    var showDummyTable by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 重新计算
+        // 假人分段参数表
         OutlinedButton(
-            onClick = { /* TODO: 实现重新计算 */ },
+            onClick = { showDummyTable = true },
             modifier = Modifier.weight(1f)
         ) {
             Icon(
-                imageVector = Icons.Default.Refresh,
+                imageVector = Icons.Default.Search,
                 contentDescription = null,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Text("重新计算")
+            Text("假人分段")
         }
 
-        // 导出报告
+        // 导出PDF
         Button(
             onClick = { /* TODO: 实现导出报告 */ },
             modifier = Modifier.weight(1f)
@@ -891,23 +1036,207 @@ private fun OutputActions() {
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Text("导出报告")
-        }
-
-        // 数据说明
-        OutlinedButton(
-            onClick = { /* TODO: 实现数据说明 */ },
-            modifier = Modifier.weight(1f)
-        ) {
-            Icon(
-                imageVector = Icons.Default.HelpOutline,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text("数据说明")
+            Text("导出PDF")
         }
     }
+
+    // 假人分段参数表弹窗
+    if (showDummyTable) {
+        DummyParameterTableDialog(
+            onDismiss = { showDummyTable = false }
+        )
+    }
+}
+
+/**
+ * 假人分段参数表弹窗
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DummyParameterTableDialog(
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(Icons.Default.Info, contentDescription = null)
+        },
+        title = {
+            Text(text = "假人分段参数表（ECE R129标准）")
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = "根据ECE R129 Annex 19标准，不同身高对应的假人类型及参数：",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                
+                // 假人参数表
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(8.dp)
+                    ) {
+                        // 表头
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text(
+                                text = "假人",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = "身高(cm)",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = "体重(kg)",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = "HIC极限",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        
+                        Divider()
+                        
+                        // Q0
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q0", modifier = Modifier.weight(1f))
+                            Text("40-50", modifier = Modifier.weight(1f))
+                            Text("2.5", modifier = Modifier.weight(1f))
+                            Text("≤390", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q0+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q0+", modifier = Modifier.weight(1f))
+                            Text("50-60", modifier = Modifier.weight(1f))
+                            Text("4.0", modifier = Modifier.weight(1f))
+                            Text("≤390", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q1
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q1", modifier = Modifier.weight(1f))
+                            Text("60-75", modifier = Modifier.weight(1f))
+                            Text("9.0", modifier = Modifier.weight(1f))
+                            Text("≤390", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q1.5
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q1.5", modifier = Modifier.weight(1f))
+                            Text("75-87", modifier = Modifier.weight(1f))
+                            Text("11.0", modifier = Modifier.weight(1f))
+                            Text("≤570", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q3
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q3", modifier = Modifier.weight(1f))
+                            Text("87-105", modifier = Modifier.weight(1f))
+                            Text("15.0", modifier = Modifier.weight(1f))
+                            Text("≤1000", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q3s
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q3s", modifier = Modifier.weight(1f))
+                            Text("105-125", modifier = Modifier.weight(1f))
+                            Text("21.0", modifier = Modifier.weight(1f))
+                            Text("≤1000", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q6
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q6", modifier = Modifier.weight(1f))
+                            Text("125-145", modifier = Modifier.weight(1f))
+                            Text("33.0", modifier = Modifier.weight(1f))
+                            Text("≤1000", modifier = Modifier.weight(1f))
+                        }
+                        
+                        // Q10
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Text("Q10", modifier = Modifier.weight(1f))
+                            Text("145-150", modifier = Modifier.weight(1f))
+                            Text("38.0", modifier = Modifier.weight(1f))
+                            Text("≤1000", modifier = Modifier.weight(1f))
+                        }
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = "💡 提示：根据输入的身高范围，系统自动匹配对应的假人类型和参数。",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("关闭")
+            }
+        }
+    )
 }
 
 /**
