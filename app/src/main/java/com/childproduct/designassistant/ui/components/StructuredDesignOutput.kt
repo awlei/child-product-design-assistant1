@@ -462,8 +462,11 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             title = "合规约束（分龄对应ECE R129/GB 27887-2024）",
             subtitle = "按年龄段精准匹配"
         ) {
-            // 低龄段（Q0-Q1.5）
+            // 按年龄段分组假人
             val lowAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.LOW_AGE }
+            val highAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
+            
+            // 低龄段（Q0-Q1.5）
             if (lowAgeDummies.isNotEmpty()) {
                 TreeItem(
                     label = "低龄段（Q0-Q1.5）",
@@ -506,7 +509,6 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             }
             
             // 高龄段（Q3-Q10）
-            val highAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
             if (highAgeDummies.isNotEmpty()) {
                 TreeItem(
                     label = "高龄段（Q3-Q10）",

@@ -19,6 +19,25 @@ package com.childproduct.designassistant.data
  */
 
 /**
+ * GPS-028 假人类型枚举
+ * 
+ * 对应 ECE R129 标准中定义的假人类型
+ */
+enum class ComplianceDummy(
+    val code: String,
+    val description: String
+) {
+    Q0("Q0", "新生儿假人（0-6个月）"),
+    Q0PLUS("Q0+", "婴儿假人（0-10个月）"),
+    Q1("Q1", "9个月假人（6-12个月）"),
+    Q1_5("Q1.5", "18个月假人（12-24个月）"),
+    Q3("Q3", "3岁假人（24-48个月）"),
+    Q3S("Q3s", "3岁假人专用（24-48个月，侧撞测试）"),
+    Q6("Q6", "6岁假人（48-84个月）"),
+    Q10("Q10", "10岁假人（84-150cm）")
+}
+
+/**
  * GPS-028 假人详细数据
  */
 data class GPS028DummyData(
@@ -294,8 +313,10 @@ object GPS028Database {
      */
     fun getDummiesByHeightRange(minHeight: Int, maxHeight: Int): List<GPS028DummyData> {
         return getAllDummies().filter { dummy ->
-            val heightRange = dummy.adaptationConditions.minHeight..dummy.adaptationConditions.maxHeight
-            heightRange.intersect(minHeight..maxHeight).isNotEmpty()
+            val dummyMinHeight = dummy.adaptationConditions.minHeight
+            val dummyMaxHeight = dummy.adaptationConditions.maxHeight
+            // 检查两个范围是否有交集
+            !(dummyMaxHeight < minHeight || dummyMinHeight > maxHeight)
         }
     }
     
