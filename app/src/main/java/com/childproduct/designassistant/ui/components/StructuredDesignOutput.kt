@@ -26,6 +26,14 @@ import com.childproduct.designassistant.data.GPS028Database
 import com.childproduct.designassistant.data.OtherProductTypesDatabase
 
 /**
+ * 结构化设计输出状态
+ * 用于管理用户选择的标准类型
+ */
+data class StructuredDesignOutputState(
+    val selectedStandards: Set<com.childproduct.designassistant.data.StandardType> = setOf()
+)
+
+/**
  * 儿童产品设计输出组件
  * 功能：以层级树状结构展示设计输出，支持展开/收起，视觉清晰
  */
@@ -353,17 +361,25 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val maxHeightCm = heightRangeParts.getOrNull(1)?.toIntOrNull() ?: 150
     
     // 从GPS-028数据库获取匹配的假人
-    val matchedDummies = GPS028Database.getDummiesByHeightRange(minHeightCm, maxHeightCm)
+    val allMatchedDummies = GPS028Database.getDummiesByHeightRange(minHeightCm, maxHeightCm)
+    
+    // 获取用户选择的标准类型
+    val selectedStandards = getSelectedStandards(creativeIdea)
     
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 基础适配数据（假人级精准对应）
-        SectionBlock(
-            icon = Icons.Default.BarChart,
-            title = "基础适配数据（精准对应GPS-028假人）",
-            subtitle = "匹配${matchedDummies.size}个假人"
-        ) {
+        // 按标准类型分组输出
+        selectedStandards.forEach { standardType ->
+            StandardOutputCard(
+                standardType = standardType,
+                allMatchedDummies = allMatchedDummies,
+                ageGroup = ageGroup,
+                heightRange = heightRange
+            )
+        }
+    }
+}
             // 按假人分组输出
             matchedDummies.forEachIndexed { index, dummy ->
                 val isLast = index == matchedDummies.size - 1
@@ -1395,4 +1411,44 @@ private fun SectionHeader(
             color = color
         )
     }
+}
+
+// ============================================================================
+// 标准过滤辅助函数
+// ============================================================================
+
+/**
+ * 根据标准类型过滤假人
+ */
+fun getDummiesByStandardType(
+    dummies: List<com.childproduct.designassistant.data.GPS028DummyData>,
+    standardType: com.childproduct.designassistant.data.StandardType
+): List<com.childproduct.designassistant.data.GPS028DummyData> {
+    return dummies.filter { it.standardType == standardType }
+}
+
+/**
+ * 获取用户选择的标准类型
+ */
+fun getSelectedStandards(creativeIdea: CreativeIdea): Set<com.childproduct.designassistant.data.StandardType> {
+    val standards = mutableSetOf<com.childproduct.designassistant.data.StandardType>()
+    
+    // 从standardsReference中提取标准类型
+    creativeIdea.standardsReference?.let { ref ->
+        when {
+            ref.mainStandard.contains("FMVSS 213") -> 
+                standards.add(com.childproduct.designassistant.data.StandardType.FMVSS_213)
+            ref.mainStandard.contains("ECE R129") -> 
+                standards.add(com.childproduct.designassistant.data.StandardType.ECE_R129)
+            ref.mainStandard.contains("GB 27887") -> 
+                standards.add(com.childproduct.designassistant.data.StandardType.GB_27887)
+        }
+    }
+    
+    // 默认使用欧标
+    if (standards.isEmpty()) {
+        standards.add(com.childproduct.designassistant.data.StandardType.ECE_R129)
+    }
+    
+    return standards
 }
