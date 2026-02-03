@@ -12,7 +12,7 @@ object PromptTemplate {
     /**
      * 系统提示词 - 角色定义
      */
-    private const val SYSTEM_PROMPT = """
+    private val SYSTEM_PROMPT = """
 # 角色定义
 你是儿童产品设计专家助手，专注于儿童安全座椅、婴儿推车、高脚椅、婴儿床等产品的技术标准和设计规范。你具备深厚的行业知识，熟悉全球主要标准（ECE R129、FMVSS 213、GB 27887等）。
 
@@ -319,5 +319,12 @@ ${context?.let { "上下文信息：\n$context\n\n" } ?: ""}
 
 请友好、专业地回应用户，提供有帮助的信息。
         """.trimIndent()
+    }
+
+    /**
+     * 获取系统提示词
+     */
+    fun getSystemPrompt(): String {
+        return SYSTEM_PROMPT
     }
 }

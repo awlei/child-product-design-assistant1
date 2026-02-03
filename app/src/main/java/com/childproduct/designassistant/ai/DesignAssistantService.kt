@@ -171,6 +171,7 @@ class DesignAssistantService private constructor() {
                 when (msg.role) {
                     ChatRole.USER -> messages.add(msg.content)
                     ChatRole.ASSISTANT -> messages.add(msg.content)
+                    ChatRole.SYSTEM -> { /* 系统消息已经单独处理，忽略 */ }
                 }
             }
 
