@@ -378,9 +378,8 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
                 heightRange = heightRange
             )
         }
-    }
-    
-    // 核心设计参数（按假人分组）
+        
+        // 核心设计参数（按假人分组）
         SectionBlock(
             icon = Icons.Default.Straighten,
             title = "核心设计参数（按假人分组）",
