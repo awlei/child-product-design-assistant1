@@ -229,7 +229,7 @@ object ProductTypeConfigManager {
         ),
         // 婴儿推车
         ProductTypeConfig(
-            productTypeId = "BABY_STROLLER",
+            productTypeId = "CHILD_STROLLER",
             productTypeName = "婴儿推车",
             standards = listOf(
                 // 欧标
