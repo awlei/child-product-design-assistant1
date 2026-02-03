@@ -379,58 +379,8 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             )
         }
     }
-}
-            // 按假人分组输出
-            matchedDummies.forEachIndexed { index, dummy ->
-                val isLast = index == matchedDummies.size - 1
-                
-                TreeItem(
-                    label = "🔽 ${dummy.displayName}",
-                    value = "",
-                    level = 0,
-                    isLast = false
-                )
-                TreeItem(
-                    label = "  身高范围",
-                    value = "${dummy.heightEnvelope.min}-${dummy.heightEnvelope.max}cm（GPS-028 Big Infant Anthro表5th-95th百分位）",
-                    level = 1,
-                    isLast = false
-                )
-                TreeItem(
-                    label = "  体重范围",
-                    value = "${dummy.weightEnvelope.min}-${dummy.weightEnvelope.max}kg（GPS-028 Big Infant Anthro表5th-95th百分位）",
-                    level = 1,
-                    isLast = false
-                )
-                TreeItem(
-                    label = "  年龄",
-                    value = "${dummy.adaptationConditions.minAge}-${dummy.adaptationConditions.maxAge}岁（${dummy.ageMonths}个月）",
-                    level = 1,
-                    isLast = false
-                )
-                TreeItem(
-                    label = "  安装方向",
-                    value = "${dummy.installationDirection.direction}（${dummy.installationDirection.heightCondition}）",
-                    level = 1,
-                    isLast = isLast && (matchedDummies.size == 1)
-                )
-            }
-            
-            TreeItem(
-                label = "适配年龄",
-                value = getAgeSegments(ageGroup),
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "身高范围",
-                value = heightRange,
-                level = 0,
-                isLast = true
-            )
-        }
-        
-        // 核心设计参数（按假人分组）
+    
+    // 核心设计参数（按假人分组）
         SectionBlock(
             icon = Icons.Default.Straighten,
             title = "核心设计参数（按假人分组）",
