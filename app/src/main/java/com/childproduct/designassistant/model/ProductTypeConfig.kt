@@ -439,6 +439,88 @@ object ProductTypeConfigManager {
                     coreRequirements = "托盘锁定强度≥50lb、C型扣带强度≥133N、五点式安全带、稳定性测试通过"
                 )
             )
+        ),
+        // 儿童床
+        ProductTypeConfig(
+            productTypeId = "CRIB",
+            productTypeName = "儿童床",
+            standards = listOf(
+                // 欧标
+                StandardConfig(
+                    standardId = "EN_716",
+                    standardName = "EN 716（欧标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.AGE_RANGE,
+                        inputLabel = "适用年龄（岁）",
+                        unit = "岁",
+                        editable = true,
+                        placeholder = "请输入0-5之间的范围，如0-3"
+                    ),
+                    paramRule = ParamRule(
+                        minValue = 0.0,
+                        maxValue = 5.0,
+                        intervals = listOf(
+                            ParamInterval(0.0, 1.0, "0-1岁"),
+                            ParamInterval(1.0, 2.0, "1-2岁"),
+                            ParamInterval(2.0, 3.0, "2-3岁"),
+                            ParamInterval(3.0, 5.0, "3-5岁")
+                        ),
+                        errorTip = "当前标准要求适用年龄为0-5岁，请调整输入"
+                    ),
+                    coreRequirements = "床垫支撑高度差≤12cm、床板条间距≤6cm、四边护栏高度≥60cm、无锐边"
+                ),
+                // 美标
+                StandardConfig(
+                    standardId = "ASTM_F1169",
+                    standardName = "ASTM F1169（美标）",
+                    region = "INTERNATIONAL",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.AGE_RANGE,
+                        inputLabel = "适用年龄（岁）",
+                        unit = "岁",
+                        editable = true,
+                        placeholder = "请输入0-4之间的范围，如0-2"
+                    ),
+                    paramRule = ParamRule(
+                        minValue = 0.0,
+                        maxValue = 4.0,
+                        intervals = listOf(
+                            ParamInterval(0.0, 1.0, "0-1岁"),
+                            ParamInterval(1.0, 2.0, "1-2岁"),
+                            ParamInterval(2.0, 3.0, "2-3岁"),
+                            ParamInterval(3.0, 4.0, "3-4岁")
+                        ),
+                        errorTip = "当前标准要求适用年龄为0-4岁，请调整输入"
+                    ),
+                    coreRequirements = "床垫厚度≤15cm、床板条间距≤6cm、全封闭床垫支撑、防跌落装置"
+                ),
+                // 国标
+                StandardConfig(
+                    standardId = "GB_28007",
+                    standardName = "GB 28007-2011（国标）",
+                    region = "DOMESTIC",
+                    inputItem = InputItemConfig(
+                        inputType = InputType.AGE_RANGE,
+                        inputLabel = "适用年龄（岁）",
+                        unit = "岁",
+                        editable = true,
+                        placeholder = "请输入0-5之间的范围，如0-3"
+                    ),
+                    paramRule = ParamRule(
+                        minValue = 0.0,
+                        maxValue = 5.0,
+                        intervals = listOf(
+                            ParamInterval(0.0, 1.0, "0-1岁"),
+                            ParamInterval(1.0, 2.0, "1-2岁"),
+                            ParamInterval(2.0, 3.0, "2-3岁"),
+                            ParamInterval(3.0, 5.0, "3-5岁")
+                        ),
+                        errorTip = "当前标准要求适用年龄为0-5岁，请调整输入"
+                    ),
+                    coreRequirements = "床板条间距≤6cm、四边护栏高度≥60cm、防跌落条间距≤6cm、甲醛释放量≤0.1mg/L"
+                )
+            )
         )
     )
 
