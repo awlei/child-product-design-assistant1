@@ -581,13 +581,13 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
         }
     }
 
-    private fun mapProductTypeToStandardCategory(productType: ProductType): StandardCategory {
+    private fun mapProductTypeToStandardCategory(productType: ProductType): ModelStandardCategory {
         return when (productType) {
-            ProductType.SAFETY_SEAT, ProductType.CHILD_SAFETY_SEAT -> StandardCategory.SAFETY_SEAT
-            ProductType.STROLLER, ProductType.CHILD_STROLLER -> StandardCategory.CARRIER
-            ProductType.CRIB -> StandardCategory.SAFETY_SEAT
-            ProductType.HIGH_CHAIR, ProductType.CHILD_HIGH_CHAIR -> StandardCategory.SAFETY_SEAT
-            ProductType.CHILD_HOUSEHOLD_GOODS -> StandardCategory.SAFETY_SEAT
+            ProductType.SAFETY_SEAT, ProductType.CHILD_SAFETY_SEAT -> ModelStandardCategory.SAFETY_SEAT
+            ProductType.STROLLER, ProductType.CHILD_STROLLER -> ModelStandardCategory.CARRIER
+            ProductType.CRIB -> ModelStandardCategory.SAFETY_SEAT
+            ProductType.HIGH_CHAIR, ProductType.CHILD_HIGH_CHAIR -> ModelStandardCategory.SAFETY_SEAT
+            ProductType.CHILD_HOUSEHOLD_GOODS -> ModelStandardCategory.SAFETY_SEAT
         }
     }
 

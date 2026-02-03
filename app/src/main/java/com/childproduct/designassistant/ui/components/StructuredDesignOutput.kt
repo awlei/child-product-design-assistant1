@@ -725,7 +725,6 @@ private fun getSideProtection(heightRange: String): String {
  * 3. 包含ISO 8124-2:2025、GB 46516—2025等最新标准
  * 4. 提供完整的测试项目、合规阈值、材料要求、设计要求
  */
-@Composable
 private fun StrollerOutputContent(creativeIdea: CreativeIdea) {
     // 从StrollerStandardDatabase获取婴儿推车的综合数据
     // 默认查询中国市场单人推车的数据
