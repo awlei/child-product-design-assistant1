@@ -342,6 +342,7 @@ object ProductTypeConfigManager {
                 StandardConfig(
                     standardId = "ISO_8124_GB28007",
                     standardName = "ISO 8124-3 / GB 28007-2011",
+                    region = "INTERNATIONAL",
                     inputItem = InputItemConfig(
                         inputType = InputType.AGE_RANGE,
                         inputLabel = "适用年龄（岁）",
