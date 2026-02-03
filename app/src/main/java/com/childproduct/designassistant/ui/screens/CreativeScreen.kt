@@ -463,7 +463,7 @@ fun CreativeScreen(
 
                 // ========== 5. Tether类型选择（仅儿童安全座椅ECE R129标准显示）==========
                 val isShowTetherSelector = selectedProductType == ProductType.SAFETY_SEAT &&
-                                         selectedStandards.any { it.standardCode == "ECE_R129" }
+                                         selectedStandards.any { it.standardId == "ECE_R129" }
 
                 if (isShowTetherSelector) {
                     Spacer(modifier = Modifier.height(8.dp))
@@ -552,7 +552,8 @@ fun CreativeScreen(
                 // ========== 生成按钮 ==========
                 Button(
                     onClick = {
-                        val heightCm = if (selectedStandard?.inputItem?.inputType == InputType.HEIGHT_RANGE) {
+                        val firstSelected = selectedStandards.firstOrNull()
+                        val heightCm = if (firstSelected?.inputItem?.inputType == InputType.HEIGHT_RANGE) {
                             (minHeight.toIntOrNull() ?: 0) to (maxHeight.toIntOrNull() ?: 0)
                         } else {
                             null
@@ -591,7 +592,7 @@ fun CreativeScreen(
                                 
                                 // 检查是否是儿童安全座椅且选择了ECE R129标准
                                 val currentProductType = selectedProductType
-                                val hasECE_R129 = selectedStandards.any { it.standardCode == "ECE_R129" }
+                                val hasECE_R129 = selectedStandards.any { it.standardId == "ECE_R129" }
 
                                 if (currentProductType == ProductType.SAFETY_SEAT && hasECE_R129) {
                                     // 使用Roadmate360OutputGenerator生成ROADMATE 360格式输出
@@ -750,7 +751,7 @@ fun ProductTypeAccordion(
                 ) {
                     Icon(
                         imageVector = when (productType) {
-                            ProductType.CHILD_SAFETY_SEAT -> Icons.Default.Car
+                            ProductType.CHILD_SAFETY_SEAT -> Icons.Default.DirectionsCar
                             ProductType.CHILD_STROLLER -> Icons.Default.DirectionsWalk
                             ProductType.CHILD_HOUSEHOLD_GOODS -> Icons.Default.Toys
                             ProductType.CHILD_HIGH_CHAIR -> Icons.Default.Chair
