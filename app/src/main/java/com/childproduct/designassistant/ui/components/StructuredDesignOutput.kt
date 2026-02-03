@@ -1,9 +1,8 @@
 package com.childproduct.designassistant.ui.components
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -142,8 +141,9 @@ private fun ProductTypeCard(
                 MaterialTheme.colorScheme.surface
         ),
         border = if (isPrimary)
-            CardDefaults.outlinedCardBorder().copy(
-                brush = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
             )
         else
             null
@@ -313,8 +313,9 @@ private fun TreeItem(
 @Composable
 private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val params = creativeIdea.complianceParameters
-    val heightRange = creativeIdea.heightRange ?: "100-150cm"
+    val heightRange = creativeIdea.ageGroup.heightRange
     val ageRange = creativeIdea.ageGroup.displayName
+    val weightRange = creativeIdea.ageGroup.weightRange
 
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -339,7 +340,7 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
             )
             TreeItem(
                 label = "体重范围",
-                value = "${params?.minWeight ?: "18.0"}-${params?.maxWeight ?: "45.0"}kg",
+                value = weightRange,
                 isLast = true
             )
         }
