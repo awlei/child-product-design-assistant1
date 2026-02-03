@@ -466,7 +466,7 @@ object GPS028Database {
      */
     private fun getQ0PlusDummy(): GPS028DummyData {
         return GPS028DummyData(
-            dummyType = ComplianceDummy.Q0_PLUS,
+            dummyType = ComplianceDummy.Q0PLUS,
             displayName = "Q0+（6-9个月）",
             ageMonths = 9,
             ageYears = 0.75,
@@ -870,7 +870,7 @@ object GPS028Database {
      */
     private fun getQ3sDummy(): GPS028DummyData {
         return GPS028DummyData(
-            dummyType = ComplianceDummy.Q3_S,
+            dummyType = ComplianceDummy.Q3S,
             displayName = "Q3s（3岁-美标侧撞）",
             ageMonths = 48,
             ageYears = 4.0,
