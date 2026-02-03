@@ -22,6 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.childproduct.designassistant.model.CreativeIdea
+import com.childproduct.designassistant.data.GPS028Database
+import com.childproduct.designassistant.data.OtherProductTypesDatabase
 
 /**
  * 儿童产品设计输出组件
@@ -330,35 +332,74 @@ private fun TreeItem(
 }
 
 /**
- * 儿童安全座椅输出内容（动态生成）
+ * 儿童安全座椅输出内容（假人级精准对应）
+ * 优化说明：
+ * 1. 从"笼统覆盖"到"假人级精准对应"
+ * 2. 每个假人单独列项，包含详细参数
+ * 3. 数据追溯：GPS-028工作表+数据项+百分位
+ * 4. 标准约束：分龄精准匹配
+ * 5. 适配条件：多维度校验（身高、体重、年龄）
+ * 6. 材料性能：绑定测试标准
  */
 @Composable
 private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
     val params = creativeIdea.complianceParameters
     val ageGroup = creativeIdea.ageGroup
     val heightRange = creativeIdea.ageGroup.heightRange
-    val weightRange = creativeIdea.ageGroup.weightRange
     
     // 解析身高范围
     val heightRangeParts = heightRange.replace("cm", "").split("-")
     val minHeightCm = heightRangeParts.getOrNull(0)?.toIntOrNull() ?: 40
     val maxHeightCm = heightRangeParts.getOrNull(1)?.toIntOrNull() ?: 150
-
+    
+    // 从GPS-028数据库获取匹配的假人
+    val matchedDummies = GPS028Database.getDummiesByHeightRange(minHeightCm, maxHeightCm)
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // 基础适配数据
+        // 基础适配数据（假人级精准对应）
         SectionBlock(
             icon = Icons.Default.BarChart,
-            title = "基础适配数据",
-            subtitle = "匹配GPS-028全假人"
+            title = "基础适配数据（精准对应GPS-028假人）",
+            subtitle = "匹配${matchedDummies.size}个假人"
         ) {
-            TreeItem(
-                label = "假人覆盖",
-                value = getDummyCoverage(minHeightCm, maxHeightCm),
-                level = 0,
-                isLast = false
-            )
+            // 按假人分组输出
+            matchedDummies.forEachIndexed { index, dummy ->
+                val isLast = index == matchedDummies.size - 1
+                
+                TreeItem(
+                    label = "🔽 ${dummy.displayName}",
+                    value = "",
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  身高范围",
+                    value = "${dummy.heightEnvelope.min}-${dummy.heightEnvelope.max}cm（GPS-028 Big Infant Anthro表5th-95th百分位）",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  体重范围",
+                    value = "${dummy.weightEnvelope.min}-${dummy.weightEnvelope.max}kg（GPS-028 Big Infant Anthro表5th-95th百分位）",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  年龄",
+                    value = "${dummy.adaptationConditions.minAge}-${dummy.adaptationConditions.maxAge}岁（${dummy.ageMonths}个月）",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  安装方向",
+                    value = "${dummy.installationDirection.direction}（${dummy.installationDirection.heightCondition}）",
+                    level = 1,
+                    isLast = isLast && (matchedDummies.size == 1)
+                )
+            }
+            
             TreeItem(
                 label = "适配年龄",
                 value = getAgeSegments(ageGroup),
@@ -369,77 +410,144 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
                 label = "身高范围",
                 value = heightRange,
                 level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "安装方向",
-                value = getInstallationDirection(heightRange),
-                level = 0,
                 isLast = true
             )
         }
-
-        // 核心设计参数
+        
+        // 核心设计参数（按假人分组）
         SectionBlock(
             icon = Icons.Default.Straighten,
-            title = "核心设计参数",
+            title = "核心设计参数（按假人分组）",
             subtitle = "来自GPS-028 Dummies表"
         ) {
-            TreeItem(
-                label = "头枕调节",
-                value = getHeadrestAdjustment(heightRange),
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "座宽",
-                value = getSeatWidth(heightRange),
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "靠背深度",
-                value = getBackrestDepth(heightRange),
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "侧防结构",
-                value = getSideProtection(heightRange),
-                level = 0,
-                isLast = true
-            )
-        }
-
-        // 合规约束
-        SectionBlock(
-            icon = Icons.Default.Verified,
-            title = "合规约束",
-            subtitle = "对应ECE R129/GB 27887-2024"
-        ) {
-            val dummyType = params?.dummyType
-            val isLowAge = dummyType in listOf(
-                com.childproduct.designassistant.model.ComplianceDummy.Q0,
-                com.childproduct.designassistant.model.ComplianceDummy.Q0_PLUS,
-                com.childproduct.designassistant.model.ComplianceDummy.Q1,
-                com.childproduct.designassistant.model.ComplianceDummy.Q1_5
-            )
-            
-            if (isLowAge) {
+            matchedDummies.forEachIndexed { index, dummy ->
+                val isLast = index == matchedDummies.size - 1
+                
                 TreeItem(
-                    label = "低龄段（Q0-Q1.5）",
-                    value = "HIC≤390、胸部加速度≤55g",
+                    label = "🔽 ${dummy.displayName}",
+                    value = "",
                     level = 0,
                     isLast = false
                 )
-            } else {
                 TreeItem(
-                    label = "高龄段（Q3-Q10）",
-                    value = "HIC≤1000、侧撞胸部压缩量≤44mm",
-                    level = 0,
+                    label = "  头枕高度（${dummy.displayName}）",
+                    value = "${dummy.designParameters.headrestHeightRange}（${dummy.designParameters.headrestDataSource}${dummy.designParameters.headrestDataItem}）",
+                    level = 1,
                     isLast = false
+                )
+                TreeItem(
+                    label = "  座宽（${dummy.displayName}）",
+                    value = "${dummy.designParameters.seatWidthRange}（${dummy.designParameters.seatWidthDataSource}${dummy.designParameters.seatWidthDataItem}）",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  靠背深度（${dummy.displayName}）",
+                    value = "${dummy.designParameters.backrestDepthRange}（${dummy.designParameters.backrestDataSource}${dummy.designParameters.backrestDataItem}）",
+                    level = 1,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "  侧防面积（${dummy.displayName}）",
+                    value = "${dummy.designParameters.sideProtectionArea}（${dummy.designParameters.sideProtectionDataSource}${dummy.designParameters.sideProtectionDataItem}）",
+                    level = 1,
+                    isLast = isLast
                 )
             }
+        }
+        
+        // 合规约束（分龄精准匹配）
+        SectionBlock(
+            icon = Icons.Default.Verified,
+            title = "合规约束（分龄对应ECE R129/GB 27887-2024）",
+            subtitle = "按年龄段精准匹配"
+        ) {
+            // 低龄段（Q0-Q1.5）
+            val lowAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.LOW_AGE }
+            if (lowAgeDummies.isNotEmpty()) {
+                TreeItem(
+                    label = "低龄段（Q0-Q1.5）",
+                    value = "",
+                    level = 0,
+                    isLast = false
+                )
+                lowAgeDummies.firstOrNull()?.let { dummy ->
+                    TreeItem(
+                        label = "  HIC极限",
+                        value = "≤${dummy.safetyThresholds.hicLimit}（${dummy.safetyThresholds.hicLimitSource}，${dummy.safetyThresholds.hicLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  胸部加速度",
+                        value = "≤${dummy.safetyThresholds.chestAccelerationLimit}g（3ms，${dummy.safetyThresholds.chestAccelerationLimitSource}，${dummy.safetyThresholds.chestAccelerationLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  颈部张力",
+                        value = "≤${dummy.safetyThresholds.neckTensionLimit}N（${dummy.safetyThresholds.neckTensionLimitSource}，${dummy.safetyThresholds.neckTensionLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  侧撞胸部压缩量",
+                        value = "≤44mm（${dummy.safetyThresholds.chestAccelerationLimitSource}，${dummy.safetyThresholds.chestAccelerationLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  头部位移",
+                        value = "≤${dummy.safetyThresholds.headExcursionLimit}mm（${dummy.safetyThresholds.headExcursionLimitSource}，${dummy.safetyThresholds.headExcursionLimitClause}）",
+                        level = 1,
+                        isLast = highAgeDummies.isEmpty()
+                    )
+                }
+            }
+            
+            // 高龄段（Q3-Q10）
+            val highAgeDummies = matchedDummies.filter { it.safetyThresholds.ageGroup == com.childproduct.designassistant.data.AgeGroupType.HIGH_AGE }
+            if (highAgeDummies.isNotEmpty()) {
+                TreeItem(
+                    label = "高龄段（Q3-Q10）",
+                    value = "",
+                    level = 0,
+                    isLast = false
+                )
+                highAgeDummies.firstOrNull()?.let { dummy ->
+                    TreeItem(
+                        label = "  HIC极限",
+                        value = "≤${dummy.safetyThresholds.hicLimit}（${dummy.safetyThresholds.hicLimitSource}，${dummy.safetyThresholds.hicLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  胸部加速度",
+                        value = "≤${dummy.safetyThresholds.chestAccelerationLimit}g（3ms，${dummy.safetyThresholds.chestAccelerationLimitSource}，${dummy.safetyThresholds.chestAccelerationLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  颈部张力",
+                        value = "≤${dummy.safetyThresholds.neckTensionLimit}N（${dummy.safetyThresholds.neckTensionLimitSource}，${dummy.safetyThresholds.neckTensionLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  侧撞胸部压缩量",
+                        value = "≤52mm（${dummy.safetyThresholds.chestAccelerationLimitSource}，${dummy.safetyThresholds.chestAccelerationLimitClause}）",
+                        level = 1,
+                        isLast = false
+                    )
+                    TreeItem(
+                        label = "  头部位移",
+                        value = "≤${dummy.safetyThresholds.headExcursionLimit}mm（${dummy.safetyThresholds.headExcursionLimitSource}，${dummy.safetyThresholds.headExcursionLimitClause}）",
+                        level = 1,
+                        isLast = true
+                    )
+                }
+            }
+            
             TreeItem(
                 label = "安装系统",
                 value = "ISOFIX+支撑腿/Top-tether（双三角固定）",
@@ -447,33 +555,35 @@ private fun SafetySeatOutputContent(creativeIdea: CreativeIdea) {
                 isLast = true
             )
         }
-
-        // 材料选型
+        
+        // 材料选型（带测试标准）
         SectionBlock(
             icon = Icons.Default.Science,
-            title = "材料选型",
-            subtitle = "带性能指标"
+            title = "材料选型（带测试标准）",
+            subtitle = "绑定测试标准"
         ) {
-            TreeItem(
-                label = "主体框架",
-                value = "食品级PP（抗冲击强度≥20kJ/m²，耐温-30~80℃）",
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "填充层",
-                value = "Cobra记忆棉（压缩回弹率≥90%）",
-                level = 0,
-                isLast = false
-            )
-            TreeItem(
-                label = "织带",
-                value = "高强度尼龙（断裂强度≥11000N）",
-                level = 0,
-                isLast = true
-            )
+            matchedDummies.firstOrNull()?.let { dummy ->
+                TreeItem(
+                    label = "主体框架",
+                    value = "食品级PP（抗冲击强度${dummy.materialTestStandards.mainFrameImpactStrength}，${dummy.materialTestStandards.mainFrameTestStandard}）",
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "织带",
+                    value = "高强度尼龙（断裂强度${dummy.materialTestStandards.strapBreakStrength}，${dummy.materialTestStandards.strapTestStandard}）",
+                    level = 0,
+                    isLast = false
+                )
+                TreeItem(
+                    label = "填充层",
+                    value = "Cobra记忆棉（压缩回弹率${dummy.materialTestStandards.foamCompressionResilience}，${dummy.materialTestStandards.foamTestStandard}）",
+                    level = 0,
+                    isLast = true
+                )
+            }
         }
-
+        
         // 安全验证项
         SectionBlock(
             icon = Icons.Default.CheckCircle,
@@ -614,125 +724,131 @@ private fun getSideProtection(heightRange: String): String {
 }
 
 /**
- * 婴儿推车输出内容
+ * 婴儿推车输出内容（假人级精准对应）
+ * 优化说明：
+ * 1. 使用GPS-028婴儿假人数据
+ * 2. 数据追溯：GPS-028 Big Infant Anthro表
+ * 3. 标准要求：EN 1888、GB 14748
+ * 4. 材料性能：绑定测试标准
  */
 @Composable
 private fun StrollerOutputContent(creativeIdea: CreativeIdea) {
+    val params = OtherProductTypesDatabase.getStrollerParameters()
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // 基础适配数据
         SectionBlock(
             icon = Icons.Default.BarChart,
-            title = "基础适配数据",
-            subtitle = "来自GPS-028 Big Infant Anthro表"
+            title = "基础适配数据（精准对应GPS-028假人）",
+            subtitle = "匹配Q0-Q3假人"
         ) {
             TreeItem(
                 label = "适配年龄",
-                value = "0-36个月（0-3岁）"
+                value = params.ageRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "身高范围",
-                value = "50-95cm"
+                value = params.heightRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "体重范围",
-                value = "3.2-15.0kg",
+                value = params.weightRange,
+                level = 0,
                 isLast = true
             )
         }
-
-        // 核心设计参数
+        
+        // 核心设计参数（来自GPS-028）
         SectionBlock(
             icon = Icons.Default.Straighten,
-            title = "核心设计参数",
-            subtitle = "单位：mm，来自GPS-028推车专属表"
+            title = "核心设计参数（来自GPS-028 Dummies表）",
+            subtitle = "带数据追溯"
         ) {
             TreeItem(
                 label = "扶手高度",
-                value = "180-260（可调节）"
+                value = params.handleHeightRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "座宽",
-                value = "320-360"
+                label = "座宽（Q0-Q3假人肩宽+余量）",
+                value = params.seatWidthRange + "（GPS-028 Dummies表Q0-Q3假人肩宽）",
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "靠背角度",
-                value = "140°-175°（多档位调节）"
+                label = "靠背角度（EN 1888要求）",
+                value = params.backrestAngleRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "轮距",
-                value = "550-600（防侧翻）",
+                label = "轮距（防侧翻，EN 1888）",
+                value = params.wheelbaseRange,
+                level = 0,
                 isLast = true
             )
         }
-
-        // 合规阈值
+        
+        // 合规阈值（分目标市场）
         SectionBlock(
             icon = Icons.Default.Verified,
-            title = "合规阈值",
-            subtitle = "分目标市场"
+            title = "合规阈值（分目标市场）",
+            subtitle = "EN 1888 / GB 14748"
         ) {
-            Text(
-                text = "│  ├─ 通用要求（EN 1888/GB 14748）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "刹车力",
-                    value = "≤50N",
-                    level = 1
-                )
-                TreeItem(
-                    label = "侧翻角度",
-                    value = "≥30°",
-                    level = 1,
-                    isLast = true
-                )
-            }
-            Text(
-                text = "│  └─ US市场额外（ASTM F833）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
+            TreeItem(
+                label = "刹车力（EN 1888 §8.3）",
+                value = params.standardRequirements.brakeForce,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "手柄强度",
-                value = "可承受135N拉力无变形",
-                level = 1,
+                label = "侧翻角度（EN 1888 §8.4）",
+                value = params.standardRequirements.stabilityAngle,
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "手柄强度（ASTM F833）",
+                value = params.standardRequirements.handleStrength,
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "测试标准",
+                value = params.standardRequirements.testStandard,
+                level = 0,
                 isLast = true
             )
         }
-
+        
         // 材料与验证依据
         SectionBlock(
             icon = Icons.Default.Science,
-            title = "材料与验证依据"
+            title = "材料与验证依据",
+            subtitle = "带测试标准"
         ) {
-            Text(
-                text = "│  ├─ 推荐材料：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
+            TreeItem(
+                label = "车架（铝合金）",
+                value = "抗拉强度≥240MPa（ISO 6892-1:2016）",
+                level = 0,
+                isLast = false
             )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "车架",
-                    value = "铝合金（抗拉强度≥240MPa）",
-                    level = 1
-                )
-                TreeItem(
-                    label = "座布",
-                    value = "牛津布（防水等级≥IPX4）",
-                    level = 1,
-                    isLast = true
-                )
-            }
+            TreeItem(
+                label = "座布（牛津布）",
+                value = "防水等级≥IPX4（GB/T 4744-2013）",
+                level = 0,
+                isLast = false
+            )
             TreeItem(
                 label = "数据追溯",
-                value = "来自GPS-028婴儿推车人体测量表、Test Data表",
+                value = params.standardRequirements.dataSource,
                 level = 0,
                 isLast = true
             )
@@ -741,125 +857,131 @@ private fun StrollerOutputContent(creativeIdea: CreativeIdea) {
 }
 
 /**
- * 儿童高脚椅输出内容
+ * 儿童高脚椅输出内容（假人级精准对应）
+ * 优化说明：
+ * 1. 使用GPS-028婴儿假人数据
+ * 2. 数据追溯：GPS-028 Big Infant Anthro表
+ * 3. 标准要求：EN 14988、GB 22793
+ * 4. 材料性能：绑定测试标准
  */
 @Composable
 private fun HighChairOutputContent(creativeIdea: CreativeIdea) {
+    val params = OtherProductTypesDatabase.getHighChairParameters()
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // 基础适配数据
         SectionBlock(
             icon = Icons.Default.BarChart,
-            title = "基础适配数据",
-            subtitle = "来自GPS-028 Infant Anthro表"
+            title = "基础适配数据（精准对应GPS-028假人）",
+            subtitle = "匹配Q1-Q3假人"
         ) {
             TreeItem(
                 label = "适配年龄",
-                value = "6-36个月（0.5-3岁）"
+                value = params.ageRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "身高范围",
-                value = "65-100cm"
+                value = params.heightRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "体重范围",
-                value = "8.0-15.0kg",
+                value = params.weightRange,
+                level = 0,
                 isLast = true
             )
         }
-
-        // 核心设计参数
+        
+        // 核心设计参数（来自GPS-028）
         SectionBlock(
             icon = Icons.Default.Straighten,
-            title = "核心设计参数",
-            subtitle = "单位：mm"
+            title = "核心设计参数（来自GPS-028 Dummies表）",
+            subtitle = "带数据追溯"
         ) {
             TreeItem(
-                label = "座高",
-                value = "450-550（可调节）"
+                label = "座高（适配成人餐桌）",
+                value = params.seatHeightRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "座宽",
-                value = "300-350"
+                label = "座宽（Q1-Q3假人臀宽+余量）",
+                value = params.seatWidthRange + "（GPS-028 Dummies表Q1-Q3假人臀宽）",
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "座深",
-                value = "250-300"
+                label = "靠背高度（Q1-Q3假人坐高）",
+                value = params.backrestHeightRange + "（GPS-028 Dummies表Q1-Q3假人坐高）",
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "托盘尺寸",
-                value = "400×300（可拆卸）",
+                label = "托盘宽度（标准尺寸）",
+                value = params.trayWidthRange,
+                level = 0,
                 isLast = true
             )
         }
-
-        // 合规阈值
+        
+        // 合规阈值（分目标市场）
         SectionBlock(
             icon = Icons.Default.Verified,
-            title = "合规阈值",
-            subtitle = "分目标市场"
+            title = "合规阈值（分目标市场）",
+            subtitle = "EN 14988 / GB 22793"
         ) {
-            Text(
-                text = "│  ├─ 通用要求（EN 14988/GB 22793）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "稳定性",
-                    value = "前倾、侧倾≥10°无翻倒",
-                    level = 1
-                )
-                TreeItem(
-                    label = "五点式安全带",
-                    value = "抗拉强度≥750N",
-                    level = 1,
-                    isLast = true
-                )
-            }
-            Text(
-                text = "│  └─ US市场额外（ASTM F404）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
+            TreeItem(
+                label = "稳定性（EN 14988 §5.3）",
+                value = params.standardRequirements.stabilityTest,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "托盘强度",
-                value = "可承受100N压力无变形",
-                level = 1,
+                label = "约束强度（5点式安全带）",
+                value = params.standardRequirements.restraintStrength,
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "托盘承载能力（EN 14988 §5.4）",
+                value = params.standardRequirements.trayLoadCapacity,
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "测试标准",
+                value = params.standardRequirements.testStandard,
+                level = 0,
                 isLast = true
             )
         }
-
+        
         // 材料与验证依据
         SectionBlock(
             icon = Icons.Default.Science,
-            title = "材料与验证依据"
+            title = "材料与验证依据",
+            subtitle = "带测试标准"
         ) {
-            Text(
-                text = "│  ├─ 推荐材料：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
+            TreeItem(
+                label = "座椅框架（食品级PP）",
+                value = "耐温-20~80℃（ISO 11359-2:2019）",
+                level = 0,
+                isLast = false
             )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "座椅框架",
-                    value = "食品级PP塑料（耐温-20℃~80℃）",
-                    level = 1
-                )
-                TreeItem(
-                    label = "安全带",
-                    value = "尼龙织带（断裂强度≥2000N）",
-                    level = 1,
-                    isLast = true
-                )
-            }
+            TreeItem(
+                label = "安全带（尼龙织带）",
+                value = "断裂强度≥2000N（GB/T 3923.1-2013）",
+                level = 0,
+                isLast = false
+            )
             TreeItem(
                 label = "数据追溯",
-                value = "来自GPS-028高脚椅人体测量表",
+                value = params.standardRequirements.dataSource,
                 level = 0,
                 isLast = true
             )
@@ -868,125 +990,131 @@ private fun HighChairOutputContent(creativeIdea: CreativeIdea) {
 }
 
 /**
- * 儿童床输出内容
+ * 儿童床输出内容（假人级精准对应）
+ * 优化说明：
+ * 1. 使用GPS-028婴儿假人数据
+ * 2. 数据追溯：GPS-028 Big Infant Anthro表
+ * 3. 标准要求：EN 716、GB 29281
+ * 4. 材料性能：绑定测试标准
  */
 @Composable
 private fun CribOutputContent(creativeIdea: CreativeIdea) {
+    val params = OtherProductTypesDatabase.getCribParameters()
+    
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // 基础适配数据
         SectionBlock(
             icon = Icons.Default.BarChart,
-            title = "基础适配数据",
-            subtitle = "来自GPS-028 Infant Anthro表"
+            title = "基础适配数据（精准对应GPS-028假人）",
+            subtitle = "匹配Q0-Q3假人"
         ) {
             TreeItem(
                 label = "适配年龄",
-                value = "0-24个月（0-2岁）"
+                value = params.ageRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "身高范围",
-                value = "50-85cm"
+                value = params.heightRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
                 label = "体重范围",
-                value = "3.0-15.0kg",
+                value = params.weightRange,
+                level = 0,
                 isLast = true
             )
         }
-
-        // 核心设计参数
+        
+        // 核心设计参数（来自GPS-028）
         SectionBlock(
             icon = Icons.Default.Straighten,
-            title = "核心设计参数",
-            subtitle = "单位：mm"
+            title = "核心设计参数（标准婴儿床尺寸）",
+            subtitle = "带数据追溯"
         ) {
             TreeItem(
-                label = "内尺寸（长×宽）",
-                value = "1200×600"
+                label = "床垫尺寸（标准尺寸）",
+                value = params.mattressSizeRange,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "床板高度",
-                value = "300-500（可调节，三档）"
+                label = "侧栏高度（防止攀爬，EN 716）",
+                value = params.sideRailHeightRange + "（EN 716 §5.2）",
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "护栏高度",
-                value = "600（顶部）"
+                label = "床栏间距（防止卡头，EN 716）",
+                value = params.slatSpacingRange + "（EN 716 §5.3）",
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "围栏间隙",
-                value = "≤60mm（防卡头）",
+                label = "床板高度（三档调节）",
+                value = "300-500mm（标准配置）",
+                level = 0,
                 isLast = true
             )
         }
-
-        // 合规阈值
+        
+        // 合规阈值（分目标市场）
         SectionBlock(
             icon = Icons.Default.Verified,
-            title = "合规阈值",
-            subtitle = "分目标市场"
+            title = "合规阈值（分目标市场）",
+            subtitle = "EN 716 / GB 29281"
         ) {
-            Text(
-                text = "│  ├─ 通用要求（EN 716/GB 28007）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
-            )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "围栏强度",
-                    value = "可承受200N拉力无变形",
-                    level = 1
-                )
-                TreeItem(
-                    label = "床板强度",
-                    value = "可承受100kg静态载荷",
-                    level = 1,
-                    isLast = true
-                )
-            }
-            Text(
-                text = "│  └─ US市场额外（ASTM F1169）：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
+            TreeItem(
+                label = "床垫支撑能力（EN 716 §5.4）",
+                value = params.standardRequirements.mattressSupport,
+                level = 0,
+                isLast = false
             )
             TreeItem(
-                label = "床垫厚度",
-                value = "≤150mm（防窒息）",
-                level = 1,
+                label = "侧栏强度（侧栏强度测试）",
+                value = params.standardRequirements.sideRailStrength,
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "床栏间距极限（防止卡头，EN 716）",
+                value = params.standardRequirements.slatSpacingLimit,
+                level = 0,
+                isLast = false
+            )
+            TreeItem(
+                label = "测试标准",
+                value = params.standardRequirements.testStandard,
+                level = 0,
                 isLast = true
             )
         }
-
+        
         // 材料与验证依据
         SectionBlock(
             icon = Icons.Default.Science,
-            title = "材料与验证依据"
+            title = "材料与验证依据",
+            subtitle = "带测试标准"
         ) {
-            Text(
-                text = "│  ├─ 推荐材料：",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold
+            TreeItem(
+                label = "床架（实木）",
+                value = "环保水性漆（GB 18580-2017）",
+                level = 0,
+                isLast = false
             )
-            Column(modifier = Modifier.padding(start = 16.dp)) {
-                TreeItem(
-                    label = "床架",
-                    value = "实木（环保水性漆）",
-                    level = 1
-                )
-                TreeItem(
-                    label = "床垫",
-                    value = "椰棕/乳胶（透气、防螨）",
-                    level = 1,
-                    isLast = true
-                )
-            }
+            TreeItem(
+                label = "床垫（椰棕/乳胶）",
+                value = "透气、防螨（GB/T 26706-2011）",
+                level = 0,
+                isLast = false
+            )
             TreeItem(
                 label = "数据追溯",
-                value = "来自GPS-028儿童床人体测量表、Test Data表",
+                value = params.standardRequirements.dataSource,
                 level = 0,
                 isLast = true
             )
