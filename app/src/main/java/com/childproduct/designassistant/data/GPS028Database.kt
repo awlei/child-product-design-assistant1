@@ -31,7 +31,9 @@ enum class StandardType(
 ) {
     ECE_R129("ECE R129", "green", "欧标"),
     FMVSS_213("FMVSS 213", "blue", "美标"),
-    GB_27887("GB 27887-2024", "orange", "国标")
+    GB_27887("GB 27887-2024", "orange", "国标"),
+    AUSTRALIAN("AS/NZS 1754", "red", "澳标"),
+    JAPANESE("JIS D 1601", "purple", "日标")
 }
 
 /**
