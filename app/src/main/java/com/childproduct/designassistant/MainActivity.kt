@@ -37,6 +37,15 @@ import com.childproduct.designassistant.ui.theme.ChildProductDesignAssistantThem
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 初始化LLM配置
+        try {
+            com.childproduct.designassistant.config.LLMConfig.init(this)
+            android.util.Log.d("MainActivity", "LLM配置初始化成功")
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "LLM配置初始化失败", e)
+        }
+
         setContent {
             ChildProductDesignAssistantTheme {
                 MainScreen()
