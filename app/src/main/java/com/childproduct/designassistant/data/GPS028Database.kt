@@ -27,13 +27,15 @@ package com.childproduct.designassistant.data
 enum class StandardType(
     val displayName: String,
     val colorName: String,
-    val shortName: String
+    val shortName: String,
+    val version: String = "",
+    val effectiveDate: String = ""
 ) {
-    ECE_R129("ECE R129", "green", "欧标"),
-    FMVSS_213("FMVSS 213", "blue", "美标"),
-    GB_27887("GB 27887-2024", "orange", "国标"),
-    AUSTRALIAN("AS/NZS 1754", "red", "澳标"),
-    JAPANESE("JIS D 1601", "purple", "日标")
+    ECE_R129("ECE R129 (i-Size)", "green", "欧标", "2013", "2013年7月（2025年广泛应用）"),
+    FMVSS_213("FMVSS 213/213a", "blue", "美标", "2025", "2025年更新（213a侧碰测试）"),
+    GB_27887("GB 28007-2024", "orange", "国标", "2024", "2024年6月发布，2026年1月1日实施"),
+    AUSTRALIAN("AS/NZS 1754", "red", "澳标", "2013", "2013年"),
+    JAPANESE("JIS D 1601", "purple", "日标", "2019", "2019年")
 }
 
 /**
@@ -295,6 +297,32 @@ data class MaterialTestStandards(
  * 提供所有假人的完整数据
  */
 object GPS028Database {
+    
+    /**
+     * 标准信息
+     * 
+     * GB 28007-2024 婴幼儿及儿童家具安全技术规范
+     * 发布日期：2024年6月25日
+     * 实施日期：2026年1月1日
+     * 
+     * 该标准全面整合并替代了GB 22793.1-2008、GB 28007-2011等多项旧标准
+     * 核心内容：
+     * - 覆盖范围更广泛：适用于0-14岁婴幼儿及儿童使用的家具
+     * - 安全要求更严格：聚焦"防伤害+防隐患"双重目标
+     * - 标识要求更规范：强化全流程安全提示
+     */
+    val STANDARD_INFO = StandardBasicInfo(
+        standardId = "GB-28007",
+        standardName = "婴幼儿及儿童家具安全技术规范",
+        standardType = StandardCategory.NATIONAL,
+        applicableRegion = "中国 (CN)",
+        applicableWeight = "覆盖0-14岁婴幼儿及儿童",
+        applicableAge = "0-14岁",
+        coreScope = "全面整合并替代GB 22793.1-2008、GB 28007-2011等多项旧标准。覆盖范围更广泛（0-14岁），安全要求更严格（防伤害+防隐患），标识要求更规范。适用于婴幼儿家具（36个月及以下）和儿童家具（3-14岁），并设定差异化要求",
+        effectiveDate = "2026年1月1日（2024年6月25日发布）",
+        standardStatus = "Current（2024年最新版）",
+        dataSource = "国家市场监督管理总局"
+    )
     
     /**
      * 获取所有假人数据

@@ -64,10 +64,10 @@ data class CribProtrusionData(
     val protrusionId: String,
     val standard: CribStandardType,
     val location: String,
-    const val maxHeight: Double,
-    const val heightRange: String,
-    const val maxDiameter: Double,
-    const val diameterRange: String,
+    val maxHeight: Double,
+    val heightRange: String,
+    val maxDiameter: Double,
+    val diameterRange: String,
     val unit: String,
     val passCriteria: String
 )
@@ -79,12 +79,12 @@ data class CribMattressData(
     val mattressId: String,
     val standard: CribStandardType,
     val mattressType: String,
-    const val minThickness: Double,
-    const val maxThickness: Double,
-    const val nominalThickness: Double,
+    val minThickness: Double,
+    val maxThickness: Double,
+    val nominalThickness: Double,
     val unit: String,
-    const val gapLimit: Double,
-    const val gapLimitRange: String,
+    val gapLimit: Double,
+    val gapLimitRange: String,
     val passCriteria: String
 )
 
@@ -103,9 +103,9 @@ object CribStandardDatabase {
             applicableRegion = "欧洲 (ECE)",
             applicableWeight = "通常≤15kg",
             applicableAge = "新生儿至约18个月",
-            coreScope = "规定儿童床的安全要求，包括尺寸、栏杆间距、凸起物、床垫、可折叠机构的锁定机制等",
+            coreScope = "规定儿童床的安全要求，包括尺寸、栏杆间距、凸起物、床垫、可折叠机构的锁定机制等。EN 1130:2019 为当前版本，2024-2025年无更新",
             effectiveDate = "2019年",
-            standardStatus = "Current",
+            standardStatus = "Current (无2024-2025年更新)",
             dataSource = "European Committee for Standardization (CEN)"
         ),
         "ASTM F1169" to StandardBasicInfo(
@@ -115,9 +115,9 @@ object CribStandardDatabase {
             applicableRegion = "美国 (USA)",
             applicableWeight = "通常≤23kg",
             applicableAge = "新生儿至约3岁",
-            coreScope = "规定全尺寸婴儿床的安全性能要求，包括可调节侧栏的禁止、护栏高度、栏杆间距等",
+            coreScope = "规定全尺寸婴儿床的安全性能要求，包括可调节侧栏的禁止、护栏高度、栏杆间距等。与CPSIA法案共同构成美国婴儿床监管标准，2024-2025年无更新",
             effectiveDate = "2019年",
-            standardStatus = "Current",
+            standardStatus = "Current (无2024-2025年更新)",
             dataSource = "ASTM International"
         ),
         "ASTM F1821" to StandardBasicInfo(

@@ -58,14 +58,14 @@ data class EceR129DummySpec(
     val group: EceR129DummyGroup,
     val weight: Double, // kg
     val height: Double, // cm
-    const val headCircumference: Double, // cm
+    val headCircumference: Double, // cm
     val shoulderWidth: Double, // mm
     val shoulderHeight: Double, // mm
     val hipWidth: Double, // mm
     val headWidth: Double, // mm
     val headHeight: Double, // mm
-    val适用车型: List<String>,
-    val安装方向: List<String>
+    val applicableModels: List<String>, // 适用车型
+    val installationDirection: List<String> // 安装方向
 )
 
 /**
@@ -75,12 +75,12 @@ data class EceR129TestMatrix(
     val matrixId: String,
     val dummyType: EceR129DummyType,
     val seatSize: String,
-    const val 速度范围: String,
+    val velocityRange: String, // 速度范围
     val velocityMin: Int, // km/h
     val velocityMax: Int, // km/h
-    const val 速度标准: String,
-    const val 刹车距离: String, // mm
-    val 刹车距离Range: String
+    val velocityStandard: String, // 速度标准
+    val brakingDistance: String, // 刹车距离 (mm)
+    val brakingDistanceRange: String
 )
 
 /**
@@ -93,7 +93,7 @@ data class EceR129DimensionThreshold(
     val minValue: Double,
     val maxValue: Double,
     val unit: String,
-    val 适用场景: String
+    val applicableScenario: String // 适用场景
 )
 
 /**
@@ -105,14 +105,14 @@ object EceR129StandardDatabase {
     
     val STANDARD_INFO = StandardBasicInfo(
         standardId = "ECE-R129",
-        standardName = "Uniform Provisions for the Approval of ISOFIX Child Restraint Systems",
+        standardName = "Uniform Provisions for the Approval of ISOFIX Child Restraint Systems (i-Size)",
         standardType = StandardCategory.INTERNATIONAL,
         applicableRegion = "欧洲 (ECE)",
         applicableWeight = "0-36kg",
-        applicableAge = "新生儿至12岁",
-        coreScope = "规定基于身高、体重和ISOFIX系统的儿童安全座椅测试要求，使用Q系列假人，强调头部保护和侧面碰撞",
+        applicableAge = "新生儿至12岁（根据身高分组）",
+        coreScope = "规定基于身高、体重和ISOFIX系统的儿童安全座椅测试要求。2025年应用愈发广泛，成为衡量新生儿安全座椅质量的重要标准。相比ECE R44，新增侧面碰撞测试，采用身高分组，强制ISOFIX，反向安装延长至15个月，使用Q系列假人",
         effectiveDate = "2013年7月",
-        standardStatus = "Current (逐步替代R44)",
+        standardStatus = "Current (2025年广泛应用，逐步替代R44)",
         dataSource = "Economic Commission for Europe (UNECE)"
     )
     
@@ -130,8 +130,8 @@ object EceR129StandardDatabase {
             hipWidth = 65.0,
             headWidth = 105.0,
             headHeight = 115.0,
-            适用车型 = listOf("后排中间", "后排两侧"),
-            安装方向 = listOf("后向安装")
+            applicableModels = listOf("后排中间", "后排两侧"),
+            installationDirection = listOf("后向安装")
         ),
         EceR129DummySpec(
             dummyType = EceR129DummyType.Q1,
@@ -144,8 +144,8 @@ object EceR129StandardDatabase {
             hipWidth = 83.0,
             headWidth = 125.0,
             headHeight = 130.0,
-            适用车型 = listOf("后排中间", "后排两侧"),
-            安装方向 = listOf("后向安装")
+            applicableModels = listOf("后排中间", "后排两侧"),
+            installationDirection = listOf("后向安装")
         ),
         EceR129DummySpec(
             dummyType = EceR129DummyType.Q1_5,
@@ -158,8 +158,8 @@ object EceR129StandardDatabase {
             hipWidth = 85.0,
             headWidth = 127.0,
             headHeight = 132.0,
-            适用车型 = listOf("后排中间", "后排两侧"),
-            安装方向 = listOf("后向安装", "前向安装")
+            applicableModels = listOf("后排中间", "后排两侧"),
+            installationDirection = listOf("后向安装", "前向安装")
         ),
         EceR129DummySpec(
             dummyType = EceR129DummyType.Q3,
@@ -172,8 +172,8 @@ object EceR129StandardDatabase {
             hipWidth = 95.0,
             headWidth = 135.0,
             headHeight = 140.0,
-            适用车型 = listOf("后排两侧"),
-            安装方向 = listOf("前向安装")
+            applicableModels = listOf("后排两侧"),
+            installationDirection = listOf("前向安装")
         ),
         EceR129DummySpec(
             dummyType = EceR129DummyType.Q6,
@@ -186,8 +186,8 @@ object EceR129StandardDatabase {
             hipWidth = 105.0,
             headWidth = 145.0,
             headHeight = 145.0,
-            适用车型 = listOf("后排两侧"),
-            安装方向 = listOf("前向安装")
+            applicableModels = listOf("后排两侧"),
+            installationDirection = listOf("前向安装")
         ),
         EceR129DummySpec(
             dummyType = EceR129DummyType.Q10,
@@ -200,8 +200,8 @@ object EceR129StandardDatabase {
             hipWidth = 115.0,
             headWidth = 155.0,
             headHeight = 150.0,
-            适用车型 = listOf("后排两侧"),
-            安装方向 = listOf("前向安装")
+            applicableModels = listOf("后排两侧"),
+            installationDirection = listOf("前向安装")
         )
     )
     
@@ -213,12 +213,12 @@ object EceR129StandardDatabase {
                 matrixId = "R129-Q0",
                 dummyType = EceR129DummyType.Q0,
                 seatSize = "40",
-                速度范围 = "50-51 km/h",
+                velocityRange = "50-51 km/h",
                 velocityMin = 50,
                 velocityMax = 51,
-                速度标准 = "50 km/h",
-                刹车距离 = "650",
-                刹车距离Range = "650±30 mm"
+                velocityStandard = "50 km/h",
+                brakingDistance = "650",
+                brakingDistanceRange = "650±30 mm"
             )
         ),
         "Q1" to listOf(
@@ -226,12 +226,12 @@ object EceR129StandardDatabase {
                 matrixId = "R129-Q1",
                 dummyType = EceR129DummyType.Q1,
                 seatSize = "45",
-                速度范围 = "50-51 km/h",
+                velocityRange = "50-51 km/h",
                 velocityMin = 50,
                 velocityMax = 51,
-                速度标准 = "50 km/h",
-                刹车距离 = "650",
-                刹车距离Range = "650±30 mm"
+                velocityStandard = "50 km/h",
+                brakingDistance = "650",
+                brakingDistanceRange = "650±30 mm"
             )
         ),
         "Q1.5" to listOf(
@@ -239,12 +239,12 @@ object EceR129StandardDatabase {
                 matrixId = "R129-Q1.5-RF",
                 dummyType = EceR129DummyType.Q1_5,
                 seatSize = "55",
-                速度范围 = "50-51 km/h",
+                velocityRange = "50-51 km/h",
                 velocityMin = 50,
                 velocityMax = 51,
-                速度标准 = "50 km/h",
-                刹车距离 = "650",
-                刹车距离Range = "650±30 mm"
+                velocityStandard = "50 km/h",
+                brakingDistance = "650",
+                brakingDistanceRange = "650±30 mm"
             )
         ),
         "Q3" to listOf(
@@ -252,12 +252,12 @@ object EceR129StandardDatabase {
                 matrixId = "R129-Q3",
                 dummyType = EceR129DummyType.Q3,
                 seatSize = "55",
-                速度范围 = "50-51 km/h",
+                velocityRange = "50-51 km/h",
                 velocityMin = 50,
                 velocityMax = 51,
-                速度标准 = "50 km/h",
-                刹车距离 = "650",
-                刹车距离Range = "650±30 mm"
+                velocityStandard = "50 km/h",
+                brakingDistance = "650",
+                brakingDistanceRange = "650±30 mm"
             )
         ),
         "Q6" to listOf(
@@ -265,12 +265,12 @@ object EceR129StandardDatabase {
                 matrixId = "R129-Q6",
                 dummyType = EceR129DummyType.Q6,
                 seatSize = "85",
-                速度范围 = "50-51 km/h",
+                velocityRange = "50-51 km/h",
                 velocityMin = 50,
                 velocityMax = 51,
-                速度标准 = "50 km/h",
-                刹车距离 = "650",
-                刹车距离Range = "650±30 mm"
+                velocityStandard = "50 km/h",
+                brakingDistance = "650",
+                brakingDistanceRange = "650±30 mm"
             )
         ),
         "Q10" to listOf(
@@ -278,12 +278,12 @@ object EceR129StandardDatabase {
                 matrixId = "R129-Q10",
                 dummyType = EceR129DummyType.Q10,
                 seatSize = "105",
-                速度范围 = "50-51 km/h",
+                velocityRange = "50-51 km/h",
                 velocityMin = 50,
                 velocityMax = 51,
-                速度标准 = "50 km/h",
-                刹车距离 = "650",
-                刹车距离Range = "650±30 mm"
+                velocityStandard = "50 km/h",
+                brakingDistance = "650",
+                brakingDistanceRange = "650±30 mm"
             )
         )
     )
@@ -353,7 +353,7 @@ object EceR129StandardDatabase {
             minValue = 170.0,
             maxValue = 190.0,
             unit = "mm",
-            适用场景 = "座椅高度设计"
+            applicableScenario = "座椅高度设计"
         ),
         EceR129DimensionThreshold(
             thresholdId = "R129-Q0-SW",
@@ -362,7 +362,7 @@ object EceR129StandardDatabase {
             minValue = 63.0,
             maxValue = 73.0,
             unit = "mm",
-            适用场景 = "靠背宽度设计"
+            applicableScenario = "靠背宽度设计"
         ),
         // Q1 尺寸阈值
         EceR129DimensionThreshold(
@@ -372,7 +372,7 @@ object EceR129StandardDatabase {
             minValue = 185.0,
             maxValue = 205.0,
             unit = "mm",
-            适用场景 = "座椅高度设计"
+            applicableScenario = "座椅高度设计"
         ),
         EceR129DimensionThreshold(
             thresholdId = "R129-Q1-SW",
@@ -381,7 +381,7 @@ object EceR129StandardDatabase {
             minValue = 83.0,
             maxValue = 93.0,
             unit = "mm",
-            适用场景 = "靠背宽度设计"
+            applicableScenario = "靠背宽度设计"
         ),
         // Q1.5 尺寸阈值
         EceR129DimensionThreshold(
@@ -391,7 +391,7 @@ object EceR129StandardDatabase {
             minValue = 190.0,
             maxValue = 210.0,
             unit = "mm",
-            适用场景 = "座椅高度设计"
+            applicableScenario = "座椅高度设计"
         ),
         EceR129DimensionThreshold(
             thresholdId = "R129-Q1.5-SW",
@@ -400,7 +400,7 @@ object EceR129StandardDatabase {
             minValue = 85.0,
             maxValue = 95.0,
             unit = "mm",
-            适用场景 = "靠背宽度设计"
+            applicableScenario = "靠背宽度设计"
         ),
         // Q3 尺寸阈值
         EceR129DimensionThreshold(
@@ -410,7 +410,7 @@ object EceR129StandardDatabase {
             minValue = 200.0,
             maxValue = 220.0,
             unit = "mm",
-            适用场景 = "座椅高度设计"
+            applicableScenario = "座椅高度设计"
         ),
         EceR129DimensionThreshold(
             thresholdId = "R129-Q3-SW",
@@ -419,7 +419,7 @@ object EceR129StandardDatabase {
             minValue = 95.0,
             maxValue = 105.0,
             unit = "mm",
-            适用场景 = "靠背宽度设计"
+            applicableScenario = "靠背宽度设计"
         ),
         // Q6 尺寸阈值
         EceR129DimensionThreshold(
@@ -429,7 +429,7 @@ object EceR129StandardDatabase {
             minValue = 210.0,
             maxValue = 230.0,
             unit = "mm",
-            适用场景 = "座椅高度设计"
+            applicableScenario = "座椅高度设计"
         ),
         EceR129DimensionThreshold(
             thresholdId = "R129-Q6-SW",
@@ -438,7 +438,7 @@ object EceR129StandardDatabase {
             minValue = 105.0,
             maxValue = 115.0,
             unit = "mm",
-            适用场景 = "靠背宽度设计"
+            applicableScenario = "靠背宽度设计"
         ),
         // Q10 尺寸阈值
         EceR129DimensionThreshold(
@@ -448,7 +448,7 @@ object EceR129StandardDatabase {
             minValue = 220.0,
             maxValue = 240.0,
             unit = "mm",
-            适用场景 = "座椅高度设计"
+            applicableScenario = "座椅高度设计"
         ),
         EceR129DimensionThreshold(
             thresholdId = "R129-Q10-SW",
@@ -457,7 +457,7 @@ object EceR129StandardDatabase {
             minValue = 115.0,
             maxValue = 125.0,
             unit = "mm",
-            适用场景 = "靠背宽度设计"
+            applicableScenario = "靠背宽度设计"
         )
     )
     

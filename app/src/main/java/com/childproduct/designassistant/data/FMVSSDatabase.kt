@@ -120,11 +120,11 @@ object FMVSSDatabase {
         standardName = "Side Impact Protection",
         standardType = StandardCategory.NATIONAL,
         applicableRegion = "USA",
-        applicableWeight = "0-36kg (0-80lb)",
-        applicableAge = "新生儿至12岁",
-        coreScope = "规定儿童约束系统的侧面碰撞保护要求，包括侧撞测试和伤害准则",
-        effectiveDate = "2014年2月",
-        standardStatus = "Current",
+        applicableWeight = "0-40lb (0-18.1kg)",
+        applicableAge = "新生儿至约4岁",
+        coreScope = "2025年重要更新：新增侧碰测试要求，适用于体重≤40lb的儿童安全座椅。测试速度设定为30mph（48km/h），接近美国常见城市限速，旨在加强儿童乘车安全防护。原定2025年6月30日生效，现延长至2026年12月5日合规",
+        effectiveDate = "2014年2月 (2025年更新)",
+        standardStatus = "Current (2025年重要更新，2026年12月5日全面合规)",
         dataSource = "U.S. Department of Transportation, NHTSA"
     )
     
@@ -204,11 +204,11 @@ object FMVSSDatabase {
         ),
         "FMVSS-213A-SIDE" to FMVSSTestConfiguration(
             configId = "FMVSS-213A-SIDE",
-            testName = "FMVSS 213a 侧面碰撞测试",
+            testName = "FMVSS 213a 侧面碰撞测试 (2025更新)",
             standard = FMVSSStandardType.FMVSS_213A,
             impactType = FMVSSImpactType.SIDE,
-            velocityKmh = 31.3,
-            velocityRange = "31.3±0.64 km/h (19.5±0.4 mph)",
+            velocityKmh = 48.0,
+            velocityRange = "48±0 km/h (30±0 mph) - 2025年新标准",
             accelerationProfile = FMVSSAccelerationProfile.SIDE,
             dummyTypes = listOf(
                 FMVSSDummyType.CRABI_12,
@@ -223,8 +223,11 @@ object FMVSSDatabase {
                 "与车门距离" to 38.0
             ),
             specialRequirements = listOf(
+                "2025年更新：测试速度设定为30mph（48km/h）",
                 "12个月假人头部无直接接触SISA或车门结构",
-                "躯干完全被CRS包裹"
+                "躯干完全被CRS包裹",
+                "适用于体重≤40lb（约18.1kg）的儿童安全座椅",
+                "合规截止日期：2026年12月5日"
             )
         )
     )

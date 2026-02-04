@@ -65,12 +65,12 @@ data class HighChairStructuralStrengthData(
     val strengthId: String,
     val standard: HighChairStandardType,
     val testType: String,
-    const val loadWeight: Double,
-    const val loadWeightRange: String,
-    const val loadDuration: Int,
-    const val loadDurationRange: String,
+    val loadWeight: Double,
+    val loadWeightRange: String,
+    val loadDuration: Int,
+    val loadDurationRange: String,
     val deformationLimit: Double,
-    const val deformationLimitRange: String,
+    val deformationLimitRange: String,
     val passCriteria: String
 )
 
@@ -89,8 +89,8 @@ object HighChairStandardDatabase {
             applicableRegion = "欧洲 (ECE)",
             applicableWeight = "通常≤15kg",
             applicableAge = "约6个月至3岁",
-            coreScope = "规定高脚椅的安全性要求，包括稳定性、结构强度、约束系统、锁定机制、锐利边缘和窒息危险等",
-            effectiveDate = "2012年",
+            coreScope = "规定高脚椅的安全性要求，包括稳定性、结构强度、约束系统、锁定机制、锐利边缘和窒息危险等。2024年版为最新版本，由意大利统一标准化组织发布",
+            effectiveDate = "2024年（最新版）",
             standardStatus = "Current",
             dataSource = "European Committee for Standardization (CEN)"
         ),
@@ -101,8 +101,8 @@ object HighChairStandardDatabase {
             applicableRegion = "美国 (USA)",
             applicableWeight = "通常≤15kg",
             applicableAge = "约6个月至3岁",
-            coreScope = "规定高脚椅的安全性能要求，包括稳定性、强度、标签、警示标签等",
-            effectiveDate = "2021年",
+            coreScope = "规定高脚椅的安全性能要求，包括稳定性、强度、标签、警示标签、化学要求等。ASTM F404-21 为最新版本，对高脚椅不得使用含铅量超标的油漆喷涂，可触及部件总铅含量有严格限制",
+            effectiveDate = "2021年（最新版）",
             standardStatus = "Current",
             dataSource = "ASTM International"
         ),
