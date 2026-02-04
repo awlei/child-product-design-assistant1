@@ -21,10 +21,10 @@ import com.childproduct.designassistant.data.model.*
     entities = [
         StandardUpdateLog::class  // 只保留最简单的实体
     ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
-@TypeConverters(Converters::class)
+// @TypeConverters(Converters::class)  // 临时注释以测试
 abstract class EceR129Database : RoomDatabase() {
 
     // ECE R129 相关 DAO
