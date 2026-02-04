@@ -19,17 +19,17 @@ import com.childproduct.designassistant.data.model.*
  */
 @Database(
     entities = [
-        CrashTestDummy::class,
-        HeightRangeMapping::class,
-        SafetyThreshold::class,
-        TestConfiguration::class,
+        // CrashTestDummy::class,  // 暂时注释
+        // HeightRangeMapping::class,  // 暂时注释
+        // SafetyThreshold::class,  // 暂时注释
+        // TestConfiguration::class,  // 暂时注释
         StandardReference::class,
         InstallationMethod::class,
         MaterialSpecification::class,
         IsofixRequirement::class,
         StandardUpdateLog::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
