@@ -198,8 +198,7 @@ fun MainScreen() {
                         modifier = Modifier.padding(screenPadding)
                     )
                     "合规管理" -> ComplianceManagementScreen(
-                        viewModel = viewModel,
-                        modifier = Modifier.padding(screenPadding)
+                        viewModel = viewModel
                     )
                     "标准适配" -> StandardSelectionScreen(
                         onGenerateDesign = { _ -> /* TODO: 生成设计方案 */ }
