@@ -1,9 +1,11 @@
 package com.childproduct.designassistant.ui.screens
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.childproduct.designassistant.data.model.DesignProposal
 import com.childproduct.designassistant.data.model.DesignProposalRequest
+import com.childproduct.designassistant.database.AppDatabase
 import com.childproduct.designassistant.service.DesignProposalGenerator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,9 +15,10 @@ import kotlinx.coroutines.launch
 /**
  * 设计方案展示ViewModel
  */
-class DesignProposalViewModel : ViewModel() {
+class DesignProposalViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val generator = DesignProposalGenerator()
+    private val database = AppDatabase.getDatabase(application)
+    private val generator = DesignProposalGenerator(database)
 
     // UI状态
     private val _uiState = MutableStateFlow<DesignProposalUiState>(DesignProposalUiState.Idle)

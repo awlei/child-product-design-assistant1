@@ -1,8 +1,7 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.database.AppDatabase
-import com.childproduct.designassistant.database.entity.CarSeatStandard
-import com.childproduct.designassistant.database.entity.StrollerStandard
+import com.childproduct.designassistant.database.entity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -102,7 +101,7 @@ class StandardDatabaseService(
 
             // 查询儿童安全座椅标准
             val carSeatStandards = database.carSeatStandardDao().getByIds(standardIds)
-            carSeatStandards.forEach { standard ->
+            carSeatStandards.forEach { standard: CarSeatStandard ->
                 summaries.add(
                     StandardSummary(
                         id = standard.standardId,
@@ -116,7 +115,7 @@ class StandardDatabaseService(
 
             // 查询婴儿推车标准
             val strollerStandards = database.strollerStandardDao().getByIds(standardIds)
-            strollerStandards.forEach { standard ->
+            strollerStandards.forEach { standard: StrollerStandard ->
                 summaries.add(
                     StandardSummary(
                         id = standard.standardId,

@@ -3,11 +3,8 @@ package com.childproduct.designassistant.service
 import com.childproduct.designassistant.data.model.*
 import com.childproduct.designassistant.database.AppDatabase
 import com.childproduct.designassistant.llm.LLMClient
-import com.childproduct.designassistant.llm.LLMConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 /**
@@ -178,18 +175,8 @@ class DesignProposalGenerator(
         // 尝试从响应中提取JSON
         val jsonString = extractJson(response)
 
-        // 解析为临时结构
-        val proposalData = json.decodeFromString<ProposalData>(jsonString)
-
-        // 转换为最终数据模型
-        return DesignProposal(
-            productType = request.productType,
-            applicableStandards = proposalData.applicableStandards,
-            basicFitData = proposalData.basicFitData,
-            designParameters = proposalData.designParameters,
-            testRequirements = proposalData.testRequirements,
-            standardTestItems = proposalData.standardTestItems
-        )
+        // 解析为最终数据模型
+        return json.decodeFromString<DesignProposal>(jsonString)
     }
 
     /**
@@ -206,16 +193,4 @@ class DesignProposalGenerator(
 
         return response.substring(startIdx, endIdx + 1)
     }
-
-    /**
-     * 临时的序列化数据结构
-     */
-    @Serializable
-    private data class ProposalData(
-        val applicableStandards: List<String>,
-        val basicFitData: BasicFitData,
-        val designParameters: DesignParameters,
-        val testRequirements: TestRequirements,
-        val standardTestItems: StandardTestItems
-    )
 }

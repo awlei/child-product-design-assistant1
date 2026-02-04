@@ -223,7 +223,7 @@ private fun DesignParametersCard(designParameters: com.childproduct.designassist
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            SectionTitle(title = "📏 设计参数", icon = Icons.Default.Ruler)
+            SectionTitle(title = "📏 设计参数", icon = Icons.Default.Straighten)
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -321,7 +321,7 @@ private fun StandardTestItemsCard(testItems: com.childproduct.designassistant.da
             Spacer(modifier = Modifier.height(12.dp))
 
             ParameterItem(
-                icon = Icons.Default.Collision,
+                icon = Icons.Default.DirectionsCar,
                 label = "动态碰撞：正碰",
                 value = testItems.dynamicFrontal
             )

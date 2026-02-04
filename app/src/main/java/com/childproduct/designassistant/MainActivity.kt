@@ -67,7 +67,11 @@ fun MainScreen() {
     var showExportDialog by remember { mutableStateOf(false) }
     var selectedModule by remember { mutableStateOf<String?>(null) }
     var showDesignProposal by remember { mutableStateOf(false) }
-    val designProposalViewModel: DesignProposalViewModel = viewModel()
+    val designProposalViewModel: DesignProposalViewModel = viewModel(
+        factory = androidx.lifecycle.viewmodel.compose.viewModelFactory {
+            androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        }
+    )
 
     Scaffold(
         topBar = {

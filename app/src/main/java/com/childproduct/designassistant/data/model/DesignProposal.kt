@@ -1,10 +1,13 @@
 package com.childproduct.designassistant.data.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * 儿童安全座椅设计方案数据模型
  *
  * 包含完整的设计方案信息，结构化展示设计参数、测试要求等
  */
+@Serializable
 data class DesignProposal(
     /** 产品类型（如：儿童安全座椅、婴儿提篮、餐椅等） */
     val productType: String,
@@ -31,6 +34,7 @@ data class DesignProposal(
 /**
  * 基础适配数据
  */
+@Serializable
 data class BasicFitData(
     /** 假人信息 */
     val dummyInfo: DummyInfo
@@ -39,6 +43,7 @@ data class BasicFitData(
 /**
  * 假人信息
  */
+@Serializable
 data class DummyInfo(
     /** 身高范围（mm） */
     val heightRange: String,
@@ -56,6 +61,7 @@ data class DummyInfo(
 /**
  * 设计参数
  */
+@Serializable
 data class DesignParameters(
     /** 头枕高度范围（mm） */
     val headrestHeightRange: String,
@@ -76,6 +82,7 @@ data class DesignParameters(
 /**
  * 测试要求
  */
+@Serializable
 data class TestRequirements(
     /** 正面碰撞要求 */
     val frontalImpact: String,
@@ -93,6 +100,7 @@ data class TestRequirements(
 /**
  * 标准测试项
  */
+@Serializable
 data class StandardTestItems(
     /** 动态碰撞：正碰 */
     val dynamicFrontal: String,
@@ -113,6 +121,7 @@ data class StandardTestItems(
 /**
  * 设计方案生成请求
  */
+@Serializable
 data class DesignProposalRequest(
     /** 产品类型 */
     val productType: String,
@@ -130,6 +139,7 @@ data class DesignProposalRequest(
 /**
  * 用户输入的假人信息
  */
+@Serializable
 data class UserDummyInput(
     /** 目标身高范围（mm） */
     val targetHeightRange: String? = null,
