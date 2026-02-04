@@ -402,3 +402,71 @@ class ChildRestraintDesignService {
         }
     }
 }
+
+/**
+ * 简单测试函数 - 用于快速验证服务功能
+ */
+fun testService() {
+    val service = ChildRestraintDesignService()
+    
+    println("\n" + "=".repeat(80))
+    println("测试1：仅选择 ECE R129")
+    println("=".repeat(80) + "\n")
+    
+    val selection1 = ChildRestraintDesignService.StandardSelection(
+        eceR129 = true,
+        gb27887 = false,
+        fmvss213 = false,
+        asNzs1754 = false
+    )
+    
+    val proposal1 = service.generateDesignProposal(
+        selection = selection1,
+        heightCm = 100.0,
+        weightKg = 15.0
+    )
+    
+    println(service.formatAsMarkdown(proposal1))
+    
+    println("\n" + "=".repeat(80))
+    println("测试2：选择 ECE R129 + GB 28007")
+    println("=".repeat(80) + "\n")
+    
+    val selection2 = ChildRestraintDesignService.StandardSelection(
+        eceR129 = true,
+        gb27887 = true,
+        fmvss213 = false,
+        asNzs1754 = false
+    )
+    
+    val proposal2 = service.generateDesignProposal(
+        selection = selection2,
+        heightCm = 83.0,
+        weightKg = 11.0
+    )
+    
+    println(service.formatAsMarkdown(proposal2))
+    
+    println("\n" + "=".repeat(80))
+    println("测试3：选择 FMVSS 213")
+    println("=".repeat(80) + "\n")
+    
+    val selection3 = ChildRestraintDesignService.StandardSelection(
+        eceR129 = false,
+        gb27887 = false,
+        fmvss213 = true,
+        asNzs1754 = false
+    )
+    
+    val proposal3 = service.generateDesignProposal(
+        selection = selection3,
+        heightCm = 125.0,
+        weightKg = 22.0
+    )
+    
+    println(service.formatAsMarkdown(proposal3))
+    
+    println("\n" + "=".repeat(80))
+    println("测试完成")
+    println("=".repeat(80) + "\n")
+}
