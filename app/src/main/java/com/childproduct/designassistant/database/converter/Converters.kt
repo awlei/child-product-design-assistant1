@@ -15,7 +15,9 @@ class Converters {
 
     /**
      * InstallDirection 转换器
+     * 临时注释以测试 KSP 问题
      */
+    /*
     @TypeConverter
     fun fromInstallDirection(direction: InstallDirection): String {
         return direction.name
@@ -29,6 +31,7 @@ class Converters {
             InstallDirection.REARWARD
         }
     }
+    */
 
     /**
      * String List 转换器
