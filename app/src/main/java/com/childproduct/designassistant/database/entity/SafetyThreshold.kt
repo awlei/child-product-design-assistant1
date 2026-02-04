@@ -7,7 +7,7 @@ import androidx.room.Index
 
 /**
  * 安全阈值实体
- * 基于UN R129 §7.1动态测试要求
+ * 基于UN R129 §7.1动态测试要求（Rev.5，2022版）
  */
 @Entity(
     tableName = "safety_threshold",
@@ -40,35 +40,37 @@ data class SafetyThreshold(
     val updatedAt: Long = System.currentTimeMillis()
 ) {
     companion object {
-        // 标准安全阈值配置（基于UN R129 Rev.4 §7.1）
+        // 标准安全阈值配置（基于UN R129 Rev.5 §7.1，2022版）
         val STANDARD_THRESHOLDS = listOf(
-            // HIC阈值
+            // HIC阈值 - Q0/Q0+ (15ms)
             SafetyThreshold(
-                thresholdId = "THRESHOLD_HIC_Q0_Q15",
+                thresholdId = "THRESHOLD_HIC_Q0_Q0PLUS",
                 dummyId = "DUMMY_Q0",
                 testItem = "头部伤害准则",
                 parameterName = "HIC15",
                 minValue = null,
-                maxValue = 390.0,
+                maxValue = 300.0,
                 unit = "-",
                 testDurationMs = 15,
-                applicableDummies = "Q0-Q1.5",
+                applicableDummies = "Q0/Q0+",
                 standardSource = "UN R129 §7.1.2",
-                notes = "Q0-Q1.5假人使用HIC15，Q3+假人使用HIC36"
+                notes = "Q0/Q0+假人使用HIC15"
             ),
+            // HIC阈值 - Q1/Q1.5 (15ms)
             SafetyThreshold(
-                thresholdId = "THRESHOLD_HIC_Q1_5",
-                dummyId = "DUMMY_Q1_5",
+                thresholdId = "THRESHOLD_HIC_Q1_Q15",
+                dummyId = "DUMMY_Q1",
                 testItem = "头部伤害准则",
-                parameterName = "HIC36",
+                parameterName = "HIC15",
                 minValue = null,
-                maxValue = 570.0,
+                maxValue = 400.0,
                 unit = "-",
-                testDurationMs = 36,
-                applicableDummies = "Q1.5",
+                testDurationMs = 15,
+                applicableDummies = "Q1/Q1.5",
                 standardSource = "UN R129 §7.1.2",
-                notes = "Q1.5假人特殊HIC36阈值"
+                notes = "Q1/Q1.5假人使用HIC15"
             ),
+            // HIC阈值 - Q3-Q10 (36ms)
             SafetyThreshold(
                 thresholdId = "THRESHOLD_HIC_Q3_Q10",
                 dummyId = "DUMMY_Q3",
@@ -81,11 +83,11 @@ data class SafetyThreshold(
                 applicableDummies = "Q3-Q10",
                 standardSource = "UN R129 §7.1.2"
             ),
-            // 胸部加速度
+            // 胸部加速度 - Q0-Q1.5
             SafetyThreshold(
                 thresholdId = "THRESHOLD_CHEST_ACC_Q0_Q15",
                 dummyId = "DUMMY_Q0",
-                testItem = "胸部合成加速度",
+                testItem = "胸部合成加速度（峰值）",
                 parameterName = "ChestAcc3ms",
                 minValue = null,
                 maxValue = 55.0,
@@ -94,10 +96,11 @@ data class SafetyThreshold(
                 applicableDummies = "Q0-Q1.5",
                 standardSource = "UN R129 §7.1.3"
             ),
+            // 胸部加速度 - Q3-Q10
             SafetyThreshold(
                 thresholdId = "THRESHOLD_CHEST_ACC_Q3_Q10",
                 dummyId = "DUMMY_Q3",
-                testItem = "胸部合成加速度",
+                testItem = "胸部合成加速度（峰值）",
                 parameterName = "ChestAcc3ms",
                 minValue = null,
                 maxValue = 60.0,
@@ -106,19 +109,33 @@ data class SafetyThreshold(
                 applicableDummies = "Q3-Q10",
                 standardSource = "UN R129 §7.1.3"
             ),
-            // 颈部张力
+            // 颈部张力 - Q0
             SafetyThreshold(
-                thresholdId = "THRESHOLD_NECK_TENSION_Q0_Q15",
+                thresholdId = "THRESHOLD_NECK_TENSION_Q0",
                 dummyId = "DUMMY_Q0",
+                testItem = "颈部张力",
+                parameterName = "NeckTension",
+                minValue = null,
+                maxValue = 1500.0,
+                unit = "N",
+                testDurationMs = null,
+                applicableDummies = "Q0",
+                standardSource = "UN R129 §7.1.4"
+            ),
+            // 颈部张力 - Q1/Q1.5
+            SafetyThreshold(
+                thresholdId = "THRESHOLD_NECK_TENSION_Q1_Q15",
+                dummyId = "DUMMY_Q1",
                 testItem = "颈部张力",
                 parameterName = "NeckTension",
                 minValue = null,
                 maxValue = 1800.0,
                 unit = "N",
                 testDurationMs = null,
-                applicableDummies = "Q0-Q1.5",
+                applicableDummies = "Q1/Q1.5",
                 standardSource = "UN R129 §7.1.4"
             ),
+            // 颈部张力 - Q3-Q10
             SafetyThreshold(
                 thresholdId = "THRESHOLD_NECK_TENSION_Q3_Q10",
                 dummyId = "DUMMY_Q3",
@@ -131,19 +148,33 @@ data class SafetyThreshold(
                 applicableDummies = "Q3-Q10",
                 standardSource = "UN R129 §7.1.4"
             ),
-            // 颈部压力
+            // 颈部压力 - Q0
             SafetyThreshold(
-                thresholdId = "THRESHOLD_NECK_COMPRESSION_Q0_Q15",
+                thresholdId = "THRESHOLD_NECK_COMPRESSION_Q0",
                 dummyId = "DUMMY_Q0",
+                testItem = "颈部压力",
+                parameterName = "NeckCompression",
+                minValue = null,
+                maxValue = 2000.0,
+                unit = "N",
+                testDurationMs = null,
+                applicableDummies = "Q0",
+                standardSource = "UN R129 §7.1.4"
+            ),
+            // 颈部压力 - Q1/Q1.5
+            SafetyThreshold(
+                thresholdId = "THRESHOLD_NECK_COMPRESSION_Q1_Q15",
+                dummyId = "DUMMY_Q1",
                 testItem = "颈部压力",
                 parameterName = "NeckCompression",
                 minValue = null,
                 maxValue = 2200.0,
                 unit = "N",
                 testDurationMs = null,
-                applicableDummies = "Q0-Q1.5",
+                applicableDummies = "Q1/Q1.5",
                 standardSource = "UN R129 §7.1.4"
             ),
+            // 颈部压力 - Q3-Q10
             SafetyThreshold(
                 thresholdId = "THRESHOLD_NECK_COMPRESSION_Q3_Q10",
                 dummyId = "DUMMY_Q3",
@@ -156,18 +187,33 @@ data class SafetyThreshold(
                 applicableDummies = "Q3-Q10",
                 standardSource = "UN R129 §7.1.4"
             ),
-            // 头部位移
+            // 头部位移 - 后向安装
             SafetyThreshold(
-                thresholdId = "THRESHOLD_HEAD_EXCURSION_ALL",
+                thresholdId = "THRESHOLD_HEAD_EXCURSION_REARWARD",
                 dummyId = "DUMMY_Q0",
-                testItem = "头部位移",
+                testItem = "头部位移（后向）",
+                parameterName = "HeadExcursion",
+                minValue = null,
+                maxValue = 500.0,
+                unit = "mm",
+                testDurationMs = null,
+                applicableDummies = "Q0-Q3",
+                standardSource = "UN R129 §7.1.5",
+                notes = "后向安装假人(Q0-Q3)"
+            ),
+            // 头部位移 - 前向安装
+            SafetyThreshold(
+                thresholdId = "THRESHOLD_HEAD_EXCURSION_FORWARD",
+                dummyId = "DUMMY_Q6",
+                testItem = "头部位移（前向）",
                 parameterName = "HeadExcursion",
                 minValue = null,
                 maxValue = 550.0,
                 unit = "mm",
                 testDurationMs = null,
-                applicableDummies = "Q0-Q10",
-                standardSource = "UN R129 §7.1.5"
+                applicableDummies = "Q6-Q10",
+                standardSource = "UN R129 §7.1.5",
+                notes = "前向安装假人(Q6-Q10)"
             ),
             // 膝部位移
             SafetyThreshold(
@@ -182,26 +228,27 @@ data class SafetyThreshold(
                 applicableDummies = "Q0-Q10",
                 standardSource = "UN R129 §7.1.6"
             ),
-            // 胸部位移
+            // 胸部压缩量 - Q0-Q1.5
             SafetyThreshold(
                 thresholdId = "THRESHOLD_CHEST_DEFLECTION_Q0_Q15",
                 dummyId = "DUMMY_Q0",
-                testItem = "胸部位移",
+                testItem = "胸部压缩量",
                 parameterName = "ChestDeflection",
                 minValue = null,
-                maxValue = 45.0,
+                maxValue = 40.0,
                 unit = "mm",
                 testDurationMs = null,
                 applicableDummies = "Q0-Q1.5",
                 standardSource = "UN R129 §7.1.7"
             ),
+            // 胸部压缩量 - Q3-Q10
             SafetyThreshold(
                 thresholdId = "THRESHOLD_CHEST_DEFLECTION_Q3_Q10",
                 dummyId = "DUMMY_Q3",
-                testItem = "胸部位移",
+                testItem = "胸部压缩量",
                 parameterName = "ChestDeflection",
                 minValue = null,
-                maxValue = 52.0,
+                maxValue = 48.0,
                 unit = "mm",
                 testDurationMs = null,
                 applicableDummies = "Q3-Q10",

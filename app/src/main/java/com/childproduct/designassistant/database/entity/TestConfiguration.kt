@@ -10,7 +10,7 @@ import com.childproduct.designassistant.model.InstallDirection
 
 /**
  * 测试配置实体
- * 基于ROADMATE 360格式和UN R129 Annex 7
+ * 基于ROADMATE 360格式和UN R129 Annex 7（Rev.5，2022版）
  */
 @Entity(
     tableName = "test_configuration",
@@ -68,7 +68,7 @@ data class TestConfiguration(
                 configs.add(
                     TestConfiguration(
                         configId = "CONFIG_R129_FRONTAL_${dummyCode.replace(".", "_").replace("+", "_PLUS").uppercase()}_REARWARD_3PTS",
-                        standardReference = "UN R129 Rev.4",
+                        standardReference = "UN R129 Rev.5",
                         pulseType = TestPulseType.FRONTAL,
                         impactDirection = ImpactDirection.valueOf(dummyCode.replace(".", "_").replace("+", "_PLUS").uppercase()),
                         dummyId = dummyId,
@@ -98,7 +98,7 @@ data class TestConfiguration(
                     configs.add(
                         TestConfiguration(
                             configId = "CONFIG_R129_FRONTAL_Q3_REARWARD_2PTS",
-                            standardReference = "UN R129 Rev.4",
+                            standardReference = "UN R129 Rev.5",
                             pulseType = TestPulseType.FRONTAL,
                             impactDirection = ImpactDirection.Q3,
                             dummyId = dummyId,
@@ -128,7 +128,7 @@ data class TestConfiguration(
                 configs.add(
                     TestConfiguration(
                         configId = "CONFIG_R129_REAR_${dummyCode.replace(".", "_").replace("+", "_PLUS").uppercase()}_REARWARD",
-                        standardReference = "UN R129 Rev.4",
+                        standardReference = "UN R129 Rev.5",
                         pulseType = TestPulseType.REAR,
                         impactDirection = ImpactDirection.valueOf(dummyCode.replace(".", "_").replace("+", "_PLUS").uppercase()),
                         dummyId = dummyId,
@@ -157,7 +157,7 @@ data class TestConfiguration(
                 configs.add(
                     TestConfiguration(
                         configId = "CONFIG_R129_LATERAL_${dummyCode.replace(".", "_").replace("+", "_PLUS").uppercase()}_REARWARD",
-                        standardReference = "UN R129 Rev.4",
+                        standardReference = "UN R129 Rev.5",
                         pulseType = TestPulseType.LATERAL,
                         impactDirection = ImpactDirection.valueOf(dummyCode.replace(".", "_").replace("+", "_PLUS").uppercase()),
                         dummyId = dummyId,
@@ -176,15 +176,15 @@ data class TestConfiguration(
                         topTetherTest = false,
                         quantity = "n/a",
                         testNumber = "-",
-                        testSpeedKmh = 32.0,
+                        testSpeedKmh = 60.0,
                         maxPulseG = 25.0,
                         stoppingDistanceMm = 250
                     )
                 )
             }
 
-            // 前向安装测试配置（105-150cm）
-            listOf("Q3s", "Q6", "Q10").forEach { dummyCode ->
+            // 前向安装测试配置（87-150cm）
+            listOf("Q3", "Q6", "Q10").forEach { dummyCode ->
                 val dummyId = "DUMMY_${dummyCode.replace(".", "_").replace("s", "S").uppercase()}"
                 val impactDir = dummyCode.replace("s", "")
 
@@ -192,7 +192,7 @@ data class TestConfiguration(
                 configs.add(
                     TestConfiguration(
                         configId = "CONFIG_R129_FRONTAL_${dummyCode.replace(".", "_").replace("s", "S").uppercase()}_FORWARD",
-                        standardReference = "UN R129 Rev.4",
+                        standardReference = "UN R129 Rev.5",
                         pulseType = TestPulseType.FRONTAL,
                         impactDirection = ImpactDirection.valueOf(impactDir.replace(".", "_").uppercase()),
                         dummyId = dummyId,
@@ -221,7 +221,7 @@ data class TestConfiguration(
                 configs.add(
                     TestConfiguration(
                         configId = "CONFIG_R129_LATERAL_${dummyCode.replace(".", "_").replace("s", "S").uppercase()}_FORWARD",
-                        standardReference = "UN R129 Rev.4",
+                        standardReference = "UN R129 Rev.5",
                         pulseType = TestPulseType.LATERAL,
                         impactDirection = ImpactDirection.valueOf(impactDir.replace(".", "_").uppercase()),
                         dummyId = dummyId,
@@ -240,7 +240,7 @@ data class TestConfiguration(
                         topTetherTest = false,
                         quantity = "n/a",
                         testNumber = "-",
-                        testSpeedKmh = 32.0,
+                        testSpeedKmh = 60.0,
                         maxPulseG = 25.0,
                         stoppingDistanceMm = 250
                     )

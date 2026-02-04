@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 /**
  * 材料规格实体
- * 基于FMVSS 302燃烧性能要求和材料标准
+ * 基于UN R118.03燃烧性能要求和材料标准（Rev.5，2022版）
  */
 @Entity(tableName = "material_specification")
 data class MaterialSpecification(
@@ -25,9 +25,9 @@ data class MaterialSpecification(
                 specId = "SPEC_FLAME_RETARDANT",
                 specName = "阻燃面料",
                 specCode = "FLAME_RETARDANT",
-                description = "通过FMVSS 302认证的阻燃面料",
-                standardRequirement = "FMVSS 302: 燃烧速度 < 4英寸/分钟 (102 mm/min)",
-                testMethod = "FMVSS 302 Horizontal Burning Test",
+                description = "通过UN R118.03认证的阻燃面料",
+                standardRequirement = "UN R118.03: 水平燃烧速度 ≤ 100mm/min，垂直燃烧自熄时间 ≤ 10s",
+                testMethod = "UN R118.03 Annex 5, Annex 6",
                 applicableComponents = listOf("座椅套", "垫子", "布料", "肩带")
             ),
             MaterialSpecification(

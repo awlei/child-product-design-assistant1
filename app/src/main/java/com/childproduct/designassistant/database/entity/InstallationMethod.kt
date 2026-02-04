@@ -5,7 +5,10 @@ import androidx.room.PrimaryKey
 
 /**
  * 安装方式实体
- * 基于UN R129 §6.1安装要求
+ * 基于UN R129 §6.1安装要求（Rev.5，2022版）
+ * - 40-87cm: 后向安装，ISOFIX 3点+Top-tether（必须）
+ * - 87-105cm: 后向安装（Q3），ISOFIX 2点 或 ISOFIX 3点+支撑腿
+ * - 105-150cm: 前向安装，ISOFIX 3点+Top-tether（必须）
  */
 @Entity(tableName = "installation_method")
 data class InstallationMethod(
@@ -26,8 +29,18 @@ data class InstallationMethod(
                 methodId = "METHOD_ISOFIX_3PTS_REARWARD",
                 methodName = "ISOFIX 3点后向安装",
                 methodCode = "ISOFIX_3PTS_REARWARD",
-                description = "使用ISOFIX 3点连接+支撑腿进行后向安装",
+                description = "使用ISOFIX 3点连接+Top Tether进行后向安装（40-87cm必须，87-105cm可选）",
                 applicableHeightCm = "40-105cm",
+                requiresTopTether = true,
+                requiresSupportLeg = false,
+                standardClause = "UN R129 §6.1.3"
+            ),
+            InstallationMethod(
+                methodId = "METHOD_ISOFIX_3PTS_SUPPORT_LEG",
+                methodName = "ISOFIX 3点+支撑腿后向安装",
+                methodCode = "ISOFIX_3PTS_SUPPORT_LEG",
+                description = "使用ISOFIX 3点连接+支撑腿进行后向安装（仅Q3，87-105cm可选方案）",
+                applicableHeightCm = "87-105cm",
                 requiresTopTether = false,
                 requiresSupportLeg = true,
                 standardClause = "UN R129 §6.1.2"

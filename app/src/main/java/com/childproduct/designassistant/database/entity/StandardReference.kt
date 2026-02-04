@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 /**
  * 标准引用实体
- * 存储标准的基本信息和版本
+ * 存储标准的基本信息和版本（Rev.5，2022版）
  */
 @Entity(tableName = "standard_reference")
 data class StandardReference(

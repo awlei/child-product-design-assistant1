@@ -33,14 +33,14 @@ class DatabaseInitializer(private val context: Context) {
 
                 // 4. 初始化标准引用
                 val standardRef = StandardReference(
-                    referenceId = "REF_UN_R129_REV4",
+                    referenceId = "REF_UN_R129_REV5",
                     regulationNumber = "UN R129",
                     regulationName = "Enhanced Child Restraint Systems used on board of motor vehicles",
-                    currentVersion = "Rev.4",
-                    entryIntoForceDate = "29 December 2018",
-                    officialUrl = "https://unece.org/transport/documents/2021/03/regs129r4e.pdf",
+                    currentVersion = "Rev.5",
+                    entryIntoForceDate = "30 November 2022",
+                    officialUrl = "https://unece.org/transport/documents/2022/12/un-r129-rev5.pdf",
                     status = "ACTIVE",
-                    relatedRegulations = listOf("UN R16", "UN R14", "UN R145"),
+                    relatedRegulations = listOf("UN R16", "UN R14", "UN R145", "UN R118.03"),
                     lastUpdated = System.currentTimeMillis()
                 )
                 database.standardReferenceDao().insert(standardRef)
@@ -69,7 +69,7 @@ class DatabaseInitializer(private val context: Context) {
                 val initLog = StandardUpdateLog(
                     logId = "INIT_${System.currentTimeMillis()}",
                     regulationNumber = "UN R129",
-                    version = "Rev.4",
+                    version = "Rev.5",
                     syncType = "INITIAL",
                     status = "SUCCESS",
                     timestamp = System.currentTimeMillis(),
@@ -82,7 +82,7 @@ class DatabaseInitializer(private val context: Context) {
                 val errorLog = StandardUpdateLog(
                     logId = "INIT_ERROR_${System.currentTimeMillis()}",
                     regulationNumber = "UN R129",
-                    version = "Rev.4",
+                    version = "Rev.5",
                     syncType = "INITIAL",
                     status = "FAILED",
                     timestamp = System.currentTimeMillis(),

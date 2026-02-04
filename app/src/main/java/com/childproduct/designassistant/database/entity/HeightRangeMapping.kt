@@ -7,6 +7,7 @@ import androidx.room.Index
 /**
  * 身高范围映射实体
  * 将身高范围映射到假人类型和产品分组
+ * 基于UN R129 Annex 19（Rev.5，2022版）
  */
 @Entity(
     tableName = "height_range_mapping",
@@ -66,16 +67,16 @@ data class HeightRangeMapping(
                 heightRangeStartCm = 87,
                 heightRangeEndCm = 105,
                 dummyId = "DUMMY_Q3",
-                productGroup = "Group 1/2",
-                installDirection = "REARWARD",
+                productGroup = "Group I/II",
+                installDirection = "REARWARD_FORWARD",
                 standardClause = "UN R129 Annex 19"
             ),
             HeightRangeMapping(
                 mappingId = "MAPPING_105_125",
                 heightRangeStartCm = 105,
                 heightRangeEndCm = 125,
-                dummyId = "DUMMY_Q3S",
-                productGroup = "Group 2/3",
+                dummyId = "DUMMY_Q6",
+                productGroup = "Group II",
                 installDirection = "FORWARD",
                 standardClause = "UN R129 Annex 19"
             ),
@@ -83,17 +84,8 @@ data class HeightRangeMapping(
                 mappingId = "MAPPING_125_145",
                 heightRangeStartCm = 125,
                 heightRangeEndCm = 145,
-                dummyId = "DUMMY_Q6",
-                productGroup = "Group 3",
-                installDirection = "FORWARD",
-                standardClause = "UN R129 Annex 19"
-            ),
-            HeightRangeMapping(
-                mappingId = "MAPPING_145_150",
-                heightRangeStartCm = 145,
-                heightRangeEndCm = 150,
                 dummyId = "DUMMY_Q10",
-                productGroup = "Group 3",
+                productGroup = "Group III",
                 installDirection = "FORWARD",
                 standardClause = "UN R129 Annex 19"
             )

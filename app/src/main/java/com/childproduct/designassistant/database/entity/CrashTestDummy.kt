@@ -7,7 +7,7 @@ import com.childproduct.designassistant.model.InstallDirection
 
 /**
  * 假人类型实体
- * 基于UN R129 Annex 19标准
+ * 基于UN R129 Annex 19标准（Rev.5，2022版）
  */
 @Entity(
     tableName = "crash_test_dummy",
@@ -31,7 +31,7 @@ data class CrashTestDummy(
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {
-    // 验证身高范围是否符合UN R129标准
+    // 验证身高范围是否符合UN R129 Rev.5标准
     fun validateHeightRange(): Boolean {
         return when (dummyCode) {
             "Q0" -> minHeightCm == 40 && maxHeightCm == 50
@@ -39,9 +39,8 @@ data class CrashTestDummy(
             "Q1" -> minHeightCm == 60 && maxHeightCm == 75
             "Q1.5" -> minHeightCm == 75 && maxHeightCm == 87
             "Q3" -> minHeightCm == 87 && maxHeightCm == 105
-            "Q3s" -> minHeightCm == 105 && maxHeightCm == 125
-            "Q6" -> minHeightCm == 125 && maxHeightCm == 145
-            "Q10" -> minHeightCm == 145 && maxHeightCm == 150
+            "Q6" -> minHeightCm == 105 && maxHeightCm == 125
+            "Q10" -> minHeightCm == 125 && maxHeightCm == 145
             else -> false
         }
     }
@@ -79,12 +78,12 @@ data class CrashTestDummy(
                 dummyName = "婴儿",
                 minHeightCm = 50,
                 maxHeightCm = 60,
-                ageRange = "6-12个月",
+                ageRange = "3-15个月",
                 productGroup = "Group 0+",
                 installDirection = InstallDirection.REARWARD,
-                description = "Q0+假人用于50-60cm身高范围婴儿",
+                description = "Q0+假人用于50-60cm身高范围婴儿，强制后向安装",
                 standardClause = "UN R129 Annex 19 §4.2",
-                weightKg = 5.12,
+                weightKg = 7.0,
                 headCircumferenceMm = 395,
                 shoulderWidthMm = 160,
                 sittingHeightMm = 285
@@ -111,10 +110,10 @@ data class CrashTestDummy(
                 dummyName = "学步儿童",
                 minHeightCm = 75,
                 maxHeightCm = 87,
-                ageRange = "1.5-3岁",
+                ageRange = "18-36个月",
                 productGroup = "Group I",
                 installDirection = InstallDirection.REARWARD,
-                description = "Q1.5假人用于75-87cm身高范围学步儿童",
+                description = "Q1.5假人用于75-87cm身高范围学步儿童，强制后向安装",
                 standardClause = "UN R129 Annex 19 §4.4",
                 weightKg = 11.0,
                 headCircumferenceMm = 455,
@@ -127,10 +126,10 @@ data class CrashTestDummy(
                 dummyName = "幼童",
                 minHeightCm = 87,
                 maxHeightCm = 105,
-                ageRange = "3-4岁",
-                productGroup = "Group 1/2",
+                ageRange = "36-48个月",
+                productGroup = "Group I/II",
                 installDirection = InstallDirection.REARWARD,
-                description = "Q3假人用于87-105cm身高范围幼童",
+                description = "Q3假人用于87-105cm身高范围幼童，可后向或前向安装",
                 standardClause = "UN R129 Annex 19 §4.5",
                 weightKg = 15.0,
                 headCircumferenceMm = 485,
@@ -138,33 +137,17 @@ data class CrashTestDummy(
                 sittingHeightMm = 370
             ),
             CrashTestDummy(
-                dummyId = "DUMMY_Q3S",
-                dummyCode = "Q3s",
-                dummyName = "儿童",
-                minHeightCm = 105,
-                maxHeightCm = 125,
-                ageRange = "4-6岁",
-                productGroup = "Group 2/3",
-                installDirection = InstallDirection.FORWARD,
-                description = "Q3s假人用于105-125cm身高范围儿童",
-                standardClause = "UN R129 Annex 19 §4.6",
-                weightKg = 21.0,
-                headCircumferenceMm = 510,
-                shoulderWidthMm = 225,
-                sittingHeightMm = 405
-            ),
-            CrashTestDummy(
                 dummyId = "DUMMY_Q6",
                 dummyCode = "Q6",
                 dummyName = "学龄儿童",
-                minHeightCm = 125,
-                maxHeightCm = 145,
-                ageRange = "6-10岁",
-                productGroup = "Group 3",
+                minHeightCm = 105,
+                maxHeightCm = 125,
+                ageRange = "48-72个月",
+                productGroup = "Group II",
                 installDirection = InstallDirection.FORWARD,
-                description = "Q6假人用于125-145cm身高范围学龄儿童",
-                standardClause = "UN R129 Annex 19 §4.7",
-                weightKg = 27.0,
+                description = "Q6假人用于105-125cm身高范围学龄儿童，前向安装",
+                standardClause = "UN R129 Annex 19 §4.6",
+                weightKg = 21.0,
                 headCircumferenceMm = 540,
                 shoulderWidthMm = 280,
                 sittingHeightMm = 445
@@ -173,13 +156,13 @@ data class CrashTestDummy(
                 dummyId = "DUMMY_Q10",
                 dummyCode = "Q10",
                 dummyName = "青少年",
-                minHeightCm = 145,
-                maxHeightCm = 150,
-                ageRange = "10-12岁",
-                productGroup = "Group 3",
+                minHeightCm = 125,
+                maxHeightCm = 145,
+                ageRange = "72-144个月",
+                productGroup = "Group III",
                 installDirection = InstallDirection.FORWARD,
-                description = "Q10假人用于145-150cm身高范围青少年",
-                standardClause = "UN R129 Annex 19 §4.8",
+                description = "Q10假人用于125-145cm身高范围青少年，前向安装",
+                standardClause = "UN R129 Annex 19 §4.7",
                 weightKg = 35.58,
                 headCircumferenceMm = 560,
                 shoulderWidthMm = 335,
