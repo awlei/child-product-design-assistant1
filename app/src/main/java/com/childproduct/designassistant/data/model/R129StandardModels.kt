@@ -509,3 +509,46 @@ data class R129r4eThresholds(
     val boosterHeadProtection: Double,  // 增高座头部保护(cm)
     val mandatoryRearwardMonths: Int    // 强制后向月龄
 )
+
+/**
+ * 核心设计参数（关联标准条款）
+ */
+data class CoreDesignParameter(
+    val parameterName: String,        // 参数名称
+    val value: String,                // 参数值/范围
+    val unit: String,                 // 单位
+    val standardClause: String,       // 关联标准条款
+    val description: String           // 参数说明
+)
+
+/**
+ * 测试矩阵项
+ */
+data class TestMatrixItem(
+    val testName: String,            // 测试名称
+    val standardClause: String,      // 标准条款
+    val testMethod: String,          // 测试方法
+    val dummyType: String,           // 假人类型
+    val acceptanceCriteria: String   // 合格标准
+)
+
+/**
+ * 尺寸阈值
+ */
+data class DimensionalThreshold(
+    val dimensionType: String,       // 尺寸类型
+    val limit: String,               // 限制值
+    val unit: String,                // 单位
+    val standardClause: String,      // 标准条款
+    val description: String          // 说明
+)
+
+/**
+ * 产品配置信息
+ */
+data class ProductConfigurationInfo(
+    val configType: String,          // 配置类型
+    val description: String,         // 配置描述
+    val standardClause: String?,     // 标准条款（可选）
+    val installationRequirement: String // 安装要求
+)
