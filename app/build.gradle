@@ -74,6 +74,7 @@ android {
 
     buildFeatures {
         compose true
+        buildConfig false  // 明确禁用 BuildConfig（不使用）
     }
 
     composeOptions {

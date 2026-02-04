@@ -2,6 +2,7 @@ package com.childproduct.designassistant.database.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
@@ -34,6 +35,9 @@ data class HighChairStandard(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_high_chair_age_group_standard_id")
     ]
 )
 data class HighChairAgeGroup(
@@ -57,6 +61,9 @@ data class HighChairAgeGroup(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_high_chair_safety_requirement_standard_id")
     ]
 )
 data class HighChairSafetyRequirement(
@@ -82,6 +89,9 @@ data class HighChairSafetyRequirement(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_high_chair_stability_standard_id")
     ]
 )
 data class HighChairStability(
@@ -106,6 +116,9 @@ data class HighChairStability(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_high_chair_restraint_standard_id")
     ]
 )
 data class HighChairRestraint(

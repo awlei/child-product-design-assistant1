@@ -2,6 +2,7 @@ package com.childproduct.designassistant.database.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
@@ -34,6 +35,9 @@ data class CribStandard(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_crib_dimension_standard_id")
     ]
 )
 data class CribDimension(
@@ -62,6 +66,9 @@ data class CribDimension(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_crib_mattress_gap_standard_id")
     ]
 )
 data class CribMattressGap(
@@ -86,6 +93,9 @@ data class CribMattressGap(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_crib_railing_standard_id")
     ]
 )
 data class CribRailing(
@@ -112,6 +122,9 @@ data class CribRailing(
             childColumns = ["standardId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["standardId"], name = "idx_crib_safety_requirement_standard_id")
     ]
 )
 data class CribSafetyRequirement(
