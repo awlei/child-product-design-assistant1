@@ -35,7 +35,7 @@ data class FMVSSDummyEntity(
     val weightLbs: Double,
     val weightKg: Double,
     val ageRange: String,
-    val适用的Standards: String, // JSON string
+    val applicableStandards: String, // JSON string
     val lastUpdated: Long = System.currentTimeMillis()
 )
 
