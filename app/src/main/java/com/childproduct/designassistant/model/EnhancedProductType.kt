@@ -47,14 +47,6 @@ enum class InternationalStandard(
 }
 
 /**
- * 安装方向枚举
- */
-enum class InstallDirection(val displayName: String) {
-    REARWARD("后向安装"),  // 后向安装
-    FORWARD("前向安装")    // 前向安装
-}
-
-/**
  * 增强的安装方式枚举
  * 包含固定类型、防旋转类型和适用方向
  */
