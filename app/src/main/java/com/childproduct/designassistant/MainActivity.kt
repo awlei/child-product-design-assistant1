@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.compose.viewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import com.childproduct.designassistant.ui.MainViewModel
 import com.childproduct.designassistant.ui.UiState
 import com.childproduct.designassistant.ui.screens.CreativeScreen
@@ -70,10 +70,24 @@ fun MainScreen() {
     var selectedModule by remember { mutableStateOf<String?>(null) }
     var showDesignProposal by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val designProposalViewModel: DesignProposalViewModel = viewModel(
-        factory = androidx.lifecycle.viewmodel.compose.viewModelFactory {
-            androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(context.applicationContext as android.app.Application)
+
+    // 创建自定义ViewModel Factory用于DesignProposalViewModel（需要Application上下文）
+    val designProposalViewModelFactory = remember {
+        object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(com.childproduct.designassistant.ui.screens.DesignProposalViewModel::class.java)) {
+                    return com.childproduct.designassistant.ui.screens.DesignProposalViewModel(
+                        context.applicationContext as android.app.Application
+                    ) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class")
+            }
         }
+    }
+
+    val designProposalViewModel: com.childproduct.designassistant.ui.screens.DesignProposalViewModel = viewModel(
+        factory = designProposalViewModelFactory
     )
 
     Scaffold(
