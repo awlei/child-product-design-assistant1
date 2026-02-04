@@ -17,7 +17,8 @@ class ChildRestraintDesignServiceTest {
             eceR129 = true,
             gb27887 = false,
             fmvss213 = false,
-            asNzs1754 = false
+            asNzs1754 = false,
+            jisD1601 = false
         )
         
         val proposal = service.generateDesignProposal(
@@ -40,7 +41,8 @@ class ChildRestraintDesignServiceTest {
             eceR129 = false,
             gb27887 = true,
             fmvss213 = false,
-            asNzs1754 = false
+            asNzs1754 = false,
+            jisD1601 = false
         )
         
         val proposal = service.generateDesignProposal(
@@ -63,7 +65,8 @@ class ChildRestraintDesignServiceTest {
             eceR129 = false,
             gb27887 = false,
             fmvss213 = true,
-            asNzs1754 = false
+            asNzs1754 = false,
+            jisD1601 = false
         )
         
         val proposal = service.generateDesignProposal(
@@ -86,7 +89,8 @@ class ChildRestraintDesignServiceTest {
             eceR129 = true,
             gb27887 = true,
             fmvss213 = false,
-            asNzs1754 = false
+            asNzs1754 = false,
+            jisD1601 = false
         )
         
         val proposal = service.generateDesignProposal(
@@ -109,7 +113,8 @@ class ChildRestraintDesignServiceTest {
             eceR129 = true,
             gb27887 = true,
             fmvss213 = true,
-            asNzs1754 = true
+            asNzs1754 = true,
+            jisD1601 = true
         )
         
         val proposal = service.generateDesignProposal(
@@ -132,7 +137,8 @@ class ChildRestraintDesignServiceTest {
             eceR129 = false,
             gb27887 = false,
             fmvss213 = false,
-            asNzs1754 = false
+            asNzs1754 = false,
+            jisD1601 = false
         )
         
         val proposal = service.generateDesignProposal(

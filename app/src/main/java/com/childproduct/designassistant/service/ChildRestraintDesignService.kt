@@ -17,11 +17,12 @@ class ChildRestraintDesignService {
      */
     data class StandardSelection(
         val eceR129: Boolean = false,      // ECE R129 (欧盟i-Size)
-        val gb27887: Boolean = false,     // GB 28007-2024 (中国新标)
+        val gb27887: Boolean = false,     // GB 27887-2024 (中国新标)
         val fmvss213: Boolean = false,    // FMVSS 213 (美国标准)
-        val asNzs1754: Boolean = false    // AS/NZS 1754 (澳洲标准)
+        val asNzs1754: Boolean = false,   // AS/NZS 1754 (澳洲标准)
+        val jisD1601: Boolean = false     // JIS D 1601 (日本标准)
     ) {
-        fun hasAnySelection(): Boolean = eceR129 || gb27887 || fmvss213 || asNzs1754
+        fun hasAnySelection(): Boolean = eceR129 || gb27887 || fmvss213 || asNzs1754 || jisD1601
         
         fun getSelectedStandards(): List<String> {
             val list = mutableListOf<String>()
@@ -29,6 +30,7 @@ class ChildRestraintDesignService {
             if (gb27887) list.add("GB 28007-2024")
             if (fmvss213) list.add("FMVSS 213")
             if (asNzs1754) list.add("AS/NZS 1754")
+            if (jisD1601) list.add("JIS D 1601")
             return list
         }
     }
@@ -182,6 +184,13 @@ class ChildRestraintDesignService {
             directions.add("AS/NZS 1754: 反向、前向、增高垫")
         }
 
+        // JIS D 1601 (日标)
+        if (selection.jisD1601) {
+            heightRanges.add("JIS D 1601: 基于年龄分组（0-6岁）")
+            weightRanges.add("JIS D 1601: 0-18kg")
+            directions.add("JIS D 1601: 反向、前向、安全带固定")
+        }
+
         return DummyDataSection(
             heightRange = heightRanges.joinToString("\n"),
             weightRange = weightRanges.joinToString("\n"),
@@ -230,6 +239,14 @@ class ChildRestraintDesignService {
             sideImpactArea.add("AS/NZS 1754: 侧碰要求")
         }
 
+        // JIS D 1601 (日标)
+        if (selection.jisD1601) {
+            headRestHeight.add("JIS D 1601: 参考日本儿童座椅规范")
+            seatWidth.add("JIS D 1601: 360-450mm")
+            envelope.add("JIS D 1601: 外形尺寸限制")
+            sideImpactArea.add("JIS D 1601: 侧碰防护要求")
+        }
+
         return DesignParametersSection(
             headRestHeight = if (headRestHeight.isNotEmpty()) headRestHeight.joinToString("\n") else null,
             seatWidth = if (seatWidth.isNotEmpty()) seatWidth.joinToString("\n") else null,
@@ -272,6 +289,13 @@ class ChildRestraintDesignService {
             frontal.add("AS/NZS 1754: 48km/h 正碰")
             sideChestCompression.add("AS/NZS 1754: 侧碰胸部压缩限制")
             webbingStrength.add("AS/NZS 1754: 织带最小断裂强度 4.5kN")
+        }
+
+        // JIS D 1601 (日标)
+        if (selection.jisD1601) {
+            frontal.add("JIS D 1601: 50km/h 正碰")
+            sideChestCompression.add("JIS D 1601: 侧碰胸部压缩量 ≤ 50mm")
+            webbingStrength.add("JIS D 1601: 织带最小断裂强度 4.5kN")
         }
 
         return TestRequirementsSection(
@@ -320,6 +344,14 @@ class ChildRestraintDesignService {
             dynamicRear.add("AS/NZS 1754: 无强制后碰测试要求")
             dynamicSide.add("AS/NZS 1754: 侧碰测试")
             flammability.add("AS/NZS 1754: AS 1530.3 阻燃要求")
+        }
+
+        // JIS D 1601 (日标)
+        if (selection.jisD1601) {
+            dynamicFrontal.add("JIS D 1601: 50km/h 正碰测试")
+            dynamicRear.add("JIS D 1601: 无强制后碰测试要求")
+            dynamicSide.add("JIS D 1601: 侧碰测试要求")
+            flammability.add("JIS D 1601: JIS D 1201 阻燃要求")
         }
 
         return StandardTestItemsSection(
@@ -415,7 +447,8 @@ fun testService() {
         eceR129 = true,
         gb27887 = false,
         fmvss213 = false,
-        asNzs1754 = false
+        asNzs1754 = false,
+        jisD1601 = false
     )
     
     val proposal1 = service.generateDesignProposal(
@@ -434,7 +467,8 @@ fun testService() {
         eceR129 = true,
         gb27887 = true,
         fmvss213 = false,
-        asNzs1754 = false
+        asNzs1754 = false,
+        jisD1601 = false
     )
     
     val proposal2 = service.generateDesignProposal(
@@ -453,7 +487,8 @@ fun testService() {
         eceR129 = false,
         gb27887 = false,
         fmvss213 = true,
-        asNzs1754 = false
+        asNzs1754 = false,
+        jisD1601 = false
     )
     
     val proposal3 = service.generateDesignProposal(
@@ -463,6 +498,26 @@ fun testService() {
     )
     
     println(service.formatAsMarkdown(proposal3))
+    
+    println("\n" + "=".repeat(80))
+    println("测试4：全选所有标准")
+    println("=".repeat(80) + "\n")
+    
+    val selection4 = ChildRestraintDesignService.StandardSelection(
+        eceR129 = true,
+        gb27887 = true,
+        fmvss213 = true,
+        asNzs1754 = true,
+        jisD1601 = true
+    )
+    
+    val proposal4 = service.generateDesignProposal(
+        selection = selection4,
+        heightCm = 50.0,
+        weightKg = 1.5
+    )
+    
+    println(service.formatAsMarkdown(proposal4))
     
     println("\n" + "=".repeat(80))
     println("测试完成")
