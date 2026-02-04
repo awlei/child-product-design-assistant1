@@ -547,12 +547,12 @@ object EceR129StandardDatabase {
     // ========== 辅助方法 ==========
     
     private fun parseWeightRange(range: String): Pair<Double, Double> {
-        val match = Regex("([\\d.]+)kg").findAll(range).map { it.groupValues[1].toDouble() }
+        val match = Regex("([\\d.]+)kg").findAll(range).map { it.groupValues[1].toDouble() }.toList()
         return if (match.size >= 2) match[0] to match[1] else 0.0 to 0.0
     }
     
     private fun parseHeightRange(range: String): Pair<Double, Double> {
-        val match = Regex("([\\d.]+)cm").findAll(range).map { it.groupValues[1].toDouble() }
+        val match = Regex("([\\d.]+)cm").findAll(range).map { it.groupValues[1].toDouble() }.toList()
         return if (match.size >= 2) match[0] to match[1] else 0.0 to 0.0
     }
 }

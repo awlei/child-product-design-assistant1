@@ -127,10 +127,12 @@ object HighChairStandardsData {
     /**
      * 所有标准列表
      */
-    val STANDARDS = listOf(
-        EN_14988_STANDARD,
-        GB_29281_STANDARD
-    )
+    val STANDARDS by lazy {
+        listOf(
+            EN_14988_STANDARD,
+            GB_29281_STANDARD
+        )
+    }
 
     /**
      * EN 14988 欧盟标准数据

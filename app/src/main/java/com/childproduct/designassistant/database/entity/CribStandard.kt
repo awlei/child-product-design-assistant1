@@ -133,10 +133,12 @@ object CribStandardsData {
     /**
      * 所有标准列表
      */
-    val STANDARDS = listOf(
-        EN_716_STANDARD,
-        GB_28007_STANDARD
-    )
+    val STANDARDS by lazy {
+        listOf(
+            EN_716_STANDARD,
+            GB_28007_STANDARD
+        )
+    }
 
     /**
      * EN 716 欧盟标准数据
