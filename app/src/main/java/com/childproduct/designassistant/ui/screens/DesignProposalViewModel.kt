@@ -5,7 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.childproduct.designassistant.data.model.DesignProposal
 import com.childproduct.designassistant.data.model.DesignProposalRequest
+import com.childproduct.designassistant.database.CribDatabase
 import com.childproduct.designassistant.database.EceR129Database
+import com.childproduct.designassistant.database.HighChairDatabase
 import com.childproduct.designassistant.service.DesignProposalGenerator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,8 +19,10 @@ import kotlinx.coroutines.launch
  */
 class DesignProposalViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val database = EceR129Database.getDatabase(application)
-    private val generator = DesignProposalGenerator(database)
+    private val eceR129Database = EceR129Database.getDatabase(application)
+    private val highChairDatabase = HighChairDatabase.getDatabase(application)
+    private val cribDatabase = CribDatabase.getDatabase(application)
+    private val generator = DesignProposalGenerator(eceR129Database, highChairDatabase, cribDatabase)
 
     // UI状态
     private val _uiState = MutableStateFlow<DesignProposalUiState>(DesignProposalUiState.Idle)

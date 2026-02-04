@@ -3,7 +3,9 @@ package com.childproduct.designassistant.repository
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.childproduct.designassistant.database.CribDatabase
 import com.childproduct.designassistant.database.EceR129Database
+import com.childproduct.designassistant.database.HighChairDatabase
 import com.childproduct.designassistant.database.dao.*
 import com.childproduct.designassistant.database.entity.*
 import com.childproduct.designassistant.model.InstallDirection
@@ -16,7 +18,9 @@ import kotlinx.coroutines.withContext
  */
 class StandardRepository private constructor(
     private val context: Context,
-    private val database: EceR129Database
+    private val eceR129Database: EceR129Database,
+    private val highChairDatabase: HighChairDatabase,
+    private val cribDatabase: CribDatabase
 ) {
 
     // ========== 假人相关操作 ==========
@@ -25,7 +29,7 @@ class StandardRepository private constructor(
      * 获取所有假人类型
      */
     fun getAllDummies(): LiveData<List<CrashTestDummy>> {
-        return database.crashTestDummyDao().getAllDummies()
+        return eceR129Database.crashTestDummyDao().getAllDummies()
     }
 
     /**
@@ -33,7 +37,7 @@ class StandardRepository private constructor(
      */
     suspend fun getDummyByHeight(heightCm: Int): CrashTestDummy? {
         return withContext(Dispatchers.IO) {
-            database.crashTestDummyDao().getDummyByHeightRange(heightCm)
+            eceR129Database.crashTestDummyDao().getDummyByHeightRange(heightCm)
         }
     }
 
@@ -42,7 +46,7 @@ class StandardRepository private constructor(
      */
     suspend fun getDummiesByHeightRange(minHeight: Int, maxHeight: Int): List<CrashTestDummy> {
         return withContext(Dispatchers.IO) {
-            val allDummies = database.crashTestDummyDao().getAllDummiesList()
+            val allDummies = eceR129Database.crashTestDummyDao().getAllDummiesList()
             allDummies.filter { dummy ->
                 dummy.minHeightCm >= minHeight && dummy.maxHeightCm <= maxHeight
             }
@@ -55,14 +59,14 @@ class StandardRepository private constructor(
      * 获取所有安全阈值
      */
     fun getAllSafetyThresholds(): LiveData<List<SafetyThreshold>> {
-        return database.safetyThresholdDao().getAllThresholds()
+        return eceR129Database.safetyThresholdDao().getAllThresholds()
     }
 
     /**
      * 根据假人获取安全阈值
      */
     fun getSafetyThresholdsByDummy(dummyId: String): LiveData<List<SafetyThreshold>> {
-        return database.safetyThresholdDao().getThresholdsByDummy(dummyId)
+        return eceR129Database.safetyThresholdDao().getThresholdsByDummy(dummyId)
     }
 
     /**
@@ -70,7 +74,7 @@ class StandardRepository private constructor(
      */
     suspend fun getThresholdsByDummyCode(dummyCode: String): List<SafetyThreshold> {
         return withContext(Dispatchers.IO) {
-            database.safetyThresholdDao().getThresholdsApplicableToDummy(dummyCode)
+            eceR129Database.safetyThresholdDao().getThresholdsApplicableToDummy(dummyCode)
         }
     }
 
@@ -80,7 +84,7 @@ class StandardRepository private constructor(
      * 获取所有测试配置
      */
     fun getAllTestConfigurations(): LiveData<List<TestConfiguration>> {
-        return database.testConfigurationDao().getAllConfigurations()
+        return eceR129Database.testConfigurationDao().getAllConfigurations()
     }
 
     /**
@@ -90,7 +94,7 @@ class StandardRepository private constructor(
         dummyCode: String,
         installDirection: String
     ): LiveData<List<TestConfiguration>> {
-        return database.testConfigurationDao().getConfigurationsByDummyAndDirection(
+        return eceR129Database.testConfigurationDao().getConfigurationsByDummyAndDirection(
             dummyCode, installDirection
         )
     }
@@ -112,7 +116,7 @@ class StandardRepository private constructor(
                 } else {
                     "FORWARD"
                 }
-                val dummyConfigs = database.testConfigurationDao()
+                val dummyConfigs = eceR129Database.testConfigurationDao()
                     .getConfigurationsByDummyAndDirection(dummy.dummyCode, direction).value ?: emptyList()
                 configs.addAll(dummyConfigs)
             }
@@ -128,7 +132,7 @@ class StandardRepository private constructor(
      */
     suspend fun getCurrentStandardVersion(): String? {
         return withContext(Dispatchers.IO) {
-            database.standardReferenceDao().getCurrentVersion("UN R129")
+            eceR129Database.standardReferenceDao().getCurrentVersion("UN R129")
         }
     }
 
@@ -136,7 +140,7 @@ class StandardRepository private constructor(
      * 获取所有标准引用
      */
     fun getAllStandards(): LiveData<List<StandardReference>> {
-        return database.standardReferenceDao().getAllStandards()
+        return eceR129Database.standardReferenceDao().getAllStandards()
     }
 
     // ========== 身高范围映射相关操作 ==========
@@ -146,7 +150,7 @@ class StandardRepository private constructor(
      */
     suspend fun getHeightMapping(heightCm: Int): HeightRangeMapping? {
         return withContext(Dispatchers.IO) {
-            database.heightRangeMappingDao().getMappingByHeight(heightCm)
+            eceR129Database.heightRangeMappingDao().getMappingByHeight(heightCm)
         }
     }
 
@@ -154,7 +158,7 @@ class StandardRepository private constructor(
      * 获取所有身高映射
      */
     fun getAllHeightMappings(): LiveData<List<HeightRangeMapping>> {
-        return database.heightRangeMappingDao().getAllMappings()
+        return eceR129Database.heightRangeMappingDao().getAllMappings()
     }
 
     // ========== 安装方式相关操作 ==========
@@ -163,7 +167,7 @@ class StandardRepository private constructor(
      * 获取所有安装方式
      */
     fun getAllInstallationMethods(): LiveData<List<InstallationMethod>> {
-        return database.installationMethodDao().getAllMethods()
+        return eceR129Database.installationMethodDao().getAllMethods()
     }
 
     // ========== 材料规格相关操作 ==========
@@ -172,7 +176,7 @@ class StandardRepository private constructor(
      * 获取所有材料规格
      */
     fun getAllMaterialSpecifications(): LiveData<List<MaterialSpecification>> {
-        return database.materialSpecificationDao().getAllSpecifications()
+        return eceR129Database.materialSpecificationDao().getAllSpecifications()
     }
 
     // ========== ISOFIX要求相关操作 ==========
@@ -181,7 +185,7 @@ class StandardRepository private constructor(
      * 获取所有ISOFIX要求
      */
     fun getAllIsofixRequirements(): LiveData<List<IsofixRequirement>> {
-        return database.isofixRequirementDao().getAllRequirements()
+        return eceR129Database.isofixRequirementDao().getAllRequirements()
     }
 
     // ========== 同步日志相关操作 ==========
@@ -190,7 +194,7 @@ class StandardRepository private constructor(
      * 获取最近的同步日志
      */
     fun getRecentSyncLogs(): LiveData<List<StandardUpdateLog>> {
-        return database.standardUpdateLogDao().getRecentLogs()
+        return eceR129Database.standardUpdateLogDao().getRecentLogs()
     }
 
     /**
@@ -198,7 +202,7 @@ class StandardRepository private constructor(
      */
     suspend fun getLastSyncTime(): Long? {
         return withContext(Dispatchers.IO) {
-            database.standardUpdateLogDao().getLastSyncTime()
+            eceR129Database.standardUpdateLogDao().getLastSyncTime()
         }
     }
 
@@ -207,56 +211,56 @@ class StandardRepository private constructor(
     /**
      * 获取所有活跃的儿童高脚椅标准
      */
-    fun getAllActiveHighChairStandards() = database.highChairStandardDao().getAllActiveStandards()
+    fun getAllActiveHighChairStandards() = highChairDatabase.highChairStandardDao().getAllActiveStandards()
 
     /**
      * 根据标准ID获取儿童高脚椅标准
      */
     suspend fun getHighChairStandardById(standardId: String) = 
-        withContext(Dispatchers.IO) { database.highChairStandardDao().getStandardById(standardId) }
+        withContext(Dispatchers.IO) { highChairDatabase.highChairStandardDao().getStandardById(standardId) }
 
     /**
      * 根据地区获取儿童高脚椅标准
      */
     fun getHighChairStandardsByRegion(region: String) = 
-        database.highChairStandardDao().getStandardsByRegion(region)
+        highChairDatabase.highChairStandardDao().getStandardsByRegion(region)
 
     /**
      * 获取标准下的年龄组
      */
     fun getHighChairAgeGroups(standardId: String) = 
-        database.highChairAgeGroupDao().getAgeGroupsByStandard(standardId)
+        highChairDatabase.highChairAgeGroupDao().getAgeGroupsByStandard(standardId)
 
     /**
      * 获取标准下的安全要求
      */
     fun getHighChairSafetyRequirements(standardId: String) = 
-        database.highChairSafetyRequirementDao().getRequirementsByStandard(standardId)
+        highChairDatabase.highChairSafetyRequirementDao().getRequirementsByStandard(standardId)
 
     /**
      * 根据类别获取安全要求
      */
     fun getHighChairRequirementsByCategory(standardId: String, category: String) = 
-        database.highChairSafetyRequirementDao().getRequirementsByCategory(standardId, category)
+        highChairDatabase.highChairSafetyRequirementDao().getRequirementsByCategory(standardId, category)
 
     /**
      * 获取标准下的稳定性数据
      */
     fun getHighChairStability(standardId: String) = 
-        database.highChairStabilityDao().getStabilityByStandard(standardId)
+        highChairDatabase.highChairStabilityDao().getStabilityByStandard(standardId)
 
     /**
      * 获取标准下的约束系统数据
      */
     fun getHighChairRestraints(standardId: String) = 
-        database.highChairRestraintDao().getRestraintsByStandard(standardId)
+        highChairDatabase.highChairRestraintDao().getRestraintsByStandard(standardId)
 
     /**
      * 初始化儿童高脚椅标准数据
      */
     suspend fun initializeHighChairStandards() = withContext(Dispatchers.IO) {
         // 插入标准
-        database.highChairStandardDao().insertStandards(
+        highChairDatabase.highChairStandardDao().insertStandards(
             listOf(
                 HighChairStandardsData.EN_14988_STANDARD,
                 HighChairStandardsData.GB_29281_STANDARD
@@ -264,16 +268,16 @@ class StandardRepository private constructor(
         )
         
         // 插入年龄组
-        database.highChairAgeGroupDao().insertAgeGroups(HighChairStandardsData.AGE_GROUPS)
+        highChairDatabase.highChairAgeGroupDao().insertAgeGroups(HighChairStandardsData.AGE_GROUPS)
         
         // 插入安全要求
-        database.highChairSafetyRequirementDao().insertRequirements(HighChairStandardsData.SAFETY_REQUIREMENTS)
+        highChairDatabase.highChairSafetyRequirementDao().insertRequirements(HighChairStandardsData.SAFETY_REQUIREMENTS)
         
         // 插入稳定性数据
-        database.highChairStabilityDao().insertStabilities(HighChairStandardsData.STABILITY_DATA)
+        highChairDatabase.highChairStabilityDao().insertStabilities(HighChairStandardsData.STABILITY_DATA)
         
         // 插入约束系统数据
-        database.highChairRestraintDao().insertRestraints(HighChairStandardsData.RESTRAINT_DATA)
+        highChairDatabase.highChairRestraintDao().insertRestraints(HighChairStandardsData.RESTRAINT_DATA)
     }
 
     // ========== 儿童床相关操作 ==========
@@ -281,68 +285,68 @@ class StandardRepository private constructor(
     /**
      * 获取所有活跃的儿童床标准
      */
-    fun getAllActiveCribStandards() = database.cribStandardDao().getAllActiveStandards()
+    fun getAllActiveCribStandards() = cribDatabase.cribStandardDao().getAllActiveStandards()
 
     /**
      * 根据标准ID获取儿童床标准
      */
     suspend fun getCribStandardById(standardId: String) = 
-        withContext(Dispatchers.IO) { database.cribStandardDao().getStandardById(standardId) }
+        withContext(Dispatchers.IO) { cribDatabase.cribStandardDao().getStandardById(standardId) }
 
     /**
      * 根据地区获取儿童床标准
      */
     fun getCribStandardsByRegion(region: String) = 
-        database.cribStandardDao().getStandardsByRegion(region)
+        cribDatabase.cribStandardDao().getStandardsByRegion(region)
 
     /**
      * 获取标准下的尺寸要求
      */
     fun getCribDimensions(standardId: String) = 
-        database.cribDimensionDao().getDimensionsByStandard(standardId)
+        cribDatabase.cribDimensionDao().getDimensionsByStandard(standardId)
 
     /**
      * 根据类型获取尺寸要求
      */
     fun getCribDimensionsByType(standardId: String, type: String) = 
-        database.cribDimensionDao().getDimensionsByType(standardId, type)
+        cribDatabase.cribDimensionDao().getDimensionsByType(standardId, type)
 
     /**
      * 获取标准下的床垫间隙要求
      */
     fun getCribMattressGaps(standardId: String) = 
-        database.cribMattressGapDao().getGapsByStandard(standardId)
+        cribDatabase.cribMattressGapDao().getGapsByStandard(standardId)
 
     /**
      * 获取标准下的栏杆要求
      */
     fun getCribRailings(standardId: String) = 
-        database.cribRailingDao().getRailingsByStandard(standardId)
+        cribDatabase.cribRailingDao().getRailingsByStandard(standardId)
 
     /**
      * 根据类型获取栏杆要求
      */
     fun getCribRailingsByType(standardId: String, type: String) = 
-        database.cribRailingDao().getRailingsByType(standardId, type)
+        cribDatabase.cribRailingDao().getRailingsByType(standardId, type)
 
     /**
      * 获取标准下的安全要求
      */
     fun getCribSafetyRequirements(standardId: String) = 
-        database.cribSafetyRequirementDao().getRequirementsByStandard(standardId)
+        cribDatabase.cribSafetyRequirementDao().getRequirementsByStandard(standardId)
 
     /**
      * 根据类别获取安全要求
      */
     fun getCribRequirementsByCategory(standardId: String, category: String) = 
-        database.cribSafetyRequirementDao().getRequirementsByCategory(standardId, category)
+        cribDatabase.cribSafetyRequirementDao().getRequirementsByCategory(standardId, category)
 
     /**
      * 初始化儿童床标准数据
      */
     suspend fun initializeCribStandards() = withContext(Dispatchers.IO) {
         // 插入标准
-        database.cribStandardDao().insertStandards(
+        cribDatabase.cribStandardDao().insertStandards(
             listOf(
                 CribStandardsData.EN_716_STANDARD,
                 CribStandardsData.GB_28007_STANDARD
@@ -350,16 +354,16 @@ class StandardRepository private constructor(
         )
         
         // 插入尺寸要求
-        database.cribDimensionDao().insertDimensions(CribStandardsData.DIMENSIONS)
+        cribDatabase.cribDimensionDao().insertDimensions(CribStandardsData.DIMENSIONS)
         
         // 插入床垫间隙要求
-        database.cribMattressGapDao().insertGaps(CribStandardsData.MATTRESS_GAPS)
+        cribDatabase.cribMattressGapDao().insertGaps(CribStandardsData.MATTRESS_GAPS)
         
         // 插入栏杆要求
-        database.cribRailingDao().insertRailings(CribStandardsData.RAILINGS)
+        cribDatabase.cribRailingDao().insertRailings(CribStandardsData.RAILINGS)
         
         // 插入安全要求
-        database.cribSafetyRequirementDao().insertRequirements(CribStandardsData.SAFETY_REQUIREMENTS)
+        cribDatabase.cribSafetyRequirementDao().insertRequirements(CribStandardsData.SAFETY_REQUIREMENTS)
     }
 
     companion object {
@@ -369,7 +373,9 @@ class StandardRepository private constructor(
             return instance ?: synchronized(this) {
                 instance ?: StandardRepository(
                     context,
-                    EceR129Database.getDatabase(context)
+                    EceR129Database.getDatabase(context),
+                    HighChairDatabase.getDatabase(context),
+                    CribDatabase.getDatabase(context)
                 ).also { instance = it }
             }
         }

@@ -131,6 +131,14 @@ data class CribSafetyRequirement(
 object CribStandardsData {
     
     /**
+     * 所有标准列表
+     */
+    val STANDARDS = listOf(
+        EN_716_STANDARD,
+        GB_28007_STANDARD
+    )
+
+    /**
      * EN 716 欧盟标准数据
      */
     val EN_716_STANDARD = CribStandard(

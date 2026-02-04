@@ -1,6 +1,8 @@
 package com.childproduct.designassistant.service
 
+import com.childproduct.designassistant.database.CribDatabase
 import com.childproduct.designassistant.database.EceR129Database
+import com.childproduct.designassistant.database.HighChairDatabase
 import com.childproduct.designassistant.database.entity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -12,7 +14,9 @@ import kotlinx.coroutines.withContext
  * 提供标准数据库的查询功能，支持根据标准ID获取详细的标准信息
  */
 class StandardDatabaseService(
-    private val database: EceR129Database
+    private val eceR129Database: EceR129Database,
+    private val highChairDatabase: HighChairDatabase,
+    private val cribDatabase: CribDatabase
 ) {
 
     /**
@@ -20,7 +24,7 @@ class StandardDatabaseService(
      */
     suspend fun getHighChairStandard(standardId: String): HighChairStandard? =
         withContext(Dispatchers.IO) {
-            database.highChairStandardDao().getStandardById(standardId)
+            highChairDatabase.highChairStandardDao().getStandardById(standardId)
         }
 
     /**
@@ -28,7 +32,7 @@ class StandardDatabaseService(
      */
     suspend fun getCribStandard(standardId: String): CribStandard? =
         withContext(Dispatchers.IO) {
-            database.cribStandardDao().getStandardById(standardId)
+            cribDatabase.cribStandardDao().getStandardById(standardId)
         }
 
     /**
@@ -36,7 +40,7 @@ class StandardDatabaseService(
      */
     suspend fun getAllHighChairStandards(): List<HighChairStandard> =
         withContext(Dispatchers.IO) {
-            database.highChairStandardDao().getAllActiveStandards().first()
+            highChairDatabase.highChairStandardDao().getAllActiveStandards().first()
         }
 
     /**
@@ -44,7 +48,7 @@ class StandardDatabaseService(
      */
     suspend fun getAllCribStandards(): List<CribStandard> =
         withContext(Dispatchers.IO) {
-            database.cribStandardDao().getAllActiveStandards().first()
+            cribDatabase.cribStandardDao().getAllActiveStandards().first()
         }
 
     /**
@@ -52,7 +56,7 @@ class StandardDatabaseService(
      */
     suspend fun getStandardSummary(standardId: String): StandardSummary? =
         withContext(Dispatchers.IO) {
-            val highChairStandard = database.highChairStandardDao().getStandardById(standardId)
+            val highChairStandard = highChairDatabase.highChairStandardDao().getStandardById(standardId)
             if (highChairStandard != null) {
                 return@withContext StandardSummary(
                     id = highChairStandard.standardId,
@@ -63,7 +67,7 @@ class StandardDatabaseService(
                 )
             }
 
-            val cribStandard = database.cribStandardDao().getStandardById(standardId)
+            val cribStandard = cribDatabase.cribStandardDao().getStandardById(standardId)
             if (cribStandard != null) {
                 return@withContext StandardSummary(
                     id = cribStandard.standardId,
@@ -85,7 +89,7 @@ class StandardDatabaseService(
             val summaries = mutableListOf<StandardSummary>()
 
             // 查询儿童高脚椅标准
-            val highChairStandards = database.highChairStandardDao().getAllActiveStandards().first()
+            val highChairStandards = highChairDatabase.highChairStandardDao().getAllActiveStandards().first()
             highChairStandards.forEach { standard: HighChairStandard ->
                 if (standardIds.contains(standard.standardId)) {
                     summaries.add(
@@ -101,7 +105,7 @@ class StandardDatabaseService(
             }
 
             // 查询儿童床标准
-            val cribStandards = database.cribStandardDao().getAllActiveStandards().first()
+            val cribStandards = cribDatabase.cribStandardDao().getAllActiveStandards().first()
             cribStandards.forEach { standard: CribStandard ->
                 if (standardIds.contains(standard.standardId)) {
                     summaries.add(

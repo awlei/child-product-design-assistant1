@@ -27,19 +27,7 @@ import com.childproduct.designassistant.data.model.*
         InstallationMethod::class,
         MaterialSpecification::class,
         IsofixRequirement::class,
-        StandardUpdateLog::class,
-        // 儿童高脚椅相关实体
-        HighChairStandard::class,
-        HighChairAgeGroup::class,
-        HighChairSafetyRequirement::class,
-        HighChairStability::class,
-        HighChairRestraint::class,
-        // 儿童床相关实体
-        CribStandard::class,
-        CribDimension::class,
-        CribMattressGap::class,
-        CribRailing::class,
-        CribSafetyRequirement::class
+        StandardUpdateLog::class
     ],
     version = 2,
     exportSchema = true
@@ -57,20 +45,6 @@ abstract class EceR129Database : RoomDatabase() {
     abstract fun materialSpecificationDao(): MaterialSpecificationDao
     abstract fun isofixRequirementDao(): IsofixRequirementDao
     abstract fun standardUpdateLogDao(): StandardUpdateLogDao
-    
-    // 儿童高脚椅相关 DAO
-    abstract fun highChairStandardDao(): HighChairStandardDao
-    abstract fun highChairAgeGroupDao(): HighChairAgeGroupDao
-    abstract fun highChairSafetyRequirementDao(): HighChairSafetyRequirementDao
-    abstract fun highChairStabilityDao(): HighChairStabilityDao
-    abstract fun highChairRestraintDao(): HighChairRestraintDao
-    
-    // 儿童床相关 DAO
-    abstract fun cribStandardDao(): CribStandardDao
-    abstract fun cribDimensionDao(): CribDimensionDao
-    abstract fun cribMattressGapDao(): CribMattressGapDao
-    abstract fun cribRailingDao(): CribRailingDao
-    abstract fun cribSafetyRequirementDao(): CribSafetyRequirementDao
 
     companion object {
         @Volatile private var INSTANCE: EceR129Database? = null

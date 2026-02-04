@@ -1,7 +1,9 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.data.model.*
+import com.childproduct.designassistant.database.CribDatabase
 import com.childproduct.designassistant.database.EceR129Database
+import com.childproduct.designassistant.database.HighChairDatabase
 import com.childproduct.designassistant.network.llm.LLMClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,12 +15,14 @@ import kotlinx.serialization.json.Json
  * 使用LLM生成结构化的儿童安全座椅设计方案
  */
 class DesignProposalGenerator(
-    private val database: EceR129Database
+    private val eceR129Database: EceR129Database,
+    private val highChairDatabase: HighChairDatabase,
+    private val cribDatabase: CribDatabase
 ) {
 
     private val llmClient = LLMClient.getInstance()
     private val json = Json { ignoreUnknownKeys = true }
-    private val standardDbService = StandardDatabaseService(database)
+    private val standardDbService = StandardDatabaseService(eceR129Database, highChairDatabase, cribDatabase)
 
     /**
      * 生成设计方案
