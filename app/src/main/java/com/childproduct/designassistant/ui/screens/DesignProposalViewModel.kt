@@ -52,16 +52,24 @@ class DesignProposalViewModel(application: Application) : AndroidViewModel(appli
                     
                     // 生成Markdown内容（如果是儿童安全座椅）
                     if (request.productType == "儿童安全座椅") {
+                        val standardList = request.selectedStandards["儿童安全座椅"] ?: emptyList()
                         val selection = ChildRestraintDesignService.StandardSelection(
-                            eceR129 = request.standards?.contains("ECE R129") == true,
-                            gb27887 = request.standards?.contains("GB 28007-2024") == true,
-                            fmvss213 = request.standards?.contains("FMVSS 213") == true,
-                            asNzs1754 = request.standards?.contains("AS/NZS 1754") == true,
-                            jisD1601 = request.standards?.contains("JIS D 1601") == true
+                            eceR129 = standardList.contains("ECE R129"),
+                            gb27887 = standardList.contains("GB 28007-2024"),
+                            fmvss213 = standardList.contains("FMVSS 213"),
+                            asNzs1754 = standardList.contains("AS/NZS 1754"),
+                            jisD1601 = standardList.contains("JIS D 1601")
                         )
                         
-                        val heightCm = request.heightRange?.maxOrNull() ?: 100.0
-                        val weightKg = request.weightRange?.maxOrNull() ?: 15.0
+                        // 解析身高和体重范围
+                        val heightStr = request.userInputDummyInfo?.targetHeightRange ?: "40-150"
+                        val weightStr = request.userInputDummyInfo?.targetWeightRange ?: "0-36"
+                        
+                        val heightRange = heightStr.split("-").map { it.trim().toDoubleOrNull() ?: 0.0 }
+                        val weightRange = weightStr.split("-").map { it.trim().toDoubleOrNull() ?: 0.0 }
+                        
+                        val heightCm = heightRange.maxOrNull() ?: 100.0
+                        val weightKg = weightRange.maxOrNull() ?: 15.0
                         
                         val designProposal = childRestraintDesignService.generateDesignProposal(
                             selection = selection,

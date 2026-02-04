@@ -114,16 +114,16 @@ object PdfExporter {
         paint.color = Color.parseColor("#1976D2")
         paint.textSize = 28f
         paint.isFakeBoldText = true
-        canvas.drawText(title, MARGIN_LEFT.toFloat(), MARGIN_TOP + 40f, paint)
+        canvas.drawText(title, MARGIN_LEFT.toFloat(), (MARGIN_TOP + 40).toFloat(), paint)
         
         // 绘制下划线
         paint.color = Color.parseColor("#2196F3")
-        paint.textSize = 4f
+        paint.strokeWidth = 4f
         canvas.drawLine(
             MARGIN_LEFT.toFloat(),
-            MARGIN_TOP + 50f,
-            PAGE_WIDTH - MARGIN_RIGHT.toFloat(),
-            MARGIN_TOP + 50f,
+            (MARGIN_TOP + 50).toFloat(),
+            (PAGE_WIDTH - MARGIN_RIGHT).toFloat(),
+            (MARGIN_TOP + 50).toFloat(),
             paint
         )
     }
@@ -141,7 +141,7 @@ object PdfExporter {
         val lines = content.lines()
 
         for (line in lines) {
-            if (y > PAGE_HEIGHT - MARGIN_BOTTOM) {
+            if (y > (PAGE_HEIGHT - MARGIN_BOTTOM).toFloat()) {
                 break // 页面已满
             }
 
@@ -175,24 +175,24 @@ object PdfExporter {
                     paint.color = Color.parseColor("#1976D2")
                     paint.textSize = 14f
                     paint.isFakeBoldText = false
-                    canvas.drawText(line, MARGIN_LEFT + 20f, y, paint)
-                    y += LINE_HEIGHT
+                    canvas.drawText(line, (MARGIN_LEFT + 20).toFloat(), y, paint)
+                    y += LINE_HEIGHT.toFloat()
                 }
                 // 列表项 (-)
                 line.startsWith("- ") -> {
                     paint.color = Color.BLACK
                     paint.textSize = 14f
                     paint.isFakeBoldText = false
-                    canvas.drawText("•", MARGIN_LEFT + 20f, y, paint)
+                    canvas.drawText("•", (MARGIN_LEFT + 20).toFloat(), y, paint)
                     // 简单的自动换行处理
                     val text = line.substring(2)
                     val remainingWidth = CONTENT_WIDTH - 40f
-                    drawWrappedText(canvas, paint, text, MARGIN_LEFT + 40f, y, remainingWidth)
-                    y += LINE_HEIGHT
+                    drawWrappedText(canvas, paint, text, (MARGIN_LEFT + 40).toFloat(), y, remainingWidth)
+                    y += LINE_HEIGHT.toFloat()
                 }
                 // 空行
                 line.isBlank() -> {
-                    y += LINE_HEIGHT * 0.5f
+                    y += (LINE_HEIGHT * 0.5).toFloat()
                 }
                 // 普通文本
                 else -> {
@@ -200,7 +200,7 @@ object PdfExporter {
                     paint.textSize = 14f
                     paint.isFakeBoldText = false
                     canvas.drawText(line, MARGIN_LEFT.toFloat(), y, paint)
-                    y += LINE_HEIGHT
+                    y += LINE_HEIGHT.toFloat()
                 }
             }
         }

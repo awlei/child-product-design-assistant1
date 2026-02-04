@@ -59,6 +59,25 @@ fun DesignProposalScreen(
         )
     }
 
+    // 导出PDF函数
+    fun exportToPdf(
+        context: Context,
+        content: String,
+        fileName: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
+        try {
+            val file = PdfExporter.exportDesignProposal(context, content, fileName)
+            if (file != null) {
+                callback(true, null)
+            } else {
+                callback(false, "PDF导出失败")
+            }
+        } catch (e: Exception) {
+            callback(false, e.message)
+        }
+    }
+
     // 权限请求启动器
     val storagePermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -76,25 +95,6 @@ fun DesignProposalScreen(
         } else {
             isExporting = false
             Toast.makeText(context, "需要存储权限才能导出PDF", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    // 导出PDF函数
-    fun exportToPdf(
-        context: Context,
-        content: String,
-        fileName: String,
-        callback: (Boolean, String?) -> Unit
-    ) {
-        try {
-            val file = PdfExporter.exportDesignProposal(context, content, fileName)
-            if (file != null) {
-                callback(true, null)
-            } else {
-                callback(false, "PDF导出失败")
-            }
-        } catch (e: Exception) {
-            callback(false, e.message)
         }
     }
 
