@@ -92,6 +92,8 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
     arg("room.expandProjection", "true")
+    // 增加 KSP 日志级别，帮助诊断编译错误
+    arg("ksp.verbose", "true")
 }
 
 dependencies {
