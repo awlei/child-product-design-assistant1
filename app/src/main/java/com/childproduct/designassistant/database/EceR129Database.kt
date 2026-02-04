@@ -25,14 +25,27 @@ import com.childproduct.designassistant.database.entity.*
         InstallationMethod::class,
         MaterialSpecification::class,
         IsofixRequirement::class,
-        StandardUpdateLog::class
+        StandardUpdateLog::class,
+        // 儿童高脚椅相关实体
+        HighChairStandard::class,
+        HighChairAgeGroup::class,
+        HighChairSafetyRequirement::class,
+        HighChairStability::class,
+        HighChairRestraint::class,
+        // 儿童床相关实体
+        CribStandard::class,
+        CribDimension::class,
+        CribMattressGap::class,
+        CribRailing::class,
+        CribSafetyRequirement::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class EceR129Database : RoomDatabase() {
 
+    // ECE R129 相关 DAO
     abstract fun crashTestDummyDao(): CrashTestDummyDao
     abstract fun heightRangeMappingDao(): HeightRangeMappingDao
     abstract fun safetyThresholdDao(): SafetyThresholdDao
@@ -42,6 +55,20 @@ abstract class EceR129Database : RoomDatabase() {
     abstract fun materialSpecificationDao(): MaterialSpecificationDao
     abstract fun isofixRequirementDao(): IsofixRequirementDao
     abstract fun standardUpdateLogDao(): StandardUpdateLogDao
+    
+    // 儿童高脚椅相关 DAO
+    abstract fun highChairStandardDao(): HighChairStandardDao
+    abstract fun highChairAgeGroupDao(): HighChairAgeGroupDao
+    abstract fun highChairSafetyRequirementDao(): HighChairSafetyRequirementDao
+    abstract fun highChairStabilityDao(): HighChairStabilityDao
+    abstract fun highChairRestraintDao(): HighChairRestraintDao
+    
+    // 儿童床相关 DAO
+    abstract fun cribStandardDao(): CribStandardDao
+    abstract fun cribDimensionDao(): CribDimensionDao
+    abstract fun cribMattressGapDao(): CribMattressGapDao
+    abstract fun cribRailingDao(): CribRailingDao
+    abstract fun cribSafetyRequirementDao(): CribSafetyRequirementDao
 
     companion object {
         @Volatile private var INSTANCE: EceR129Database? = null

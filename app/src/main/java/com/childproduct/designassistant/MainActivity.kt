@@ -32,6 +32,7 @@ import com.childproduct.designassistant.ui.screens.TestMatrixScreen
 import com.childproduct.designassistant.ui.screens.DesignSuggestionScreen
 import com.childproduct.designassistant.ui.screens.CompetitorReferenceScreen
 import com.childproduct.designassistant.ui.screens.ComplianceManagementScreen
+import com.childproduct.designassistant.ui.standard.StandardSelectionScreen
 import com.childproduct.designassistant.ui.theme.ChildProductDesignAssistantTheme
 
 class MainActivity : ComponentActivity() {
@@ -165,27 +166,73 @@ fun MainScreen() {
                 )
             }
         ) { targetTab ->
-            when (targetTab) {
-                0 -> CreativeScreen(
-                    viewModel = viewModel,
-                    modifier = Modifier.padding(screenPadding)
-                )
-                1 -> SafetyScreen(
-                    viewModel = viewModel,
-                    modifier = Modifier.padding(screenPadding)
-                )
-                2 -> TechnicalRecommendationScreen(
-                    viewModel = viewModel,
-                    modifier = Modifier.padding(screenPadding)
-                )
-                3 -> DocumentScreen(
-                    viewModel = viewModel,
-                    modifier = Modifier.padding(screenPadding)
-                )
-                4 -> MoreScreen(
-                    onNavigate = { screen -> selectedModule = screen },
-                    modifier = Modifier.padding(screenPadding)
-                )
+            // 处理 MoreScreen 的导航
+            if (selectedModule != null) {
+                when (selectedModule) {
+                    "文档学习" -> DocumentLearningScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "智能问答" -> ChatQAScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "一键生成" -> OneClickGenerationScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "综合报告" -> IntegratedReportScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "测试矩阵" -> TestMatrixScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "设计建议" -> DesignSuggestionScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "竞品参考" -> CompetitorReferenceScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "合规管理" -> ComplianceManagementScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    "标准适配" -> StandardSelectionScreen(
+                        onNavigateBack = { selectedModule = null },
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    else -> CreativeScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                }
+            } else {
+                when (targetTab) {
+                    0 -> CreativeScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    1 -> SafetyScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    2 -> TechnicalRecommendationScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    3 -> DocumentScreen(
+                        viewModel = viewModel,
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                    4 -> MoreScreen(
+                        onNavigate = { screen -> selectedModule = screen },
+                        modifier = Modifier.padding(screenPadding)
+                    )
+                }
             }
         }
     }
@@ -210,7 +257,8 @@ fun MoreScreen(
             "测试矩阵" to Icons.Default.GridOn,
             "设计建议" to Icons.Default.Recommend,
             "竞品参考" to Icons.Default.CompareArrows,
-            "合规管理" to Icons.Default.Gavel
+            "合规管理" to Icons.Default.Gavel,
+            "标准适配" to Icons.Default.Checklist
         ).forEach { (name, icon) ->
             Card(
                 modifier = Modifier
