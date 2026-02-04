@@ -34,7 +34,7 @@ data class CribDimensionData(
     val dimensionName: String,
     val minValue: Double,
     val maxValue: Double,
-    const val nominalValue: Double,
+    val nominalValue: Double,
     val unit: String,
     val tolerance: String,
     val passCriteria: String
@@ -47,13 +47,13 @@ data class CribSlatData(
     val slatId: String,
     val standard: CribStandardType,
     val slatType: String, // 竖杆或横杆
-    const val minSpacing: Double,
-    const val maxSpacing: Double,
-    const val nominalSpacing: Double,
+    val minSpacing: Double,
+    val maxSpacing: Double,
+    val nominalSpacing: Double,
     val unit: String,
     val tolerance: String,
     val strength: Double,
-    const val strengthRange: String,
+    val strengthRange: String,
     val passCriteria: String
 )
 

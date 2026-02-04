@@ -34,10 +34,10 @@ data class HighChairStabilityData(
     val testCondition: String,
     val trayAngle: Int,
     val seatAngle: Int,
-    const val stabilityAngle: Int,
-    const val stabilityAngleRange: String,
+    val stabilityAngle: Int,
+    val stabilityAngleRange: String,
     val loadWeight: Double,
-    const val loadWeightRange: String,
+    val loadWeightRange: String,
     val passCriteria: String
 )
 
@@ -53,7 +53,7 @@ data class HighChairRestraintData(
     val minBeltLength: Double,
     val maxBeltLength: Double,
     val buckleStrength: Double,
-    const val buckleStrengthRange: String,
+    val buckleStrengthRange: String,
     val testForce: Double,
     val passCriteria: String
 )
