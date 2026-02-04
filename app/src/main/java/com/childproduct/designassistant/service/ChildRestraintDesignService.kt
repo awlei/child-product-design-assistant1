@@ -1,8 +1,6 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.data.*
-import com.childproduct.designassistant.data.GPS028Database
-import com.childproduct.designassistant.data.model.StandardBasicInfo
 
 /**
  * 儿童安全座椅标准适配设计服务
