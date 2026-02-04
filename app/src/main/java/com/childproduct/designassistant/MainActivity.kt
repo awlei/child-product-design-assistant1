@@ -202,8 +202,7 @@ fun MainScreen() {
                         modifier = Modifier.padding(screenPadding)
                     )
                     "标准适配" -> StandardSelectionScreen(
-                        onNavigateBack = { selectedModule = null },
-                        modifier = Modifier.padding(screenPadding)
+                        onGenerateDesign = { _ -> /* TODO: 生成设计方案 */ }
                     )
                     else -> CreativeScreen(
                         viewModel = viewModel,

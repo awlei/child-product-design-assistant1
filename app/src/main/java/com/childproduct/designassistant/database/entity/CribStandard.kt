@@ -167,6 +167,8 @@ object CribStandardsData {
             maxLengthMm = 1400,
             minWidthMm = 600,
             maxWidthMm = 800,
+            minHeightMm = null,
+            maxHeightMm = null,
             description = "内部尺寸（床垫放置区域）"
         ),
         CribDimension(
@@ -178,6 +180,7 @@ object CribStandardsData {
             minWidthMm = 600,
             maxWidthMm = 800,
             minHeightMm = 100,
+            maxHeightMm = null,
             description = "床垫尺寸"
         ),
         // GB 28007 尺寸
@@ -189,6 +192,8 @@ object CribStandardsData {
             maxLengthMm = 1400,
             minWidthMm = 600,
             maxWidthMm = 800,
+            minHeightMm = null,
+            maxHeightMm = null,
             description = "内部尺寸"
         ),
         CribDimension(
@@ -200,6 +205,7 @@ object CribStandardsData {
             minWidthMm = 600,
             maxWidthMm = 800,
             minHeightMm = 100,
+            maxHeightMm = null,
             description = "床垫尺寸"
         )
     )

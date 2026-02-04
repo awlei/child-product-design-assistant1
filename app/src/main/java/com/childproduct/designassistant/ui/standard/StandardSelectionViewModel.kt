@@ -26,7 +26,10 @@ class StandardSelectionViewModel : ViewModel() {
 
     // 生成方案事件
     private val _generateEvent = MutableSharedFlow<Map<String, List<String>>>()
-    val generateEvent: SharedFlow<Map<String, List<String>>> = _generateEvent.asSharedFlow()
+    val generateEvent: SharedFlow<Map<String, List<String>>> = _generateEvent.shareIn(
+        viewModelScope,
+        SharingStarted.Eagerly
+    )
 
     init {
         loadProductData()
