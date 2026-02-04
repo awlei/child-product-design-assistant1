@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.childproduct.designassistant.ui.MainViewModel
@@ -67,9 +68,10 @@ fun MainScreen() {
     var showExportDialog by remember { mutableStateOf(false) }
     var selectedModule by remember { mutableStateOf<String?>(null) }
     var showDesignProposal by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     val designProposalViewModel: DesignProposalViewModel = viewModel(
         factory = androidx.lifecycle.viewmodel.compose.viewModelFactory {
-            androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.getInstance(context.applicationContext as android.app.Application)
         }
     )
 

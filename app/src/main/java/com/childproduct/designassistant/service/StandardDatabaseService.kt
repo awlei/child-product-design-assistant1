@@ -1,6 +1,6 @@
 package com.childproduct.designassistant.service
 
-import com.childproduct.designassistant.database.AppDatabase
+import com.childproduct.designassistant.database.EceR129Database
 import com.childproduct.designassistant.database.entity.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -11,55 +11,39 @@ import kotlinx.coroutines.withContext
  * 提供标准数据库的查询功能，支持根据标准ID获取详细的标准信息
  */
 class StandardDatabaseService(
-    private val database: AppDatabase
+    private val database: EceR129Database
 ) {
 
     /**
-     * 根据标准ID获取儿童安全座椅标准
+     * 根据标准ID获取儿童高脚椅标准
      */
-    suspend fun getCarSeatStandard(standardId: String): CarSeatStandard? =
+    suspend fun getHighChairStandard(standardId: String): HighChairStandard? =
         withContext(Dispatchers.IO) {
-            database.carSeatStandardDao().getById(standardId)
+            database.highChairStandardDao().getById(standardId)
         }
 
     /**
-     * 根据标准ID获取婴儿推车标准
+     * 根据标准ID获取儿童床标准
      */
-    suspend fun getStrollerStandard(standardId: String): StrollerStandard? =
+    suspend fun getCribStandard(standardId: String): CribStandard? =
         withContext(Dispatchers.IO) {
-            database.strollerStandardDao().getById(standardId)
+            database.cribStandardDao().getById(standardId)
         }
 
     /**
-     * 获取所有儿童安全座椅标准
+     * 获取所有儿童高脚椅标准
      */
-    suspend fun getAllCarSeatStandards(): List<CarSeatStandard> =
+    suspend fun getAllHighChairStandards(): List<HighChairStandard> =
         withContext(Dispatchers.IO) {
-            database.carSeatStandardDao().getAll()
+            database.highChairStandardDao().getAll()
         }
 
     /**
-     * 获取所有婴儿推车标准
+     * 获取所有儿童床标准
      */
-    suspend fun getAllStrollerStandards(): List<StrollerStandard> =
+    suspend fun getAllCribStandards(): List<CribStandard> =
         withContext(Dispatchers.IO) {
-            database.strollerStandardDao().getAll()
-        }
-
-    /**
-     * 根据标准名称模糊搜索儿童安全座椅标准
-     */
-    suspend fun searchCarSeatStandards(query: String): List<CarSeatStandard> =
-        withContext(Dispatchers.IO) {
-            database.carSeatStandardDao().searchByName("%$query%")
-        }
-
-    /**
-     * 根据标准名称模糊搜索婴儿推车标准
-     */
-    suspend fun searchStrollerStandards(query: String): List<StrollerStandard> =
-        withContext(Dispatchers.IO) {
-            database.strollerStandardDao().searchByName("%$query%")
+            database.cribStandardDao().getAll()
         }
 
     /**
@@ -67,25 +51,25 @@ class StandardDatabaseService(
      */
     suspend fun getStandardSummary(standardId: String): StandardSummary? =
         withContext(Dispatchers.IO) {
-            val carSeatStandard = database.carSeatStandardDao().getById(standardId)
-            if (carSeatStandard != null) {
+            val highChairStandard = database.highChairStandardDao().getById(standardId)
+            if (highChairStandard != null) {
                 return@withContext StandardSummary(
-                    id = carSeatStandard.standardId,
-                    name = carSeatStandard.standardName,
-                    region = carSeatStandard.region,
-                    version = carSeatStandard.version,
-                    type = "儿童安全座椅"
+                    id = highChairStandard.standardId,
+                    name = highChairStandard.standardName,
+                    region = highChairStandard.region,
+                    version = highChairStandard.version,
+                    type = "儿童高脚椅"
                 )
             }
 
-            val strollerStandard = database.strollerStandardDao().getById(standardId)
-            if (strollerStandard != null) {
+            val cribStandard = database.cribStandardDao().getById(standardId)
+            if (cribStandard != null) {
                 return@withContext StandardSummary(
-                    id = strollerStandard.standardId,
-                    name = strollerStandard.standardName,
-                    region = strollerStandard.region,
-                    version = strollerStandard.version,
-                    type = "婴儿推车"
+                    id = cribStandard.standardId,
+                    name = cribStandard.standardName,
+                    region = cribStandard.region,
+                    version = cribStandard.version,
+                    type = "儿童床"
                 )
             }
 
@@ -99,32 +83,36 @@ class StandardDatabaseService(
         withContext(Dispatchers.IO) {
             val summaries = mutableListOf<StandardSummary>()
 
-            // 查询儿童安全座椅标准
-            val carSeatStandards = database.carSeatStandardDao().getByIds(standardIds)
-            carSeatStandards.forEach { standard: CarSeatStandard ->
-                summaries.add(
-                    StandardSummary(
-                        id = standard.standardId,
-                        name = standard.standardName,
-                        region = standard.region,
-                        version = standard.version,
-                        type = "儿童安全座椅"
+            // 查询儿童高脚椅标准
+            val highChairStandards = database.highChairStandardDao().getAll()
+            highChairStandards.forEach { standard: HighChairStandard ->
+                if (standardIds.contains(standard.standardId)) {
+                    summaries.add(
+                        StandardSummary(
+                            id = standard.standardId,
+                            name = standard.standardName,
+                            region = standard.region,
+                            version = standard.version,
+                            type = "儿童高脚椅"
+                        )
                     )
-                )
+                }
             }
 
-            // 查询婴儿推车标准
-            val strollerStandards = database.strollerStandardDao().getByIds(standardIds)
-            strollerStandards.forEach { standard: StrollerStandard ->
-                summaries.add(
-                    StandardSummary(
-                        id = standard.standardId,
-                        name = standard.standardName,
-                        region = standard.region,
-                        version = standard.version,
-                        type = "婴儿推车"
+            // 查询儿童床标准
+            val cribStandards = database.cribStandardDao().getAll()
+            cribStandards.forEach { standard: CribStandard ->
+                if (standardIds.contains(standard.standardId)) {
+                    summaries.add(
+                        StandardSummary(
+                            id = standard.standardId,
+                            name = standard.standardName,
+                            region = standard.region,
+                            version = standard.version,
+                            type = "儿童床"
+                        )
                     )
-                )
+                }
             }
 
             summaries
