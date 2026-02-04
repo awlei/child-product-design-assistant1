@@ -16,7 +16,7 @@ class DesignProposalGenerator(
     private val database: EceR129Database
 ) {
 
-    private val llmClient = LLMClient()
+    private val llmClient = LLMClient.getInstance()
     private val json = Json { ignoreUnknownKeys = true }
     private val standardDbService = StandardDatabaseService(database)
 
@@ -41,9 +41,9 @@ class DesignProposalGenerator(
                 val userMessage = buildUserMessage(request, standardSummaries)
 
                 // 调用LLM
-                val response = llmClient.chat(
+                val response = llmClient.simpleChat(
                     systemPrompt = systemPrompt,
-                    userMessage = userMessage
+                    userPrompt = userMessage
                 )
 
                 // 解析响应
