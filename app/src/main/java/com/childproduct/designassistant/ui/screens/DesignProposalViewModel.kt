@@ -8,6 +8,7 @@ import com.childproduct.designassistant.data.model.DesignProposalRequest
 import com.childproduct.designassistant.database.CribDatabase
 import com.childproduct.designassistant.database.EceR129Database
 import com.childproduct.designassistant.database.HighChairDatabase
+import com.childproduct.designassistant.service.ChildRestraintDesignService
 import com.childproduct.designassistant.service.DesignProposalGenerator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +24,7 @@ class DesignProposalViewModel(application: Application) : AndroidViewModel(appli
     private val highChairDatabase = HighChairDatabase.getDatabase(application)
     private val cribDatabase = CribDatabase.getDatabase(application)
     private val generator = DesignProposalGenerator(eceR129Database, highChairDatabase, cribDatabase)
+    private val childRestraintDesignService = ChildRestraintDesignService()
 
     // UI状态
     private val _uiState = MutableStateFlow<DesignProposalUiState>(DesignProposalUiState.Idle)
@@ -31,6 +33,10 @@ class DesignProposalViewModel(application: Application) : AndroidViewModel(appli
     // 当前设计方案
     private val _currentProposal = MutableStateFlow<DesignProposal?>(null)
     val currentProposal: StateFlow<DesignProposal?> = _currentProposal.asStateFlow()
+
+    // Markdown内容（用于PDF导出）
+    private val _markdownContent = MutableStateFlow("")
+    val markdownContent: StateFlow<String> = _markdownContent.asStateFlow()
 
     /**
      * 生成设计方案
@@ -43,6 +49,28 @@ class DesignProposalViewModel(application: Application) : AndroidViewModel(appli
                 .onSuccess { proposal ->
                     _currentProposal.value = proposal
                     _uiState.value = DesignProposalUiState.Success(proposal)
+                    
+                    // 生成Markdown内容（如果是儿童安全座椅）
+                    if (request.productType == "儿童安全座椅") {
+                        val selection = ChildRestraintDesignService.StandardSelection(
+                            eceR129 = request.standards?.contains("ECE R129") == true,
+                            gb27887 = request.standards?.contains("GB 28007-2024") == true,
+                            fmvss213 = request.standards?.contains("FMVSS 213") == true,
+                            asNzs1754 = request.standards?.contains("AS/NZS 1754") == true,
+                            jisD1601 = request.standards?.contains("JIS D 1601") == true
+                        )
+                        
+                        val heightCm = request.heightRange?.maxOrNull() ?: 100.0
+                        val weightKg = request.weightRange?.maxOrNull() ?: 15.0
+                        
+                        val designProposal = childRestraintDesignService.generateDesignProposal(
+                            selection = selection,
+                            heightCm = heightCm,
+                            weightKg = weightKg
+                        )
+                        
+                        _markdownContent.value = childRestraintDesignService.formatAsMarkdown(designProposal)
+                    }
                 }
                 .onFailure { error ->
                     _uiState.value = DesignProposalUiState.Error(
@@ -58,6 +86,7 @@ class DesignProposalViewModel(application: Application) : AndroidViewModel(appli
     fun reset() {
         _currentProposal.value = null
         _uiState.value = DesignProposalUiState.Idle
+        _markdownContent.value = ""
     }
 }
 

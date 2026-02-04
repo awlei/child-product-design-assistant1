@@ -196,6 +196,7 @@ fun MainScreen() {
                 val designProposalViewModel: DesignProposalViewModel = viewModel()
                 DesignProposalScreen(
                     proposal = designProposalViewModel.currentProposal.value ?: return@AnimatedContent,
+                    markdownContent = designProposalViewModel.markdownContent.value,
                     onBack = { showDesignProposal = false }
                 )
                 return@AnimatedContent

@@ -1,5 +1,12 @@
 package com.childproduct.designassistant.ui.screens
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,14 +15,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.childproduct.designassistant.data.model.DesignProposal
+import com.childproduct.designassistant.util.PdfExporter
 
 /**
  * 设计方案展示界面
@@ -26,9 +36,103 @@ import com.childproduct.designassistant.data.model.DesignProposal
 @Composable
 fun DesignProposalScreen(
     proposal: DesignProposal,
+    markdownContent: String = "",
     onBack: () -> Unit = {}
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
+    var isExporting by remember { mutableStateOf(false) }
+    var showSuccessDialog by remember { mutableStateOf(false) }
+    var exportError by remember { mutableStateOf<String?>(null) }
+
+    // 存储权限请求
+    var hasStoragePermission by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                true // Android 11+ 不需要存储权限
+            } else {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        )
+    }
+
+    // 权限请求启动器
+    val storagePermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        hasStoragePermission = isGranted
+        if (isGranted) {
+            exportToPdf(context, markdownContent, proposal.productType) { success, error ->
+                if (success) {
+                    showSuccessDialog = true
+                } else {
+                    exportError = error
+                }
+                isExporting = false
+            }
+        } else {
+            isExporting = false
+            Toast.makeText(context, "需要存储权限才能导出PDF", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 导出PDF函数
+    fun exportToPdf(
+        context: Context,
+        content: String,
+        fileName: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
+        try {
+            val file = PdfExporter.exportDesignProposal(context, content, fileName)
+            if (file != null) {
+                callback(true, null)
+            } else {
+                callback(false, "PDF导出失败")
+            }
+        } catch (e: Exception) {
+            callback(false, e.message)
+        }
+    }
+
+    // 处理导出按钮点击
+    fun handleExportClick() {
+        if (markdownContent.isEmpty()) {
+            Toast.makeText(context, "没有可导出的内容", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        isExporting = true
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11+ 不需要请求权限
+            exportToPdf(context, markdownContent, proposal.productType) { success, error ->
+                if (success) {
+                    showSuccessDialog = true
+                } else {
+                    exportError = error
+                }
+                isExporting = false
+            }
+        } else {
+            // Android 10 及以下需要请求权限
+            if (!hasStoragePermission) {
+                storagePermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            } else {
+                exportToPdf(context, markdownContent, proposal.productType) { success, error ->
+                    if (success) {
+                        showSuccessDialog = true
+                    } else {
+                        exportError = error
+                    }
+                    isExporting = false
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -37,6 +141,19 @@ fun DesignProposalScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "返回")
+                    }
+                },
+                actions = {
+                    // 导出PDF按钮
+                    IconButton(
+                        onClick = { handleExportClick() },
+                        enabled = !isExporting
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "导出PDF",
+                            tint = if (isExporting) Color.Gray else MaterialTheme.colorScheme.primary
+                        )
                     }
                 }
             )
@@ -71,6 +188,23 @@ fun DesignProposalScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
+    // 导出成功对话框
+    ExportSuccessDialog(
+        showDialog = showSuccessDialog,
+        onDismiss = { showSuccessDialog = false },
+        onOpenFile = {
+            // 可以在这里添加打开文件的功能
+            Toast.makeText(context, "文件已保存到Downloads目录", Toast.LENGTH_SHORT).show()
+        }
+    )
+
+    // 导出错误对话框
+    ExportErrorDialog(
+        showDialog = exportError != null,
+        errorMessage = exportError,
+        onDismiss = { exportError = null }
+    )
 }
 
 /**
@@ -412,5 +546,74 @@ private fun ParameterItem(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
+    }
+}
+
+/**
+ * 导出成功对话框
+ */
+@Composable
+private fun ExportSuccessDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onOpenFile: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    text = "导出成功",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text("PDF文件已成功导出到Downloads目录")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onOpenFile()
+                    onDismiss()
+                }) {
+                    Text("打开文件")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("确定")
+                }
+            }
+        )
+    }
+}
+
+/**
+ * 导出错误对话框
+ */
+@Composable
+private fun ExportErrorDialog(
+    showDialog: Boolean,
+    errorMessage: String?,
+    onDismiss: () -> Unit
+) {
+    if (showDialog && errorMessage != null) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = {
+                Text(
+                    text = "导出失败",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.error
+                )
+            },
+            text = {
+                Text(errorMessage)
+            },
+            confirmButton = {
+                TextButton(onClick = onDismiss) {
+                    Text("确定")
+                }
+            }
+        )
     }
 }
