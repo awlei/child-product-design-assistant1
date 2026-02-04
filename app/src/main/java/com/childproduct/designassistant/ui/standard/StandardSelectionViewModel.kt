@@ -2,6 +2,7 @@ package com.childproduct.designassistant.ui.standard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.childproduct.designassistant.data.model.DesignProposalRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -114,6 +115,31 @@ class StandardSelectionViewModel : ViewModel() {
      */
     fun resetSelection() {
         _selectedStandards.value = emptyMap()
+    }
+
+    /**
+     * 创建设计方案请求
+     */
+    fun createDesignRequest(productType: String = "儿童安全座椅"): DesignProposalRequest {
+        return DesignProposalRequest(
+            productType = productType,
+            selectedStandards = _selectedStandards.value,
+            additionalRequirements = emptyList()
+        )
+    }
+
+    /**
+     * 获取选中的产品类型列表
+     */
+    fun getSelectedProductTypes(): List<String> {
+        return _selectedStandards.value.keys.toList()
+    }
+
+    /**
+     * 获取选中的标准列表
+     */
+    fun getSelectedStandardsCount(): Int {
+        return _selectedStandards.value.values.sumOf { it.size }
     }
 }
 

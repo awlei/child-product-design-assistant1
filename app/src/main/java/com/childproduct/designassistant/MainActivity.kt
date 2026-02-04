@@ -32,6 +32,8 @@ import com.childproduct.designassistant.ui.screens.TestMatrixScreen
 import com.childproduct.designassistant.ui.screens.DesignSuggestionScreen
 import com.childproduct.designassistant.ui.screens.CompetitorReferenceScreen
 import com.childproduct.designassistant.ui.screens.ComplianceManagementScreen
+import com.childproduct.designassistant.ui.screens.DesignProposalScreen
+import com.childproduct.designassistant.ui.screens.DesignProposalViewModel
 import com.childproduct.designassistant.ui.standard.StandardSelectionScreen
 import com.childproduct.designassistant.ui.theme.ChildProductDesignAssistantTheme
 
@@ -64,6 +66,8 @@ fun MainScreen() {
 
     var showExportDialog by remember { mutableStateOf(false) }
     var selectedModule by remember { mutableStateOf<String?>(null) }
+    var showDesignProposal by remember { mutableStateOf(false) }
+    val designProposalViewModel: DesignProposalViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -166,6 +170,16 @@ fun MainScreen() {
                 )
             }
         ) { targetTab ->
+            // 显示设计方案界面
+            if (showDesignProposal) {
+                val designProposalViewModel: DesignProposalViewModel = viewModel()
+                DesignProposalScreen(
+                    proposal = designProposalViewModel.currentProposal.value ?: return@AnimatedContent,
+                    onBack = { showDesignProposal = false }
+                )
+                return@AnimatedContent
+            }
+
             // 处理 MoreScreen 的导航
             if (selectedModule != null) {
                 when (selectedModule) {
@@ -201,7 +215,17 @@ fun MainScreen() {
                         viewModel = viewModel
                     )
                     "标准适配" -> StandardSelectionScreen(
-                        onGenerateDesign = { _ -> /* TODO: 生成设计方案 */ }
+                        onGenerateDesign = { selectedStandards ->
+                            // 生成设计方案
+                            val request = com.childproduct.designassistant.data.model.DesignProposalRequest(
+                                productType = "儿童安全座椅",
+                                selectedStandards = selectedStandards,
+                                additionalRequirements = emptyList()
+                            )
+                            designProposalViewModel.generateProposal(request)
+                            // 导航到设计方案界面
+                            showDesignProposal = true
+                        }
                     )
                     else -> CreativeScreen(
                         viewModel = viewModel,
