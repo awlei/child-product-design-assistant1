@@ -3,6 +3,7 @@ package com.childproduct.designassistant.service
 import com.childproduct.designassistant.database.EceR129Database
 import com.childproduct.designassistant.database.entity.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 
 /**
@@ -19,7 +20,7 @@ class StandardDatabaseService(
      */
     suspend fun getHighChairStandard(standardId: String): HighChairStandard? =
         withContext(Dispatchers.IO) {
-            database.highChairStandardDao().getById(standardId)
+            database.highChairStandardDao().getStandardById(standardId)
         }
 
     /**
@@ -27,7 +28,7 @@ class StandardDatabaseService(
      */
     suspend fun getCribStandard(standardId: String): CribStandard? =
         withContext(Dispatchers.IO) {
-            database.cribStandardDao().getById(standardId)
+            database.cribStandardDao().getStandardById(standardId)
         }
 
     /**
@@ -35,7 +36,7 @@ class StandardDatabaseService(
      */
     suspend fun getAllHighChairStandards(): List<HighChairStandard> =
         withContext(Dispatchers.IO) {
-            database.highChairStandardDao().getAll()
+            database.highChairStandardDao().getAllActiveStandards().first()
         }
 
     /**
@@ -43,7 +44,7 @@ class StandardDatabaseService(
      */
     suspend fun getAllCribStandards(): List<CribStandard> =
         withContext(Dispatchers.IO) {
-            database.cribStandardDao().getAll()
+            database.cribStandardDao().getAllActiveStandards().first()
         }
 
     /**
