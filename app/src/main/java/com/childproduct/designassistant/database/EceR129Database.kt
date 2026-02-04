@@ -10,8 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.childproduct.designassistant.database.converter.Converters
 import com.childproduct.designassistant.database.dao.*
 import com.childproduct.designassistant.database.entity.*
-import com.childproduct.designassistant.model.*
-import com.childproduct.designassistant.data.model.*
+// 移除通配符导入，只导入实际需要的类
 
 /**
  * ECE R129标准数据库
