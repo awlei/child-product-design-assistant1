@@ -2,7 +2,6 @@ package com.childproduct.designassistant.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.childproduct.designassistant.database.EceR129Database
 import com.childproduct.designassistant.database.dao.*
 import com.childproduct.designassistant.database.entity.*
@@ -11,8 +10,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * 标准数据仓库
- * 提供对ECE R129标准数据的统一访问接口
+ * ECE R129 标准数据仓库
+ * 提供对ECE R129标准数据（儿童安全座椅）的统一访问接口
  */
 class StandardRepository private constructor(
     private val context: Context,
@@ -200,166 +199,6 @@ class StandardRepository private constructor(
         return withContext(Dispatchers.IO) {
             database.standardUpdateLogDao().getLastSyncTime()
         }
-    }
-
-    // ========== 儿童高脚椅相关操作 ==========
-
-    /**
-     * 获取所有活跃的儿童高脚椅标准
-     */
-    fun getAllActiveHighChairStandards() = database.highChairStandardDao().getAllActiveStandards()
-
-    /**
-     * 根据标准ID获取儿童高脚椅标准
-     */
-    suspend fun getHighChairStandardById(standardId: String) = 
-        withContext(Dispatchers.IO) { database.highChairStandardDao().getStandardById(standardId) }
-
-    /**
-     * 根据地区获取儿童高脚椅标准
-     */
-    fun getHighChairStandardsByRegion(region: String) = 
-        database.highChairStandardDao().getStandardsByRegion(region)
-
-    /**
-     * 获取标准下的年龄组
-     */
-    fun getHighChairAgeGroups(standardId: String) = 
-        database.highChairAgeGroupDao().getAgeGroupsByStandard(standardId)
-
-    /**
-     * 获取标准下的安全要求
-     */
-    fun getHighChairSafetyRequirements(standardId: String) = 
-        database.highChairSafetyRequirementDao().getRequirementsByStandard(standardId)
-
-    /**
-     * 根据类别获取安全要求
-     */
-    fun getHighChairRequirementsByCategory(standardId: String, category: String) = 
-        database.highChairSafetyRequirementDao().getRequirementsByCategory(standardId, category)
-
-    /**
-     * 获取标准下的稳定性数据
-     */
-    fun getHighChairStability(standardId: String) = 
-        database.highChairStabilityDao().getStabilityByStandard(standardId)
-
-    /**
-     * 获取标准下的约束系统数据
-     */
-    fun getHighChairRestraints(standardId: String) = 
-        database.highChairRestraintDao().getRestraintsByStandard(standardId)
-
-    /**
-     * 初始化儿童高脚椅标准数据
-     */
-    suspend fun initializeHighChairStandards() = withContext(Dispatchers.IO) {
-        // 插入标准
-        database.highChairStandardDao().insertStandards(
-            listOf(
-                HighChairStandardsData.EN_14988_STANDARD,
-                HighChairStandardsData.GB_29281_STANDARD
-            )
-        )
-        
-        // 插入年龄组
-        database.highChairAgeGroupDao().insertAgeGroups(HighChairStandardsData.AGE_GROUPS)
-        
-        // 插入安全要求
-        database.highChairSafetyRequirementDao().insertRequirements(HighChairStandardsData.SAFETY_REQUIREMENTS)
-        
-        // 插入稳定性数据
-        database.highChairStabilityDao().insertStabilities(HighChairStandardsData.STABILITY_DATA)
-        
-        // 插入约束系统数据
-        database.highChairRestraintDao().insertRestraints(HighChairStandardsData.RESTRAINT_DATA)
-    }
-
-    // ========== 儿童床相关操作 ==========
-
-    /**
-     * 获取所有活跃的儿童床标准
-     */
-    fun getAllActiveCribStandards() = database.cribStandardDao().getAllActiveStandards()
-
-    /**
-     * 根据标准ID获取儿童床标准
-     */
-    suspend fun getCribStandardById(standardId: String) = 
-        withContext(Dispatchers.IO) { database.cribStandardDao().getStandardById(standardId) }
-
-    /**
-     * 根据地区获取儿童床标准
-     */
-    fun getCribStandardsByRegion(region: String) = 
-        database.cribStandardDao().getStandardsByRegion(region)
-
-    /**
-     * 获取标准下的尺寸要求
-     */
-    fun getCribDimensions(standardId: String) = 
-        database.cribDimensionDao().getDimensionsByStandard(standardId)
-
-    /**
-     * 根据类型获取尺寸要求
-     */
-    fun getCribDimensionsByType(standardId: String, type: String) = 
-        database.cribDimensionDao().getDimensionsByType(standardId, type)
-
-    /**
-     * 获取标准下的床垫间隙要求
-     */
-    fun getCribMattressGaps(standardId: String) = 
-        database.cribMattressGapDao().getGapsByStandard(standardId)
-
-    /**
-     * 获取标准下的栏杆要求
-     */
-    fun getCribRailings(standardId: String) = 
-        database.cribRailingDao().getRailingsByStandard(standardId)
-
-    /**
-     * 根据类型获取栏杆要求
-     */
-    fun getCribRailingsByType(standardId: String, type: String) = 
-        database.cribRailingDao().getRailingsByType(standardId, type)
-
-    /**
-     * 获取标准下的安全要求
-     */
-    fun getCribSafetyRequirements(standardId: String) = 
-        database.cribSafetyRequirementDao().getRequirementsByStandard(standardId)
-
-    /**
-     * 根据类别获取安全要求
-     */
-    fun getCribRequirementsByCategory(standardId: String, category: String) = 
-        database.cribSafetyRequirementDao().getRequirementsByCategory(standardId, category)
-
-    /**
-     * 初始化儿童床标准数据
-     */
-    suspend fun initializeCribStandards() = withContext(Dispatchers.IO) {
-        // 插入标准
-        database.cribStandardDao().insertStandards(
-            listOf(
-                CribStandardsData.EN_716_STANDARD,
-                CribStandardsData.GB_28007_STANDARD
-            )
-        )
-        
-        // 插入尺寸要求
-        database.cribDimensionDao().insertDimensions(CribStandardsData.DIMENSIONS)
-        
-        // 插入床垫间隙要求
-        database.cribMattressGapDao().insertGaps(CribStandardsData.MATTRESS_GAPS)
-        
-        // 插入栏杆要求
-        database.cribRailingDao().insertRailings(CribStandardsData.RAILINGS)
-        
-        // 插入安全要求
-        database.cribSafetyRequirementDao().insertRequirements(CribStandardsData.SAFETY_REQUIREMENTS)
     }
 
     companion object {
