@@ -1,6 +1,7 @@
 package com.childproduct.designassistant.data
 
 import com.childproduct.designassistant.data.model.*
+import com.childproduct.designassistant.database.EceR129Database
 
 /**
  * R129r4e标准详细解析服务
@@ -8,34 +9,32 @@ import com.childproduct.designassistant.data.model.*
  */
 class R129StandardDetailsService {
 
-    private val eceR129Database = EceR129StandardDatabase()
-
     /**
      * 获取标准概述
      */
     fun getStandardOverview(): StandardOverview {
-        return eceR129Database.getStandardOverview()
+        return EceR129Database.getStandardOverview()
     }
 
     /**
      * 获取所有假人规格
      */
     fun getAllDummySpecs(): List<DummySpec> {
-        return eceR129Database.getDummySpecsList()
+        return EceR129Database.getDummySpecsList()
     }
 
     /**
      * 根据假人类型获取详细规格
      */
     fun getDummySpecDetail(dummyType: String): DummySpec? {
-        return eceR129Database.getDummySpec(dummyType)
+        return EceR129Database.getDummySpec(dummyType)
     }
 
     /**
      * 根据身高范围获取适用假人
      */
     fun getApplicableDummiesByHeight(heightRange: String): List<DummySpec> {
-        return eceR129Database.getApplicableDummies(heightRange)
+        return EceR129Database.getApplicableDummies(heightRange)
     }
 
     /**
@@ -44,7 +43,7 @@ class R129StandardDetailsService {
     fun getInjuryCriteriaComparison(): Map<String, Map<String, Any>> {
         val comparison = mutableMapOf<String, Map<String, Any>>()
 
-        eceR129Database.getDummySpecsList().forEach { dummy ->
+        EceR129Database.getDummySpecsList().forEach { dummy ->
             val criteriaMap: Map<String, Any> = mapOf(
                 "dummyType" to dummy.dummyType,
                 "headAcceleration3ms_low" to dummy.injuryCriteria.headAcceleration3ms.lowThreshold,
@@ -68,49 +67,49 @@ class R129StandardDetailsService {
      * 获取防旋转装置要求
      */
     fun getAntiRotationDeviceSpec(deviceType: AntiRotationDeviceType): AntiRotationDeviceSpec? {
-        return eceR129Database.getAntiRotationDeviceSpec(deviceType)
+        return EceR129Database.getAntiRotationDeviceSpec(deviceType)
     }
 
     /**
      * 获取所有防旋转装置类型及规格
      */
     fun getAllAntiRotationDeviceSpecs(): Map<AntiRotationDeviceType, AntiRotationDeviceSpec> {
-        return eceR129Database.getAntiRotationDevicesMap()
+        return EceR129Database.getAntiRotationDevicesMap()
     }
 
     /**
      * 获取碰撞测试曲线
      */
     fun getImpactTestCurve(testType: ImpactTestType): ImpactTestCurve? {
-        return eceR129Database.getImpactTestCurve(testType)
+        return EceR129Database.getImpactTestCurve(testType)
     }
 
     /**
      * 获取所有碰撞测试曲线
      */
     fun getAllImpactTestCurves(): List<ImpactTestCurve> {
-        return eceR129Database.getImpactTestCurvesList()
+        return EceR129Database.getImpactTestCurvesList()
     }
 
     /**
      * 获取材料标准要求
      */
     fun getMaterialStandards(): List<MaterialStandardRequirement> {
-        return eceR129Database.getMaterialStandardsList()
+        return EceR129Database.getMaterialStandardsList()
     }
 
     /**
      * 根据材料类型获取标准要求
      */
     fun getMaterialStandardByType(materialType: MaterialType): List<MaterialStandardRequirement> {
-        return eceR129Database.getMaterialStandardsList().filter { it.materialType == materialType }
+        return EceR129Database.getMaterialStandardsList().filter { it.materialType == materialType }
     }
 
     /**
      * 获取卡扣要求
      */
     fun getBuckleRequirement(): BuckleRequirement {
-        return eceR129Database.getBuckleRequirement()
+        return EceR129Database.getBuckleRequirement()
     }
 
     /**
@@ -118,8 +117,8 @@ class R129StandardDetailsService {
      */
     fun getRetractorRequirement(retractorType: RetractorType): RetractorRequirement {
         return when (retractorType) {
-            RetractorType.AUTO_LOCKING -> eceR129Database.getAutoLockingRetractor()
-            RetractorType.EMERGENCY_LOCKING -> eceR129Database.getEmergencyLockingRetractor()
+            RetractorType.AUTO_LOCKING -> EceR129Database.getAutoLockingRetractor()
+            RetractorType.EMERGENCY_LOCKING -> EceR129Database.getEmergencyLockingRetractor()
         }
     }
 
@@ -127,56 +126,56 @@ class R129StandardDetailsService {
      * 获取认证申请材料清单
      */
     fun getApplicationDocuments(): ApplicationDocuments {
-        return eceR129Database.getApplicationDocuments()
+        return EceR129Database.getApplicationDocuments()
     }
 
     /**
      * 获取标识要求
      */
     fun getMarkingRequirements(): List<MarkingRequirement> {
-        return eceR129Database.getMarkingRequirementsList()
+        return EceR129Database.getMarkingRequirementsList()
     }
 
     /**
      * 获取生产一致性控制要求
      */
     fun getProductionConformity(): ProductionConformityControl {
-        return eceR129Database.getProductionConformity()
+        return EceR129Database.getProductionConformity()
     }
 
     /**
      * 获取用户说明书要求
      */
     fun getUserManualRequirements(): UserManualRequirements {
-        return eceR129Database.getUserManualRequirements()
+        return EceR129Database.getUserManualRequirements()
     }
 
     /**
      * 获取测试台车规格
      */
     fun getTestTrolleySpec(): TestTrolleySpec {
-        return eceR129Database.getTestTrolleySpec()
+        return EceR129Database.getTestTrolleySpec()
     }
 
     /**
      * 获取假人安装垫片高度
      */
     fun getSpacerHeight(dummyType: String): Int? {
-        return eceR129Database.getSpacerHeight(dummyType)
+        return EceR129Database.getSpacerHeight(dummyType)
     }
 
     /**
      * 获取测试安装预紧力要求
      */
     fun getInstallationPreload(): Map<String, Int> {
-        return eceR129Database.getInstallationPreloadMap()
+        return EceR129Database.getInstallationPreloadMap()
     }
 
     /**
      * 获取外部尺寸ISO包络
      */
     fun getExternalEnvelopes(): Map<String, EnvelopeDimensions> {
-        return eceR129Database.getExternalEnvelopesMap()
+        return EceR129Database.getExternalEnvelopesMap()
     }
 
     /**
@@ -189,35 +188,35 @@ class R129StandardDetailsService {
             "iSizeBooster" -> "iSizeBooster"
             else -> null
         }
-        return envelopeKey?.let { eceR129Database.getExternalEnvelopesMap()[it] }
+        return envelopeKey?.let { EceR129Database.getExternalEnvelopesMap()[it] }
     }
 
     /**
      * 获取关键术语定义
      */
     fun getKeyTerms(): List<Pair<String, String>> {
-        return eceR129Database.getKeyTermsList()
+        return EceR129Database.getKeyTermsList()
     }
 
     /**
      * 搜索术语定义
      */
     fun searchTerm(keyword: String): Pair<String, String>? {
-        return eceR129Database.getKeyTermsList().find { it.first.contains(keyword, ignoreCase = true) }
+        return EceR129Database.getKeyTermsList().find { it.first.contains(keyword, ignoreCase = true) }
     }
 
     /**
      * 获取ECRS分类信息
      */
     fun getEcrsClassifications(): List<ECRSClassification> {
-        return eceR129Database.getECRSClassificationsList()
+        return EceR129Database.getECRSClassificationsList()
     }
 
     /**
      * 获取R129r4e关键阈值
      */
     fun getR129r4eThresholds(): R129r4eThresholds {
-        return eceR129Database.getThresholds()
+        return EceR129Database.getThresholds()
     }
 
     /**
@@ -225,7 +224,7 @@ class R129StandardDetailsService {
      */
     fun determineOrientationRequirement(heightRange: String): String {
         val (minHeight, maxHeight) = parseHeightRange(heightRange)
-        val thresholds = eceR129Database.getThresholds()
+        val thresholds = EceR129Database.getThresholds()
 
         return when {
             maxHeight <= thresholds.maxRearwardHeight -> "强制后向(≤${thresholds.mandatoryRearwardMonths}个月)"
@@ -243,7 +242,7 @@ class R129StandardDetailsService {
         hpc: Int,
         chestAcceleration3ms: Double
     ): ComplianceResult {
-        val dummy = eceR129Database.getDummySpec(dummyType) ?: return ComplianceResult(
+        val dummy = EceR129Database.getDummySpec(dummyType) ?: return ComplianceResult(
             isCompliant = false,
             details = "未找到假人类型: $dummyType"
         )
@@ -289,7 +288,7 @@ class R129StandardDetailsService {
         testType: String,
         results: Map<String, Any>
     ): String {
-        val applicableDummies = eceR129Database.getApplicableDummies(heightRange)
+        val applicableDummies = EceR129Database.getApplicableDummies(heightRange)
         val dummyNames = applicableDummies.joinToString(", ") { it.dummyType }
 
         return """
