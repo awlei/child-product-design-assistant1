@@ -19,31 +19,23 @@ import com.childproduct.designassistant.data.model.*
  */
 @Database(
     entities = [
-        // CrashTestDummy::class,  // 暂时注释
-        // HeightRangeMapping::class,  // 暂时注释
-        // SafetyThreshold::class,  // 暂时注释
-        // TestConfiguration::class,  // 暂时注释
-        StandardReference::class,
-        InstallationMethod::class,
-        MaterialSpecification::class,
-        IsofixRequirement::class,
-        StandardUpdateLog::class
+        StandardUpdateLog::class  // 只保留最简单的实体
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
 abstract class EceR129Database : RoomDatabase() {
 
     // ECE R129 相关 DAO
-    abstract fun crashTestDummyDao(): CrashTestDummyDao
-    abstract fun heightRangeMappingDao(): HeightRangeMappingDao
-    abstract fun safetyThresholdDao(): SafetyThresholdDao
-    abstract fun testConfigurationDao(): TestConfigurationDao
-    abstract fun standardReferenceDao(): StandardReferenceDao
-    abstract fun installationMethodDao(): InstallationMethodDao
-    abstract fun materialSpecificationDao(): MaterialSpecificationDao
-    abstract fun isofixRequirementDao(): IsofixRequirementDao
+    // abstract fun crashTestDummyDao(): CrashTestDummyDao
+    // abstract fun heightRangeMappingDao(): HeightRangeMappingDao
+    // abstract fun safetyThresholdDao(): SafetyThresholdDao
+    // abstract fun testConfigurationDao(): TestConfigurationDao
+    // abstract fun standardReferenceDao(): StandardReferenceDao
+    // abstract fun installationMethodDao(): InstallationMethodDao
+    // abstract fun materialSpecificationDao(): MaterialSpecificationDao
+    // abstract fun isofixRequirementDao(): IsofixRequirementDao
     abstract fun standardUpdateLogDao(): StandardUpdateLogDao
 
     companion object {
