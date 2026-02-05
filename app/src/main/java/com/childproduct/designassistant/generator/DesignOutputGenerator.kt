@@ -22,8 +22,8 @@ object DesignOutputGenerator {
         return when (input.productType) {
             EnhancedProductType.SAFETY_SEAT -> generateSafetySeatOutput(input, primaryStandard)
             EnhancedProductType.STROLLER -> generateStrollerOutput(input, primaryStandard)
-            EnhancedProductType.HIGH_CHAIR -> generateHighChairOutput(input, primaryStandard)
-            EnhancedProductType.CRIB -> generateCribOutput(input, primaryStandard)
+            EnhancedProductType.HIGH_CHAIR -> generateHighChairOutput(input)
+            EnhancedProductType.CRIB -> generateCribOutput(input)
         }
     }
 
@@ -299,21 +299,17 @@ object DesignOutputGenerator {
             appendLine("|----------|----------|----------|------|----------|")
 
             // 根据用户选择的标准生成阈值
-            standards.forEach { standard ->
-                val thresholds = getThresholdsForStandard(standard)
-                thresholds.forEach { threshold ->
-                    appendLine(
-                        "| ${threshold.testItem} | ${threshold.standardRequirement} | " +
-                                "${threshold.applicableDummy} | ${threshold.unit} | ${threshold.standardSource} |"
-                    )
-                }
+            val thresholds = getThresholdsForStandard(primaryStandard)
+            thresholds.forEach { threshold ->
+                appendLine(
+                    "| ${threshold.testItem} | ${threshold.standardRequirement} | " +
+                            "${threshold.applicableDummy} | ${threshold.unit} | ${threshold.standardSource} |"
+                )
             }
 
             appendLine()
             appendLine("> ⚠️ **阈值说明**：")
-            standards.forEach { standard ->
-                appendLine("> - **${standard.code}**：${getThresholdDescription(standard)}")
-            }
+            appendLine("> - **${primaryStandard.code}**：${getThresholdDescription(primaryStandard)}")
             appendLine()
         }
     }

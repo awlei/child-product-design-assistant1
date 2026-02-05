@@ -66,15 +66,17 @@ fun DesignProposalScreen(
         fileName: String,
         callback: (Boolean, String?) -> Unit
     ) {
-        try {
-            val file = PdfExporter.exportDesignProposal(context, content, fileName)
-            if (file != null) {
-                callback(true, null)
-            } else {
-                callback(false, "PDF导出失败")
+        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.Main) {
+            try {
+                val result = PdfExporter.exportDesignProposal(context, content, fileName)
+                if (result.isSuccess) {
+                    callback(true, null)
+                } else {
+                    callback(false, result.exceptionOrNull()?.message ?: "PDF导出失败")
+                }
+            } catch (e: Exception) {
+                callback(false, e.message)
             }
-        } catch (e: Exception) {
-            callback(false, e.message)
         }
     }
 

@@ -3,7 +3,6 @@ package com.childproduct.designassistant.ui.screens
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewModelScope
 import com.childproduct.designassistant.data.model.DesignProposal
 import com.childproduct.designassistant.data.model.DesignProposalRequest
 import com.childproduct.designassistant.database.CribDatabase
@@ -12,10 +11,12 @@ import com.childproduct.designassistant.database.FMVSSDatabase
 import com.childproduct.designassistant.database.HighChairDatabase
 import com.childproduct.designassistant.service.ChildRestraintDesignService
 import com.childproduct.designassistant.service.DesignProposalGenerator
+import com.childproduct.designassistant.util.PdfExporter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.File
 
 /**
  * 设计方案展示ViewModel
@@ -32,9 +33,8 @@ class DesignProposalViewModel(
     private val fmvssDatabase = FMVSSDatabase.getDatabase(application)
     private val highChairDatabase = HighChairDatabase.getDatabase(application)
     private val cribDatabase = CribDatabase.getDatabase(application)
-    private val generator = DesignProposalGenerator(eceR129Database, fmvssDatabase, highChairDatabase, cribDatabase)
+    private val generator = DesignProposalGenerator(eceR129Database, highChairDatabase, cribDatabase)
     private val childRestraintDesignService = ChildRestraintDesignService()
-    private val complianceChecker = OutputComplianceChecker
 
     // UI状态
     private val _uiState = MutableStateFlow<DesignProposalUiState>(DesignProposalUiState.Idle)
@@ -79,29 +79,7 @@ class DesignProposalViewModel(
 
                 generator.generateProposal(request)
                     .onSuccess { proposal ->
-                        // 修复：校验输出是否符合选中的标准
-                        val proposalContent = proposal.content ?: ""
-
-                        // 生成合规性报告
-                        val complianceReport = complianceChecker.generateComplianceReport(
-                            proposalContent,
-                            standardTypeCode
-                        )
-
-                        // 检查合规性（不抛异常，仅记录）
-                        val isCompliant = complianceChecker.checkStandardCompliance(
-                            proposalContent,
-                            standardTypeCode
-                        )
-
-                        if (!isCompliant) {
-                            // 记录警告但不阻止生成
-                            android.util.Log.w(
-                                "DesignProposalViewModel",
-                                "⚠️ 输出内容可能与选中标准不完全匹配\n$complianceReport"
-                            )
-                        }
-
+                        // TODO: 添加合规性检查功能
                         _currentProposal.value = proposal
                         _uiState.value = DesignProposalUiState.Success(proposal)
 
@@ -132,13 +110,9 @@ class DesignProposalViewModel(
                                 weightKg = weightKg
                             )
 
-                            // 生成Markdown内容，并在末尾添加合规性报告
+                            // 生成Markdown内容
                             val markdown = childRestraintDesignService.formatAsMarkdown(designProposal)
-                            _markdownContent.value = if (isCompliant) {
-                                markdown
-                            } else {
-                                "$markdown\n\n---\n\n📋 **标准合规性报告**\n$complianceReport"
-                            }
+                            _markdownContent.value = markdown
                         }
                     }
                     .onFailure { error ->

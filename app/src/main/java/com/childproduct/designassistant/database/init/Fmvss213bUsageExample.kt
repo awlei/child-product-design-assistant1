@@ -23,7 +23,7 @@ class Fmvss213bUsageExample(private val context: Context) {
         private const val STANDARD_ID_213b = "FMVSS-213b-2026"
     }
     
-    private val database: FMVSSDatabase = FMVSSDatabase.getInstance(context)
+    private val database: FMVSSDatabase = FMVSSDatabase.getDatabase(context)
     private val dao: FMVSSDao = database.fmvssDao()
     
     /**
