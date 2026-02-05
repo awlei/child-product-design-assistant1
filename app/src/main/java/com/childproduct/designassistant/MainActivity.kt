@@ -242,6 +242,7 @@ fun MainScreen() {
                             val request = com.childproduct.designassistant.data.model.DesignProposalRequest(
                                 productType = "儿童安全座椅",
                                 selectedStandards = selectedStandards,
+                                selectedStandardType = selectedStandardType, // 修复：传递标准类型
                                 additionalRequirements = emptyList()
                             )
                             // 修复：将选中的标准类型传递给DesignProposalViewModel

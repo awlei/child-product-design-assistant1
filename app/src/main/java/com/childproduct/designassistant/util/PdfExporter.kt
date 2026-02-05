@@ -110,8 +110,10 @@ object PdfExporter {
         paint.color = Color.parseColor("#1976D2")
         paint.textSize = 28f
         paint.isFakeBoldText = true
+        // 修复：使用Typeface.DEFAULT支持中文
+        paint.typeface = android.graphics.Typeface.DEFAULT
         canvas.drawText(title, MARGIN_LEFT.toFloat(), (MARGIN_TOP + 40).toFloat(), paint)
-        
+
         // 绘制下划线
         paint.color = Color.parseColor("#2196F3")
         paint.strokeWidth = 4f
@@ -147,6 +149,7 @@ object PdfExporter {
                     paint.color = Color.parseColor("#1976D2")
                     paint.textSize = 24f
                     paint.isFakeBoldText = true
+                    paint.typeface = android.graphics.Typeface.DEFAULT_BOLD // 修复：支持中文
                     canvas.drawText(line.substring(2), MARGIN_LEFT.toFloat(), y, paint)
                     y += LINE_HEIGHT * 1.5f
                 }
@@ -155,6 +158,7 @@ object PdfExporter {
                     paint.color = Color.parseColor("#1976D2")
                     paint.textSize = 20f
                     paint.isFakeBoldText = true
+                    paint.typeface = android.graphics.Typeface.DEFAULT_BOLD // 修复：支持中文
                     canvas.drawText(line.substring(3), MARGIN_LEFT.toFloat(), y, paint)
                     y += LINE_HEIGHT * 1.3f
                 }
@@ -163,6 +167,7 @@ object PdfExporter {
                     paint.color = Color.parseColor("#1976D2")
                     paint.textSize = 18f
                     paint.isFakeBoldText = true
+                    paint.typeface = android.graphics.Typeface.DEFAULT_BOLD // 修复：支持中文
                     canvas.drawText(line.substring(4), MARGIN_LEFT.toFloat(), y, paint)
                     y += LINE_HEIGHT * 1.2f
                 }
@@ -171,6 +176,7 @@ object PdfExporter {
                     paint.color = Color.parseColor("#1976D2")
                     paint.textSize = 14f
                     paint.isFakeBoldText = false
+                    paint.typeface = android.graphics.Typeface.DEFAULT // 修复：支持中文
                     canvas.drawText(line, (MARGIN_LEFT + 20).toFloat(), y, paint)
                     y += LINE_HEIGHT.toFloat()
                 }
@@ -179,6 +185,7 @@ object PdfExporter {
                     paint.color = Color.BLACK
                     paint.textSize = 14f
                     paint.isFakeBoldText = false
+                    paint.typeface = android.graphics.Typeface.DEFAULT // 修复：支持中文
                     canvas.drawText("•", (MARGIN_LEFT + 20).toFloat(), y, paint)
                     // 简单的自动换行处理
                     val text = line.substring(2)
@@ -195,6 +202,7 @@ object PdfExporter {
                     paint.color = Color.BLACK
                     paint.textSize = 14f
                     paint.isFakeBoldText = false
+                    paint.typeface = android.graphics.Typeface.DEFAULT // 修复：支持中文
                     canvas.drawText(line, MARGIN_LEFT.toFloat(), y, paint)
                     y += LINE_HEIGHT.toFloat()
                 }
@@ -205,7 +213,7 @@ object PdfExporter {
     }
 
     /**
-     * 绘制自动换行的文本
+     * 绘制自动换行的文本（修复：支持中文）
      */
     private fun drawWrappedText(
         canvas: Canvas,
@@ -215,28 +223,28 @@ object PdfExporter {
         y: Float,
         maxWidth: Float
     ) {
-        val words = text.split(" ")
+        // 修复：使用基于字符的换行（支持中文）
         var currentLine = ""
         var currentX = x
 
-        for (word in words) {
-            val testLine = if (currentLine.isEmpty()) word else "$currentLine $word"
+        for (char in text) {
+            val testLine = currentLine + char
             val textWidth = paint.measureText(testLine)
 
-            if (textWidth > maxWidth) {
-                if (currentLine.isNotEmpty()) {
-                    canvas.drawText(currentLine, currentX, y, paint)
-                    currentLine = word
-                    currentX = x
-                } else {
-                    canvas.drawText(word, currentX, y, paint)
-                }
+            if (textWidth > maxWidth && currentLine.isNotEmpty()) {
+                // 当前行已满，绘制并换行
+                paint.typeface = android.graphics.Typeface.DEFAULT // 确保支持中文
+                canvas.drawText(currentLine, currentX, y, paint)
+                currentLine = char.toString()
+                currentX = x
             } else {
                 currentLine = testLine
             }
         }
 
+        // 绘制最后一行
         if (currentLine.isNotEmpty()) {
+            paint.typeface = android.graphics.Typeface.DEFAULT // 确保支持中文
             canvas.drawText(currentLine, currentX, y, paint)
         }
     }

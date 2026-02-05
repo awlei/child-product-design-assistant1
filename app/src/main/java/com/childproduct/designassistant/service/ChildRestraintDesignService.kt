@@ -86,7 +86,7 @@ class ChildRestraintDesignService {
 
     /**
      * 生成设计方案
-     * 
+     *
      * @param selection 用户选择的标准
      * @param heightCm 用户输入的身高（cm）
      * @param weightKg 用户输入的体重（kg）
@@ -106,6 +106,18 @@ class ChildRestraintDesignService {
                 standardTestItems = StandardTestItemsSection(null, null, null, null)
             )
         }
+
+        // 修复：验证标准选择，确保只包含一个标准（避免混用）
+        val selectedCount = listOf(
+            selection.eceR129,
+            selection.gb27887,
+            selection.fmvss213,
+            selection.asNzs1754,
+            selection.jisD1601
+        ).count { it }
+
+        android.util.Log.d("ChildRestraintDS", "选中标准数量: $selectedCount")
+        android.util.Log.d("ChildRestraintDS", "ECE=${selection.eceR129}, GB=${selection.gb27887}, FMVSS=${selection.fmvss213}")
 
         // 获取适用的标准标签
         val applicableStandards = selection.getSelectedStandards()

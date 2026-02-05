@@ -129,6 +129,9 @@ data class DesignProposalRequest(
     /** 选中的标准ID列表（产品类型 -> 标准ID列表） */
     val selectedStandards: Map<String, List<String>>,
 
+    /** 选中的标准类型（ECE_R129、FMVSS_213、GB_27887_2024等） */
+    val selectedStandardType: String? = null, // 新增：标准类型
+
     /** 用户输入的假人信息 */
     val userInputDummyInfo: UserDummyInput? = null,
 

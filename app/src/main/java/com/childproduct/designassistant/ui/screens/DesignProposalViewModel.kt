@@ -64,9 +64,14 @@ class DesignProposalViewModel(
             _uiState.value = DesignProposalUiState.Loading
 
             try {
-                // 获取选中的标准类型
-                val standardType = _selectedStandard.value
+                // 获取选中的标准类型（修复：从request中获取）
+                val standardType = request.selectedStandardType
                     ?: throw IllegalArgumentException("未选择标准类型，请先选择标准")
+
+                // 更新ViewModel中的标准类型状态
+                _selectedStandard.value = standardType
+
+                android.util.Log.d("DesignProposalVM", "收到标准类型: $standardType")
 
                 // 转换标准类型标识
                 val standardTypeCode = when {
@@ -86,13 +91,18 @@ class DesignProposalViewModel(
                         // 生成Markdown内容（如果是儿童安全座椅）
                         if (request.productType == "儿童安全座椅") {
                             val standardList = request.selectedStandards["儿童安全座椅"] ?: emptyList()
+
+                            // 修复：使用正确的标准ID映射
                             val selection = ChildRestraintDesignService.StandardSelection(
-                                eceR129 = standardList.contains("ECE R129") || standardTypeCode == "ECE_R129",
-                                gb27887 = standardList.contains("GB 28007-2024") || standardTypeCode == "GB_27887_2024",
-                                fmvss213 = standardList.contains("FMVSS 213") || standardTypeCode == "FMVSS_213",
-                                asNzs1754 = standardList.contains("AS/NZS 1754"),
-                                jisD1601 = standardList.contains("JIS D 1601")
+                                eceR129 = standardList.contains("ece_r129") || standardTypeCode == "ECE_R129",
+                                gb27887 = standardList.contains("gb_27887_2024") || standardTypeCode == "GB_27887_2024",
+                                fmvss213 = standardList.contains("fmvss_213") || standardTypeCode == "FMVSS_213",
+                                asNzs1754 = standardList.contains("as_nzs_1754"),
+                                jisD1601 = standardList.contains("jis_d1601")
                             )
+
+                            android.util.Log.d("DesignProposalVM", "标准列表: $standardList")
+                            android.util.Log.d("DesignProposalVM", "选择结果: ECE=${selection.eceR129}, GB=${selection.gb27887}, FMVSS=${selection.fmvss213}")
 
                             // 解析身高和体重范围
                             val heightStr = request.userInputDummyInfo?.targetHeightRange ?: "40-150"
