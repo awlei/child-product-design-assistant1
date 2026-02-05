@@ -107,6 +107,8 @@ data class FMVSSProductTestEntity(
     val testResult: String,
     val certificationNumber: String?,
     val testLab: String?,
+    val certificationDate: String?,
+    val expiresDate: String?,
     val comments: String?,
     val lastUpdated: Long = System.currentTimeMillis()
 )
