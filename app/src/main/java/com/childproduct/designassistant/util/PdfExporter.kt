@@ -62,7 +62,7 @@ object PdfExporter {
             drawTitle(canvas, paint, fileName)
             
             // 解析和绘制Markdown内容
-            var yPosition = MARGIN_TOP + 80
+            var yPosition = (MARGIN_TOP + 80).toFloat()
             yPosition = drawMarkdownContent(canvas, paint, markdownContent, yPosition)
 
             // 如果内容超过一页，创建新页面
@@ -71,7 +71,7 @@ object PdfExporter {
                 val newPageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pdfDocument.pages.size + 1).create()
                 val newPage = pdfDocument.startPage(newPageInfo)
                 val newCanvas = newPage.canvas
-                yPosition = drawMarkdownContent(newCanvas, paint, markdownContent, MARGIN_TOP)
+                yPosition = drawMarkdownContent(newCanvas, paint, markdownContent, MARGIN_TOP.toFloat())
                 if (yPosition <= PAGE_HEIGHT - MARGIN_BOTTOM) {
                     page = newPage
                 } else {
