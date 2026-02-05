@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.ViewModelProvider
 import com.childproduct.designassistant.ui.MainViewModel
@@ -67,8 +68,13 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * 重新初始化数据库
-     * 物理隔离ECE和FMVSS数据，解决标准混淆问题
+     * 重新初始化数据库（重构版 - 支持标准隔离）
+     * 
+     * 修复说明：
+     * - 使用新的DatabaseInitializer.initializeAllDatabases方法
+     * - 分别初始化ECE和FMVSS数据库，确保数据完全隔离
+     * - ECE数据库只插入ECE假人（Q0/Q0+/Q1/Q1.5/Q3/Q6/Q10）
+     * - FMVSS数据库只插入FMVSS假人（Q3s/HIII）
      */
     private fun reinitializeDatabase() {
         // 检查是否需要重新初始化（基于SharedPreference）
@@ -79,19 +85,22 @@ class MainActivity : ComponentActivity() {
         if (lastVersion < currentVersion) {
             android.util.Log.d("MainActivity", "检测到数据库版本更新，开始重新初始化...")
 
-            // 获取数据库实例
-            val eceR129Database = com.childproduct.designassistant.database.EceR129Database.getDatabase(this)
-            val fmvssDatabase = com.childproduct.designassistant.database.FMVSSDatabase.getDatabase(this)
-
-            // 创建清理和重新初始化器
-            val reinitializer = com.childproduct.designassistant.database.DatabaseCleanAndReinitializer(this)
-
-            // 执行清理和重新初始化
-            reinitializer.execute(eceR129Database, fmvssDatabase)
-
-            // 更新版本号
-            prefs.edit().putInt("database_version", currentVersion).apply()
-            android.util.Log.d("MainActivity", "数据库重新初始化完成")
+            // 使用新的DatabaseInitializer，分别初始化ECE和FMVSS数据库
+            val initializer = com.childproduct.designassistant.database.DatabaseInitializer(this)
+            
+            // 在协程中执行初始化（因为是suspend函数）
+            androidx.lifecycle.lifecycleScope.launch {
+                try {
+                    // 初始化所有数据库（数据完全隔离）
+                    initializer.initializeAllDatabases()
+                    
+                    // 更新版本号
+                    prefs.edit().putInt("database_version", currentVersion).apply()
+                    android.util.Log.d("MainActivity", "数据库重新初始化完成 - ECE和FMVSS数据已彻底隔离")
+                } catch (e: Exception) {
+                    android.util.Log.e("MainActivity", "数据库重新初始化失败", e)
+                }
+            }
         } else {
             android.util.Log.d("MainActivity", "数据库已是最新版本，跳过重新初始化")
         }

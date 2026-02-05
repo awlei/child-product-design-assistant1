@@ -2,9 +2,9 @@ package com.childproduct.designassistant.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.childproduct.designassistant.database.CribDatabase
 import com.childproduct.designassistant.database.EceR129Database
+import com.childproduct.designassistant.database.FMVSSDatabase
 import com.childproduct.designassistant.database.HighChairDatabase
 import com.childproduct.designassistant.database.dao.*
 import com.childproduct.designassistant.database.entity.*
@@ -13,47 +13,157 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * 标准数据仓库
- * 提供对ECE R129标准数据的统一访问接口
+ * 标准数据仓库（重构版 - 支持标准路由）
+ * 
+ * 修复说明：
+ * - 新增FMVSSDatabase支持，实现ECE/FMVSS双标准路由
+ * - 核心方法getDummyByStandardAndHeight按选中标准路由到对应数据库
+ * - 彻底隔离：查ECE只走ECE库，查FMVSS只走FMVSS库
+ * 
+ * 使用原则：
+ * - 必须传入选中标准（ECE_R129 / FMVSS_213 / GB_27887_2024）
+ * - Repository层自动路由到对应数据库
+ * - 杜绝跨标准的通用查询
  */
 class StandardRepository private constructor(
     private val context: Context,
     private val eceR129Database: EceR129Database,
+    private val fmvssDatabase: FMVSSDatabase,
     private val highChairDatabase: HighChairDatabase,
     private val cribDatabase: CribDatabase
 ) {
 
-    // ========== 假人相关操作 ==========
+    // ========== 核心方法：按标准路由查询假人 ==========
 
     /**
-     * 获取所有假人类型
+     * 按「选中标准+身高」查询假人（彻底隔离）
+     * 
+     * 修复说明：
+     * - 根据selectedStandard参数路由到对应数据库
+     * - ECE标准：查EceR129Database，强制过滤standardType = 'ECE_R129'
+     * - FMVSS标准：查FMVSSDatabase，强制过滤standardType = 'FMVSS_213'
+     * - 非法标准：返回null
+     * 
+     * @param selectedStandard 选中的标准（ECE_R129/FMVSS_213/GB_27887_2024）
+     * @param heightCm 身高（cm）
+     * @return 匹配的假人，如果标准无效或无匹配则返回null
      */
+    suspend fun getDummyByStandardAndHeight(
+        selectedStandard: String,
+        heightCm: Int
+    ): CrashTestDummy? {
+        return withContext(Dispatchers.IO) {
+            when (selectedStandard) {
+                // ECE R129标准：查ECE数据库，且强制过滤standardType
+                "ECE_R129", "GB_27887_2024" -> {
+                    android.util.Log.d("StandardRouting", "查询ECE数据库 - 标准: $selectedStandard, 身高: $heightCm")
+                    eceR129Database.crashTestDummyDao()
+                        .getDummyByStandardAndHeight("ECE_R129", heightCm)
+                }
+                
+                // FMVSS 213标准：查FMVSS数据库，且强制过滤standardType
+                "FMVSS_213" -> {
+                    android.util.Log.d("StandardRouting", "查询FMVSS数据库 - 标准: $selectedStandard, 身高: $heightCm")
+                    fmvssDatabase.fmvssDao()
+                        .getDummyByHeight(heightCm)
+                }
+                
+                // 非法标准直接返回null
+                else -> {
+                    android.util.Log.w("StandardRouting", "无效的标准类型: $selectedStandard")
+                    null
+                }
+            }
+        }
+    }
+
+    /**
+     * 按标准查询所有假人（彻底隔离）
+     * 
+     * @param selectedStandard 选中的标准
+     * @return 该标准的所有假人列表
+     */
+    suspend fun getAllDummiesByStandard(selectedStandard: String): List<CrashTestDummy> {
+        return withContext(Dispatchers.IO) {
+            when (selectedStandard) {
+                "ECE_R129", "GB_27887_2024" -> {
+                    eceR129Database.crashTestDummyDao()
+                        .getDummiesByStandard("ECE_R129")
+                }
+                
+                "FMVSS_213" -> {
+                    fmvssDatabase.fmvssDao()
+                        .getAllDummies()
+                }
+                
+                else -> {
+                    android.util.Log.w("StandardRouting", "无效的标准类型: $selectedStandard")
+                    emptyList()
+                }
+            }
+        }
+    }
+
+    /**
+     * 按标准+安装方向查询假人（彻底隔离）
+     * 
+     * @param selectedStandard 选中的标准
+     * @param direction 安装方向（REARWARD/FORWARD）
+     * @return 匹配的假人列表
+     */
+    suspend fun getDummiesByStandardAndDirection(
+        selectedStandard: String,
+        direction: String
+    ): List<CrashTestDummy> {
+        return withContext(Dispatchers.IO) {
+            when (selectedStandard) {
+                "ECE_R129", "GB_27887_2024" -> {
+                    eceR129Database.crashTestDummyDao()
+                        .getDummiesByStandardAndDirection("ECE_R129", direction)
+                }
+                
+                "FMVSS_213" -> {
+                    // FMVSS只支持前向安装
+                    if (direction == "FORWARD") {
+                        fmvssDatabase.fmvssDao()
+                            .getAllDummies()
+                    } else {
+                        emptyList()
+                    }
+                }
+                
+                else -> emptyList()
+            }
+        }
+    }
+
+    // ========== ECE R129专属操作（已废弃，推荐使用带标准参数的方法） ==========
+
+    /**
+     * 获取所有假人类型（已废弃 - 请使用getAllDummiesByStandard）
+     * 
+     * ⚠️ 警告：此方法返回所有标准的假人，可能导致标准混用
+     * 💡 推荐：使用getAllDummiesByStandard(selectedStandard)
+     */
+    @Deprecated("请使用getAllDummiesByStandard(selectedStandard)以避免标准混用")
     fun getAllDummies(): LiveData<List<CrashTestDummy>> {
         return eceR129Database.crashTestDummyDao().getAllDummies()
     }
 
     /**
-     * 根据身高获取适用假人
+     * 根据身高获取适用假人（已废弃 - 请使用getDummyByStandardAndHeight）
+     * 
+     * ⚠️ 警告：此方法未按标准过滤，会返回所有标准的匹配假人
+     * 💡 推荐：使用getDummyByStandardAndHeight(selectedStandard, heightCm)
      */
+    @Deprecated("请使用getDummyByStandardAndHeight(selectedStandard, heightCm)以避免标准混用")
     suspend fun getDummyByHeight(heightCm: Int): CrashTestDummy? {
         return withContext(Dispatchers.IO) {
             eceR129Database.crashTestDummyDao().getDummyByHeightRange(heightCm)
         }
     }
 
-    /**
-     * 根据身高范围获取所有适用假人
-     */
-    suspend fun getDummiesByHeightRange(minHeight: Int, maxHeight: Int): List<CrashTestDummy> {
-        return withContext(Dispatchers.IO) {
-            val allDummies = eceR129Database.crashTestDummyDao().getAllDummiesList()
-            allDummies.filter { dummy ->
-                dummy.minHeightCm >= minHeight && dummy.maxHeightCm <= maxHeight
-            }
-        }
-    }
-
-    // ========== 安全阈值相关操作 ==========
+    // ========== ECE R129安全阈值相关操作 ==========
 
     /**
      * 获取所有安全阈值
@@ -78,7 +188,30 @@ class StandardRepository private constructor(
         }
     }
 
-    // ========== 测试配置相关操作 ==========
+    // ========== FMVSS安全阈值相关操作 ==========
+
+    /**
+     * 获取FMVSS阈值（按假人代码）
+     * 
+     * @param dummyCode 假人代码（如Q3s、HIII）
+     * @return FMVSS阈值列表
+     */
+    suspend fun getFmvssThresholdsByDummy(dummyCode: String): List<FMVSSThresholdEntity> {
+        return withContext(Dispatchers.IO) {
+            fmvssDatabase.fmvssDao().getThresholdsByDummy(dummyCode)
+        }
+    }
+
+    /**
+     * 获取所有FMVSS阈值
+     */
+    suspend fun getAllFmvssThresholds(): List<FMVSSThresholdEntity> {
+        return withContext(Dispatchers.IO) {
+            fmvssDatabase.fmvssDao().getAllThresholds()
+        }
+    }
+
+    // ========== ECE R129测试配置相关操作 ==========
 
     /**
      * 获取所有测试配置
@@ -107,9 +240,12 @@ class StandardRepository private constructor(
         maxHeight: Int
     ): List<TestConfiguration> {
         return withContext(Dispatchers.IO) {
-            val dummies = getDummiesByHeightRange(minHeight, maxHeight)
-            val configs = mutableListOf<TestConfiguration>()
+            val allDummies = eceR129Database.crashTestDummyDao().getAllDummiesList()
+            val dummies = allDummies.filter { dummy ->
+                dummy.minHeightCm >= minHeight && dummy.maxHeightCm <= maxHeight
+            }
             
+            val configs = mutableListOf<TestConfiguration>()
             dummies.forEach { dummy ->
                 val direction = if (dummy.minHeightCm < 105) {
                     "REARWARD"
@@ -122,6 +258,29 @@ class StandardRepository private constructor(
             }
             
             configs.distinctBy { it.configId }
+        }
+    }
+
+    // ========== FMVSS测试配置相关操作 ==========
+
+    /**
+     * 获取FMVSS测试配置（按假人代码）
+     * 
+     * @param dummyCode 假人代码（如Q3s、HIII）
+     * @return FMVSS测试配置列表
+     */
+    suspend fun getFmvssTestConfigsByDummy(dummyCode: String): List<FMVSSTestConfigEntity> {
+        return withContext(Dispatchers.IO) {
+            fmvssDatabase.fmvssDao().getTestConfigurationsByDummy(dummyCode)
+        }
+    }
+
+    /**
+     * 获取所有FMVSS测试配置
+     */
+    suspend fun getAllFmvssTestConfigs(): List<FMVSSTestConfigEntity> {
+        return withContext(Dispatchers.IO) {
+            fmvssDatabase.fmvssDao().getAllTestConfigurations()
         }
     }
 
@@ -141,6 +300,15 @@ class StandardRepository private constructor(
      */
     fun getAllStandards(): LiveData<List<StandardReference>> {
         return eceR129Database.standardReferenceDao().getAllStandards()
+    }
+
+    /**
+     * 获取FMVSS标准信息
+     */
+    suspend fun getFmvssStandardInfo(): FMVSSStandardEntity? {
+        return withContext(Dispatchers.IO) {
+            fmvssDatabase.fmvssDao().getStandardById("FMVSS_213")
+        }
     }
 
     // ========== 身高范围映射相关操作 ==========
@@ -300,46 +468,16 @@ class StandardRepository private constructor(
         cribDatabase.cribStandardDao().getStandardsByRegion(region)
 
     /**
-     * 获取标准下的尺寸要求
+     * 根据标准ID获取儿童床年龄组
      */
-    fun getCribDimensions(standardId: String) = 
-        cribDatabase.cribDimensionDao().getDimensionsByStandard(standardId)
+    fun getCribAgeGroups(standardId: String) = 
+        cribDatabase.cribAgeGroupDao().getAgeGroupsByStandard(standardId)
 
     /**
-     * 根据类型获取尺寸要求
-     */
-    fun getCribDimensionsByType(standardId: String, type: String) = 
-        cribDatabase.cribDimensionDao().getDimensionsByType(standardId, type)
-
-    /**
-     * 获取标准下的床垫间隙要求
-     */
-    fun getCribMattressGaps(standardId: String) = 
-        cribDatabase.cribMattressGapDao().getGapsByStandard(standardId)
-
-    /**
-     * 获取标准下的栏杆要求
-     */
-    fun getCribRailings(standardId: String) = 
-        cribDatabase.cribRailingDao().getRailingsByStandard(standardId)
-
-    /**
-     * 根据类型获取栏杆要求
-     */
-    fun getCribRailingsByType(standardId: String, type: String) = 
-        cribDatabase.cribRailingDao().getRailingsByType(standardId, type)
-
-    /**
-     * 获取标准下的安全要求
+     * 获取标准下的儿童床安全要求
      */
     fun getCribSafetyRequirements(standardId: String) = 
         cribDatabase.cribSafetyRequirementDao().getRequirementsByStandard(standardId)
-
-    /**
-     * 根据类别获取安全要求
-     */
-    fun getCribRequirementsByCategory(standardId: String, category: String) = 
-        cribDatabase.cribSafetyRequirementDao().getRequirementsByCategory(standardId, category)
 
     /**
      * 初始化儿童床标准数据
@@ -348,157 +486,71 @@ class StandardRepository private constructor(
         // 插入标准
         cribDatabase.cribStandardDao().insertStandards(
             listOf(
+                CribStandardsData.ASTM_F1169_STANDARD,
                 CribStandardsData.EN_716_STANDARD,
-                CribStandardsData.GB_28007_STANDARD
+                CribStandardsData.GB_28004_STANDARD
             )
         )
         
-        // 插入尺寸要求
-        cribDatabase.cribDimensionDao().insertDimensions(CribStandardsData.DIMENSIONS)
-        
-        // 插入床垫间隙要求
-        cribDatabase.cribMattressGapDao().insertGaps(CribStandardsData.MATTRESS_GAPS)
-        
-        // 插入栏杆要求
-        cribDatabase.cribRailingDao().insertRailings(CribStandardsData.RAILINGS)
+        // 插入年龄组
+        cribDatabase.cribAgeGroupDao().insertAgeGroups(CribStandardsData.AGE_GROUPS)
         
         // 插入安全要求
         cribDatabase.cribSafetyRequirementDao().insertRequirements(CribStandardsData.SAFETY_REQUIREMENTS)
+        
+        // 插入尺寸数据
+        cribDatabase.cribDimensionDao().insertDimensions(CribStandardsData.DIMENSIONS)
     }
 
-    // ========== 新增：按标准类型获取数据的方法（解决标准混用问题） ==========
+    // ========== 标准类型验证 ==========
 
     /**
-     * 数据传输对象：按标准类型过滤后的标准数据
+     * 验证标准类型是否有效
+     * 
+     * @param standardType 标准类型
+     * @return 是否有效
      */
-    data class StandardData(
-        val standardType: String,
-        val standardName: String,
-        val dummies: List<CrashTestDummy>,
-        val thresholds: List<SafetyThreshold>,
-        val testConfigs: List<TestConfiguration>
-    )
-
-    /**
-     * 按标准类型获取完整的标准数据
-     * @param standardType 标准类型："ECE_R129", "FMVSS_213", "GB_27887_2024"
-     * @return StandardData 包含该标准的假人、阈值、测试配置
-     */
-    suspend fun getDataByStandard(standardType: String): StandardData {
-        return withContext(Dispatchers.IO) {
-            val standardName = when (standardType) {
-                "ECE_R129" -> "UN R129 (i-Size)"
-                "FMVSS_213" -> "FMVSS 213 (美国)"
-                "GB_27887_2024" -> "GB 27887-2024 (中国)"
-                "GB_28007_2024" -> "GB 28007-2024 (中国儿童床)"
-                else -> "未知标准"
-            }
-
-            val dummies = eceR129Database.crashTestDummyDao().getByStandardType(standardType)
-            val thresholds = eceR129Database.safetyThresholdDao().getByStandardType(standardType)
-            val testConfigs = eceR129Database.testConfigurationDao().getByStandardType(standardType)
-
-            StandardData(
-                standardType = standardType,
-                standardName = standardName,
-                dummies = dummies,
-                thresholds = thresholds,
-                testConfigs = testConfigs
-            )
-        }
+    fun isValidStandardType(standardType: String): Boolean {
+        return standardType in listOf("ECE_R129", "FMVSS_213", "GB_27887_2024")
     }
 
-    /**
-     * 按标准类型和身高获取假人
-     */
-    suspend fun getDummyByStandardAndHeight(standardType: String, heightCm: Int): CrashTestDummy? {
-        return withContext(Dispatchers.IO) {
-            eceR129Database.crashTestDummyDao().getByStandardTypeAndHeight(standardType, heightCm)
-        }
-    }
+    // ========== 标准路由日志 ==========
 
     /**
-     * 按标准类型和身高范围获取假人列表
+     * 记录标准路由日志（用于调试）
+     * 
+     * @param standardType 标准类型
+     * @param operation 操作类型
+     * @param result 查询结果
      */
-    suspend fun getDummiesByStandardAndHeightRange(
-        standardType: String,
-        minHeight: Int,
-        maxHeight: Int
-    ): List<CrashTestDummy> {
-        return withContext(Dispatchers.IO) {
-            val allDummies = eceR129Database.crashTestDummyDao().getByStandardType(standardType)
-            allDummies.filter { dummy ->
-                dummy.minHeightCm >= minHeight && dummy.maxHeightCm <= maxHeight
-            }
-        }
-    }
-
-    /**
-     * 按标准类型和假人获取安全阈值
-     */
-    suspend fun getThresholdsByStandardAndDummy(standardType: String, dummyId: String): List<SafetyThreshold> {
-        return withContext(Dispatchers.IO) {
-            eceR129Database.safetyThresholdDao().getByStandardTypeAndDummy(standardType, dummyId)
-        }
-    }
-
-    /**
-     * 按标准类型和假人代码获取安全阈值
-     */
-    suspend fun getThresholdsByStandardAndDummyCode(
-        standardType: String,
-        dummyCode: String
-    ): List<SafetyThreshold> {
-        return withContext(Dispatchers.IO) {
-            eceR129Database.safetyThresholdDao().getByStandardTypeAndDummyCode(standardType, dummyCode)
-        }
-    }
-
-    /**
-     * 按标准类型获取测试配置
-     */
-    suspend fun getTestConfigsByStandard(standardType: String): List<TestConfiguration> {
-        return withContext(Dispatchers.IO) {
-            eceR129Database.testConfigurationDao().getByStandardType(standardType)
-        }
-    }
-
-    /**
-     * 按标准类型、假人代码和安装方向获取测试配置
-     */
-    suspend fun getTestConfigsByStandardAndDummyAndDirection(
-        standardType: String,
-        dummyCode: String,
-        installDirection: String
-    ): List<TestConfiguration> {
-        return withContext(Dispatchers.IO) {
-            eceR129Database.testConfigurationDao().getByStandardTypeAndDummyAndDirection(
-                standardType,
-                dummyCode,
-                installDirection
-            )
-        }
+    private fun logStandardRouting(standardType: String, operation: String, result: Any?) {
+        android.util.Log.d(
+            "StandardRouting",
+            "标准路由 - 类型: $standardType, 操作: $operation, 结果: ${result?.javaClass?.simpleName}"
+        )
     }
 
     companion object {
-        @Volatile private var instance: StandardRepository? = null
+        @Volatile private var INSTANCE: StandardRepository? = null
 
-        fun getInstance(context: Context): StandardRepository {
-            return instance ?: synchronized(this) {
-                instance ?: StandardRepository(
+        fun getInstance(
+            context: Context,
+            eceR129Database: EceR129Database,
+            fmvssDatabase: FMVSSDatabase,
+            highChairDatabase: HighChairDatabase,
+            cribDatabase: CribDatabase
+        ): StandardRepository {
+            return INSTANCE ?: synchronized(this) {
+                val instance = StandardRepository(
                     context,
-                    EceR129Database.getDatabase(context),
-                    HighChairDatabase.getDatabase(context),
-                    CribDatabase.getDatabase(context)
-                ).also { instance = it }
+                    eceR129Database,
+                    fmvssDatabase,
+                    highChairDatabase,
+                    cribDatabase
+                )
+                INSTANCE = instance
+                instance
             }
-        }
-
-        /**
-         * 清除实例（用于测试）
-         */
-        fun clearInstance() {
-            instance = null
         }
     }
 }
