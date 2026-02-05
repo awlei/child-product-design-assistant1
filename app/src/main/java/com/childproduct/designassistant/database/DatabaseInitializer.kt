@@ -24,7 +24,10 @@ class DatabaseInitializer(private val context: Context) {
                 // 2. 初始化ECE专属假人数据（物理隔离）
                 database.eceCrashTestDummyDao().initializeEceDummies()
 
-                // 3. 初始化安全阈值
+                // 3. 初始化Envelope数据（新增）
+                database.eceEnvelopeDao().initializeStandardEnvelopes()
+
+                // 4. 初始化安全阈值
                 SafetyThreshold.STANDARD_THRESHOLDS.forEach { threshold ->
                     database.safetyThresholdDao().insert(threshold)
                 }
@@ -76,7 +79,7 @@ class DatabaseInitializer(private val context: Context) {
                     syncType = "INITIAL",
                     status = "SUCCESS",
                     timestamp = System.currentTimeMillis(),
-                    details = "数据库初始化完成，包含${CrashTestDummy.STANDARD_DUMMIES.size}个旧版假人类型，${database.eceCrashTestDummyDao().getCount()}个ECE专属假人，${SafetyThreshold.STANDARD_THRESHOLDS.size}个安全阈值，${TestConfiguration.getStandardConfigurations().size}个测试配置"
+                    details = "数据库初始化完成，包含${CrashTestDummy.STANDARD_DUMMIES.size}个旧版假人类型，${database.eceCrashTestDummyDao().getCount()}个ECE专属假人，${database.eceEnvelopeDao().getCount()}个Envelope，${SafetyThreshold.STANDARD_THRESHOLDS.size}个安全阈值，${TestConfiguration.getStandardConfigurations().size}个测试配置"
                 )
                 database.standardUpdateLogDao().insert(initLog)
 

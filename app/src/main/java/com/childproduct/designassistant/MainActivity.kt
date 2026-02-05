@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
         // 检查是否需要重新初始化（基于SharedPreference）
         val prefs = getSharedPreferences("DatabaseConfig", MODE_PRIVATE)
         val lastVersion = prefs.getInt("database_version", 0)
-        val currentVersion = 7  // EceR129Database版本7，FMVSSDatabase版本2
+        val currentVersion = 8  // EceR129Database版本8（添加Envelope），FMVSSDatabase版本2
 
         if (lastVersion < currentVersion) {
             android.util.Log.d("MainActivity", "检测到数据库版本更新，开始重新初始化...")

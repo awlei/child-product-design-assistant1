@@ -15,12 +15,13 @@ import com.childproduct.designassistant.database.entity.*
  * 存储 ECE R129 标准相关的所有数据
  * 物理隔离：仅存储ECE标准数据，不包含FMVSS数据
  *
- * 数据库版本: 7
+ * 数据库版本: 8
  */
 @Database(
     entities = [
         CrashTestDummy::class,          // 旧版假人实体（向后兼容）
         EceCrashTestDummy::class,       // 新版ECE专属假人实体（物理隔离）
+        EceEnvelope::class,             // 新增：ECE Envelope实体
         SafetyThreshold::class,
         TestConfiguration::class,
         StandardReference::class,
@@ -30,7 +31,7 @@ import com.childproduct.designassistant.database.entity.*
         HeightRangeMapping::class,
         StandardUpdateLog::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -39,6 +40,7 @@ abstract class EceR129Database : RoomDatabase() {
     // DAO 访问方法
     abstract fun crashTestDummyDao(): CrashTestDummyDao
     abstract fun eceCrashTestDummyDao(): EceCrashTestDummyDao  // 新增：ECE专属假人DAO
+    abstract fun eceEnvelopeDao(): EceEnvelopeDao              // 新增：ECE Envelope DAO
     abstract fun safetyThresholdDao(): SafetyThresholdDao
     abstract fun testConfigurationDao(): TestConfigurationDao
     abstract fun standardReferenceDao(): StandardReferenceDao

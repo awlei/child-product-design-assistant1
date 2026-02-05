@@ -48,7 +48,11 @@ class StandardOutputGenerator(private val standardRepository: StandardRepository
         val headRestHeight: String?,
         val seatWidth: String?,
         val envelope: String?,
-        val sideImpactArea: String?
+        val sideImpactArea: String?,
+        val sizeClass: String?,             // 新增：ISOFIX Size Class
+        val externalDimensions: String?,     // 新增：外形尺寸
+        val cockpitDimensions: String?,      // 新增：座舱尺寸
+        val installationRequirements: String? // 新增：安装要求
     )
 
     /**
@@ -269,12 +273,41 @@ class StandardOutputGenerator(private val standardRepository: StandardRepository
     /**
      * 生成ECE设计参数
      */
-    private fun generateEceDesignParameters(dummy: EceCrashTestDummy?): DesignParametersSection {
+    private suspend fun generateEceDesignParameters(dummy: EceCrashTestDummy?): DesignParametersSection {
+        // 获取对应的Envelope数据
+        val envelope = if (dummy != null) {
+            standardRepository.getEceEnvelopeByDummyCode(dummy.dummyCode)
+        } else {
+            null
+        }
+
+        val sizeClass = envelope?.sizeClass ?: "B1"
+        val externalDim = envelope?.let {
+            "长${it.maxLengthMm}mm × 宽${it.maxWidthMm}mm × 高${it.maxHeightMm}mm"
+        } ?: "参考ISOFIX标准"
+
+        val cockpitDim = envelope?.let {
+            "座舱长度${it.minCockpitLengthMm}mm × 宽度${it.minCockpitWidthMm}mm"
+        } ?: "参考GPS-028数据"
+
+        val installReq = envelope?.let {
+            when (it.applicableGroup) {
+                "Group 0+" -> "ISOFIX下固定点间距280mm，支撑腿区域无障碍"
+                "Group I" -> "ISOFIX下固定点间距280mm，Top tether锚点距离${it.topTetherDistanceMm}mm"
+                "Group II/III" -> "ISOFIX下固定点间距280mm，Top tether锚点距离${it.topTetherDistanceMm}mm"
+                else -> "参考UN R129要求"
+            }
+        } ?: "参考UN R129要求"
+
         return DesignParametersSection(
-            headRestHeight = "ECE R129: 参考GPS-028 Q系列假人数据，支持头枕调节",
-            seatWidth = "ECE R129: ISOFIX SIZE CLASS (B1, B2, D, E)",
-            envelope = "ECE R129: External Envelope (基于ISO-FIX)",
-            sideImpactArea = "ECE R129: 侧面碰撞防护区域（Q系列假人HIC≤1000）"
+            headRestHeight = "ECE R129: 参考GPS-028 Q系列假人数据，支持头枕调节（${envelope?.minHeadRestHeightMm}-${envelope?.maxHeadRestHeightMm}mm）",
+            seatWidth = "ECE R129: ISOFIX SIZE CLASS ${sizeClass} (${envelope?.minCockpitWidthMm}mm)",
+            envelope = "ECE R129: ISOFIX Size Class ${sizeClass}，External Envelope (${externalDim})",
+            sideImpactArea = "ECE R129: 侧面碰撞防护区域（${envelope?.sideImpactWidthMm}mm，Q系列假人HIC≤1000）",
+            sizeClass = sizeClass,
+            externalDimensions = externalDim,
+            cockpitDimensions = cockpitDim,
+            installationRequirements = installReq
         )
     }
 

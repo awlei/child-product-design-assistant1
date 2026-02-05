@@ -51,6 +51,58 @@ class StandardRepository private constructor(
         }
     }
 
+    // ========== ECE R129 专属Envelope操作 ==========
+
+    /**
+     * 获取所有ECE Envelope数据
+     */
+    suspend fun getAllEceEnvelopes(): List<com.childproduct.designassistant.database.entity.EceEnvelope> {
+        return withContext(Dispatchers.IO) {
+            Log.d(TAG, "[ECE] 获取所有ECE Envelope")
+            eceR129Database.eceEnvelopeDao().getAll()
+        }
+    }
+
+    /**
+     * 根据Size Class获取Envelope
+     */
+    suspend fun getEceEnvelopeBySizeClass(sizeClass: String): com.childproduct.designassistant.database.entity.EceEnvelope? {
+        return withContext(Dispatchers.IO) {
+            Log.d(TAG, "[ECE] 根据Size Class ${sizeClass}获取Envelope")
+            eceR129Database.eceEnvelopeDao().getBySizeClass(sizeClass)
+        }
+    }
+
+    /**
+     * 根据产品组获取Envelope
+     */
+    suspend fun getEceEnvelopeByProductGroup(productGroup: String): com.childproduct.designassistant.database.entity.EceEnvelope? {
+        return withContext(Dispatchers.IO) {
+            Log.d(TAG, "[ECE] 根据产品组${productGroup}获取Envelope")
+            eceR129Database.eceEnvelopeDao().getByProductGroup(productGroup)
+        }
+    }
+
+    /**
+     * 根据假人代码获取Envelope
+     */
+    suspend fun getEceEnvelopeByDummyCode(dummyCode: String): com.childproduct.designassistant.database.entity.EceEnvelope? {
+        return withContext(Dispatchers.IO) {
+            Log.d(TAG, "[ECE] 根据假人代码${dummyCode}获取Envelope")
+            eceR129Database.eceEnvelopeDao().getByDummyCode(dummyCode)
+        }
+    }
+
+    /**
+     * 根据身高获取Envelope
+     */
+    suspend fun getEceEnvelopeByHeight(heightCm: Int): com.childproduct.designassistant.database.entity.EceEnvelope? {
+        return withContext(Dispatchers.IO) {
+            Log.d(TAG, "[ECE] 根据身高${heightCm}cm获取Envelope")
+            eceR129Database.eceEnvelopeDao().getByHeight(heightCm)
+        }
+    }
+
     // ========== ECE R129 专属假人操作 ==========
 
     /**
