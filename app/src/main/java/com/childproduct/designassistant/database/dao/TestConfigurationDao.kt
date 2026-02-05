@@ -54,4 +54,35 @@ interface TestConfigurationDao {
 
     @Query("DELETE FROM test_configuration")
     suspend fun deleteAll()
+
+    // ========== 新增：按标准类型查询的方法（解决标准混用问题） ==========
+
+    @Query("SELECT * FROM test_configuration WHERE standardType = :standardType ORDER BY dummyId, pulseType, installDirection")
+    suspend fun getByStandardType(standardType: String): List<TestConfiguration>
+
+    @Query("SELECT * FROM test_configuration WHERE standardType = :standardType ORDER BY dummyId, pulseType, installDirection")
+    fun getByStandardTypeLiveData(standardType: String): LiveData<List<TestConfiguration>>
+
+    @Query("SELECT * FROM test_configuration WHERE standardType = :standardType AND dummyId = :dummyId ORDER BY pulseType, installDirection")
+    suspend fun getByStandardTypeAndDummyId(standardType: String, dummyId: String): List<TestConfiguration>
+
+    @Query("SELECT * FROM test_configuration WHERE standardType = :standardType AND pulseType = :pulseType ORDER BY dummyId")
+    suspend fun getByStandardTypeAndPulseType(standardType: String, pulseType: String): List<TestConfiguration>
+
+    @Query("SELECT * FROM test_configuration WHERE standardType = :standardType AND installDirection = :installDirection ORDER BY dummyId, pulseType")
+    suspend fun getByStandardTypeAndInstallDirection(standardType: String, installDirection: String): List<TestConfiguration>
+
+    @Query("""
+        SELECT tc.* FROM test_configuration tc
+        INNER JOIN crash_test_dummy ctd ON tc.dummyId = ctd.dummyId
+        WHERE tc.standardType = :standardType 
+        AND ctd.dummyCode = :dummyCode 
+        AND tc.installDirection = :installDirection
+        ORDER BY tc.pulseType
+    """)
+    suspend fun getByStandardTypeAndDummyAndDirection(
+        standardType: String,
+        dummyCode: String,
+        installDirection: String
+    ): List<TestConfiguration>
 }

@@ -14,8 +14,9 @@ import kotlinx.coroutines.launch
 
 /**
  * 标准选择ViewModel
- * 
+ *
  * 负责管理标准选择的UI状态和业务逻辑
+ * 修复：确保选中的标准能正确传递给下游ViewModel
  */
 class StandardSelectionViewModel : ViewModel() {
 
@@ -26,6 +27,10 @@ class StandardSelectionViewModel : ViewModel() {
     // 选中的标准（产品ID -> 标准ID列表）
     private val _selectedStandards = MutableStateFlow<Map<String, List<String>>>(emptyMap())
     val selectedStandards: StateFlow<Map<String, List<String>>> = _selectedStandards.asStateFlow()
+
+    // 新增：选中的标准类型（用于传递给下游）
+    private val _selectedStandardType = MutableStateFlow<String?>(null)
+    val selectedStandardType: StateFlow<String?> = _selectedStandardType.asStateFlow()
 
     // 生成方案事件
     private val _generateEvent = MutableSharedFlow<Map<String, List<String>>>()
@@ -67,7 +72,7 @@ class StandardSelectionViewModel : ViewModel() {
     fun toggleStandard(productId: String, standardId: String) {
         val current = _selectedStandards.value
         val currentList = current[productId] ?: emptyList()
-        
+
         val newList = if (standardId in currentList) {
             currentList - standardId
         } else {
@@ -81,6 +86,10 @@ class StandardSelectionViewModel : ViewModel() {
         }
 
         _selectedStandards.value = newMap
+
+        // 新增：自动更新选中的标准类型（取第一个选中的标准）
+        val allSelectedStandards = newMap.values.flatten()
+        _selectedStandardType.value = allSelectedStandards.firstOrNull()
     }
 
     /**
@@ -115,6 +124,7 @@ class StandardSelectionViewModel : ViewModel() {
      */
     fun resetSelection() {
         _selectedStandards.value = emptyMap()
+        _selectedStandardType.value = null
     }
 
     /**

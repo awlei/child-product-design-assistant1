@@ -8,6 +8,7 @@ import androidx.room.Index
 /**
  * 安全阈值实体
  * 基于UN R129 §7.1动态测试要求（Rev.5，2022版）
+ * 修复：添加standardType字段以支持按标准类型过滤数据
  */
 @Entity(
     tableName = "safety_threshold",
@@ -21,7 +22,8 @@ import androidx.room.Index
     ],
     indices = [
         Index(value = ["dummyId"]),
-        Index(value = ["testItem", "dummyId"], unique = true)
+        Index(value = ["testItem", "dummyId"], unique = true),
+        Index(value = ["standardType"])  // 新增：支持按标准类型查询
     ]
 )
 data class SafetyThreshold(
@@ -36,6 +38,7 @@ data class SafetyThreshold(
     val applicableDummies: String,            // 适用假人范围: "Q0-Q1.5", "Q3-Q10"
     val standardSource: String,               // 标准来源: "UN R129 §7.1.2"
     val notes: String? = null,                // 备注说明
+    val standardType: String = "ECE_R129",    // 新增：标准类型标识 "ECE_R129", "FMVSS_213", "GB_27887_2024"
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {

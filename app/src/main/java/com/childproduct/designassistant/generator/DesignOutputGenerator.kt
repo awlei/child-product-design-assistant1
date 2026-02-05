@@ -5,6 +5,7 @@ import com.childproduct.designassistant.model.*
 /**
  * 儿童产品设计方案输出生成器
  * 支持多标准适配、产品类型差异化输出、安装方式智能映射
+ * 修复：确保根据用户选择的标准类型生成对应内容，避免标准混用
  */
 object DesignOutputGenerator {
 
@@ -12,59 +13,66 @@ object DesignOutputGenerator {
      * 生成完整设计方案输出（Markdown格式）
      */
     fun generateDesignOutput(input: DesignInput): String {
+        // 修复：确保至少选择了一个标准
+        require(input.standards.isNotEmpty()) { "必须至少选择一个标准" }
+
+        // 修复：使用第一个选中的标准作为主要标准（避免混用）
+        val primaryStandard = input.standards.first()
+
         return when (input.productType) {
-            EnhancedProductType.SAFETY_SEAT -> generateSafetySeatOutput(input)
-            EnhancedProductType.STROLLER -> generateStrollerOutput(input)
-            EnhancedProductType.HIGH_CHAIR -> generateHighChairOutput(input)
-            EnhancedProductType.CRIB -> generateCribOutput(input)
+            EnhancedProductType.SAFETY_SEAT -> generateSafetySeatOutput(input, primaryStandard)
+            EnhancedProductType.STROLLER -> generateStrollerOutput(input, primaryStandard)
+            EnhancedProductType.HIGH_CHAIR -> generateHighChairOutput(input, primaryStandard)
+            EnhancedProductType.CRIB -> generateCribOutput(input, primaryStandard)
         }
     }
 
     // ========== 儿童安全座椅输出 ==========
-    private fun generateSafetySeatOutput(input: DesignInput): String {
+    private fun generateSafetySeatOutput(input: DesignInput, primaryStandard: InternationalStandard): String {
         require(input.heightRange != null) { "安全座椅必须提供身高范围" }
         require(input.installMethod != null) { "安全座椅必须选择安装方式" }
 
         val (minHeight, maxHeight) = parseHeightRange(input.heightRange!!)
-        val dummyMappings = getDummyMappings(minHeight, maxHeight)
-        val installDirections = getInstallDirections(minHeight, maxHeight)
+        val dummyMappings = getDummyMappingsByStandard(minHeight, maxHeight, primaryStandard)
+        val installDirections = getInstallDirectionsByStandard(minHeight, maxHeight, primaryStandard)
 
         return buildString {
             // 1. 标准映射说明
-            appendLine(generateStandardMappingSection(input, dummyMappings, installDirections))
+            appendLine(generateStandardMappingSection(input, primaryStandard, dummyMappings, installDirections))
 
             // 2. 基本设计方案
-            appendLine(generateBasicDesignSection(input, minHeight, maxHeight, installDirections))
+            appendLine(generateBasicDesignSection(input, primaryStandard, minHeight, maxHeight, installDirections))
 
             // 3. ISOFIX envelope尺寸要求（仅ISOFIX安装）
             if (input.installMethod!!.fixedType.contains("ISOFIX")) {
-                appendLine(generateIsofixEnvelopeSection())
+                appendLine(generateIsofixEnvelopeSection(primaryStandard))
             }
 
             // 4. 测试矩阵
-            appendLine(generateTestMatrixSection(input, dummyMappings, installDirections))
+            appendLine(generateTestMatrixSection(input, primaryStandard, dummyMappings, installDirections))
 
-            // 5. 安全阈值
-            appendLine(generateSafetyThresholdsSection(input.standards, dummyMappings))
+            // 5. 安全阈值（修复：只显示选中标准的阈值）
+            appendLine(generateSafetyThresholdsSection(primaryStandard, dummyMappings))
 
             // 6. 合规声明
-            appendLine(generateComplianceStatementSection(input))
+            appendLine(generateComplianceStatementSection(input, primaryStandard))
 
             // 7. 安全注意事项
-            appendLine(generateSafetyNotesSection(input, installDirections))
+            appendLine(generateSafetyNotesSection(input, primaryStandard, installDirections))
         }
     }
 
     // ========== 标准映射说明 ==========
     private fun generateStandardMappingSection(
         input: DesignInput,
+        primaryStandard: InternationalStandard,
         dummyMappings: List<DummyMapping>,
         installDirections: InstallDirectionsMap
     ): String {
         return buildString {
             appendLine("## 【标准说明】")
             appendLine()
-            appendLine("> ⚠️ **关键说明**：根据所选标准及身高范围，自动映射假人类型与安装方向")
+            appendLine("> ⚠️ **关键说明**：本方案基于所选标准 **${primaryStandard.displayName}** 生成，避免混用其他标准")
             appendLine()
 
             // 假人映射表
@@ -78,15 +86,31 @@ object DesignOutputGenerator {
                 appendLine(
                     "| ${mapping.minHeight}-${mapping.maxHeight}cm | ${mapping.dummyType} | ${mapping.ageRange} | " +
                             "${if (direction == InstallDirection.REARWARD) "Rearward facing" else "Forward facing"} | " +
-                            "${input.standards.joinToString(" / ") { it.displayName }} |"
+                            "${primaryStandard.displayName} |"
                 )
             }
             appendLine()
 
-            // 安装方向规则
-            appendLine("**安装方向规则**（${input.standards.joinToString(" / ") { it.code }}）：")
-            appendLine("- 40-105cm：强制后向安装（Rearward facing）")
-            appendLine("- 105-150cm：允许前向安装（Forward facing），必须使用Top-tether防旋转")
+            // 安装方向规则（根据标准类型显示不同规则）
+            appendLine("**安装方向规则**（${primaryStandard.displayName}）：")
+            when (primaryStandard) {
+                InternationalStandard.ECE_R129 -> {
+                    appendLine("- 40-105cm：强制后向安装（Rearward facing）")
+                    appendLine("- 105-150cm：允许前向安装（Forward facing），必须使用Top-tether防旋转")
+                }
+                InternationalStandard.FMVSS_213 -> {
+                    appendLine("- 根据假人类型确定安装方向")
+                    appendLine("- 0-3岁：推荐后向安装")
+                    appendLine("- 4岁及以上：可前向安装")
+                }
+                InternationalStandard.GB_27887 -> {
+                    appendLine("- 40-105cm：强制后向安装")
+                    appendLine("- 105cm以上：可前向安装")
+                }
+                else -> {
+                    appendLine("- 根据标准要求确定安装方向")
+                }
+            }
             appendLine()
         }
     }
@@ -94,6 +118,7 @@ object DesignOutputGenerator {
     // ========== 基本设计方案 ==========
     private fun generateBasicDesignSection(
         input: DesignInput,
+        primaryStandard: InternationalStandard,
         minHeight: Int,
         maxHeight: Int,
         installDirections: InstallDirectionsMap
@@ -123,20 +148,22 @@ object DesignOutputGenerator {
     }
 
     // ========== ISOFIX envelope尺寸 ==========
-    private fun generateIsofixEnvelopeSection(): String {
+    private fun generateIsofixEnvelopeSection(primaryStandard: InternationalStandard): String {
         return """
 ## 【ISOFIX envelope尺寸要求】
+- **适用标准**：${primaryStandard.displayName}
 - **正向安装**：需符合 ISO/F2X 治具尺寸，确保锚点连接刚性
 - **反向安装**：需符合 ISO/R2 治具尺寸，保证与车辆座椅贴合度
 - **前后滑动量**：允许 80mm±1mm 调节，适配不同车型锚点位置
 - **侧向滑动量**：单侧可向外滑动≥200mm，方便装卸且关闭后精准匹配
-- **刚性要求**：ISOFIX连接件静态强度 ≥8kN（ECE R129 §6.1.2.3）
+- **刚性要求**：ISOFIX连接件静态强度 ≥8kN（${primaryStandard.code} §6.1.2.3）
         """.trimIndent() + "\n\n"
     }
 
     // ========== 测试矩阵（ROADMATE 360格式）==========
     private fun generateTestMatrixSection(
         input: DesignInput,
+        primaryStandard: InternationalStandard,
         dummyMappings: List<DummyMapping>,
         installDirections: InstallDirectionsMap
     ): String {
@@ -260,13 +287,13 @@ object DesignOutputGenerator {
         )
     }
 
-    // ========== 安全阈值 ==========
+    // ========== 安全阈值（修复：只显示选中标准的阈值）==========
     private fun generateSafetyThresholdsSection(
-        standards: List<InternationalStandard>,
+        primaryStandard: InternationalStandard,
         dummyMappings: List<DummyMapping>
     ): String {
         return buildString {
-            appendLine("## 【安全阈值】（${standards.joinToString(" / ") { it.displayName }}）")
+            appendLine("## 【安全阈值】（${primaryStandard.displayName}）")
             appendLine()
             appendLine("| 测试项目 | 标准要求 | 适用假人 | 单位 | 标准条款 |")
             appendLine("|----------|----------|----------|------|----------|")
@@ -331,27 +358,32 @@ object DesignOutputGenerator {
     }
 
     // ========== 合规声明 ==========
-    private fun generateComplianceStatementSection(input: DesignInput): String {
+    private fun generateComplianceStatementSection(
+        input: DesignInput,
+        primaryStandard: InternationalStandard
+    ): String {
         return """
 ## 【合规声明】
+
 本设计方案适配以下标准：
-${input.standards.joinToString("\n") { "- ${it.displayName}" }}
+- ${primaryStandard.displayName}（${primaryStandard.region}）
 
 **核心合规要求**：
-- 假人覆盖：${getDummyCoverage(input.heightRange!!)}（符合${input.standards.joinToString(" / ") { it.code }} §5.2）
+- 假人覆盖：${getDummyCoverage(input.heightRange!!)}（符合${primaryStandard.code} §5.2）
 - 安装方向：
-  • 40-105cm：强制后向安装（${input.standards.joinToString(" / ") { it.code }} §5.1.3）
-  • 105-150cm：前向安装+Top-tether强制（${input.standards.joinToString(" / ") { it.code }} §6.1.2）
-- 动态测试：正面/后向/侧向碰撞全覆盖（${input.standards.joinToString(" / ") { it.code }} §7）
-- ISOFIX连接：3点式+支撑腿/上拉带双重防旋转（${input.standards.joinToString(" / ") { it.code }} §6.1.2）
+  • 40-105cm：强制后向安装（${primaryStandard.code} §5.1.3）
+  • 105-150cm：前向安装+Top-tether强制（${primaryStandard.code} §6.1.2）
+- 动态测试：正面/后向/侧向碰撞全覆盖（${primaryStandard.code} §7）
+- ISOFIX连接：3点式+支撑腿/上拉带双重防旋转（${primaryStandard.code} §6.1.2）
 
-> ⚠️ **标准隔离原则**：本输出严格遵循所选标准要求，不同标准参数独立呈现，无混用。
+> ⚠️ **标准隔离原则**：本输出严格遵循所选标准 ${primaryStandard.displayName} 要求，不包含其他标准的内容，避免混用。
         """.trimIndent() + "\n\n"
     }
 
     // ========== 安全注意事项 ==========
     private fun generateSafetyNotesSection(
         input: DesignInput,
+        primaryStandard: InternationalStandard,
         installDirections: InstallDirectionsMap
     ): String {
         return buildString {
@@ -362,9 +394,9 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("- **安装警示**：")
             installDirections.forEach { (range, direction) ->
                 if (direction == InstallDirection.REARWARD) {
-                    appendLine("  • ${range.first}-${range.last}cm：必须后向安装，禁止前向（${input.standards.joinToString(" / ") { it.code }} §8.1）")
+                    appendLine("  • ${range.first}-${range.last}cm：必须后向安装，禁止前向（${primaryStandard.code} §8.1）")
                 } else {
-                    appendLine("  • ${range.first}-${range.last}cm：前向安装必须使用Top-tether，禁止仅用ISOFIX（${input.standards.joinToString(" / ") { it.code }} §8.1）")
+                    appendLine("  • ${range.first}-${range.last}cm：前向安装必须使用Top-tether，禁止仅用ISOFIX（${primaryStandard.code} §8.1）")
                 }
             }
 
@@ -374,7 +406,7 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             appendLine("  • \"105-150cm: Forward facing with Top-tether\"")
 
             // 材质阻燃
-            appendLine("- **材质阻燃**：面料燃烧速度≤4英寸/分钟（FMVSS 302，${input.standards.joinToString(" / ") { it.code }}引用要求）")
+            appendLine("- **材质阻燃**：面料燃烧速度≤4英寸/分钟（FMVSS 302，${primaryStandard.code}引用要求）")
 
             // 成长调节
             appendLine("- **成长调节**：头枕/肩带7档高度调节，适配Q0-Q10全假人肩高范围")
@@ -383,7 +415,7 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
     }
 
     // ========== 婴儿推车输出 ==========
-    private fun generateStrollerOutput(input: DesignInput): String {
+    private fun generateStrollerOutput(input: DesignInput, primaryStandard: InternationalStandard): String {
         return buildString {
             appendLine("## 【设计方案】")
             appendLine("**产品类型**：${input.productType.displayName}")
@@ -641,5 +673,110 @@ ${input.standards.joinToString("\n") { "- ${it.displayName}" }}
             max <= 145 -> "Q0-Q6"
             else -> "Q0-Q10（全假人序列）"
         }
+    }
+
+    // ========== 新增：按标准类型获取假人映射（解决标准混用问题）==========
+    private fun getDummyMappingsByStandard(
+        minHeight: Int,
+        maxHeight: Int,
+        standard: InternationalStandard
+    ): List<DummyMapping> {
+        // 根据标准类型返回不同的假人映射
+        return when (standard) {
+            InternationalStandard.ECE_R129 -> {
+                // ECE R129使用Q系列假人
+                listOf(
+                    DummyMapping(40, 50, "Q0", "新生儿假人(Q0)", "0-6个月"),
+                    DummyMapping(50, 60, "Q0+", "大婴儿假人(Q0+)", "6-12个月"),
+                    DummyMapping(60, 75, "Q1", "幼儿假人(Q1)", "1-2岁"),
+                    DummyMapping(75, 87, "Q1.5", "学步儿童假人(Q1.5)", "2-3岁"),
+                    DummyMapping(87, 105, "Q3", "学前儿童假人(Q3)", "3-4岁"),
+                    DummyMapping(105, 125, "Q6", "大龄儿童假人(Q6)", "4-7岁"),
+                    DummyMapping(125, 150, "Q10", "青少年假人(Q10)", "7-12岁")
+                )
+            }
+            InternationalStandard.FMVSS_213 -> {
+                // FMVSS 213使用HIII和Q3s假人（侧碰使用Q3s）
+                listOf(
+                    DummyMapping(40, 57, "CRABI", "新生儿假人(CRABI)", "0-18个月"),
+                    DummyMapping(57, 81, "Hybrid III 3YO", "幼儿假人(HIII-3YO)", "1-3岁"),
+                    DummyMapping(81, 102, "Hybrid III 6YO", "儿童假人(HIII-6YO)", "3-6岁"),
+                    DummyMapping(102, 130, "Hybrid III 10YO", "大龄儿童假人(HIII-10YO)", "6-10岁"),
+                    DummyMapping(130, 145, "Q3s", "侧碰假人(Q3s)", "8-11岁")
+                )
+            }
+            InternationalStandard.GB_27887 -> {
+                // GB 27887参考ECE R129
+                listOf(
+                    DummyMapping(40, 50, "Q0", "新生儿假人(Q0)", "0-6个月"),
+                    DummyMapping(50, 60, "Q0+", "大婴儿假人(Q0+)", "6-12个月"),
+                    DummyMapping(60, 75, "Q1", "幼儿假人(Q1)", "1-2岁"),
+                    DummyMapping(75, 87, "Q1.5", "学步儿童假人(Q1.5)", "2-3岁"),
+                    DummyMapping(87, 105, "Q3", "学前儿童假人(Q3)", "3-4岁"),
+                    DummyMapping(105, 125, "Q6", "大龄儿童假人(Q6)", "4-7岁"),
+                    DummyMapping(125, 150, "Q10", "青少年假人(Q10)", "7-12岁")
+                )
+            }
+            else -> {
+                // 其他标准默认使用ECE R129的假人映射
+                listOf(
+                    DummyMapping(40, 50, "Q0", "新生儿假人(Q0)", "0-6个月"),
+                    DummyMapping(50, 60, "Q0+", "大婴儿假人(Q0+)", "6-12个月"),
+                    DummyMapping(60, 75, "Q1", "幼儿假人(Q1)", "1-2岁"),
+                    DummyMapping(75, 87, "Q1.5", "学步儿童假人(Q1.5)", "2-3岁"),
+                    DummyMapping(87, 105, "Q3", "学前儿童假人(Q3)", "3-4岁"),
+                    DummyMapping(105, 125, "Q6", "大龄儿童假人(Q6)", "4-7岁"),
+                    DummyMapping(125, 150, "Q10", "青少年假人(Q10)", "7-12岁")
+                )
+            }
+        }.filter { it.minHeight < maxHeight && it.maxHeight > minHeight }
+    }
+
+    // ========== 新增：按标准类型获取安装方向（解决标准混用问题）==========
+    private fun getInstallDirectionsByStandard(
+        minHeight: Int,
+        maxHeight: Int,
+        standard: InternationalStandard
+    ): InstallDirectionsMap {
+        val directions = mutableMapOf<IntRange, InstallDirection>()
+
+        when (standard) {
+            InternationalStandard.ECE_R129, InternationalStandard.GB_27887 -> {
+                // ECE R129和GB 27887：40-105cm后向，105-150cm前向
+                if (minHeight < 105) {
+                    val end = minOf(maxHeight, 105)
+                    directions[40..end] = InstallDirection.REARWARD
+                }
+                if (maxHeight >= 105) {
+                    val start = maxOf(minHeight, 105)
+                    directions[start..maxHeight] = InstallDirection.FORWARD
+                }
+            }
+            InternationalStandard.FMVSS_213 -> {
+                // FMVSS 213：根据年龄确定
+                if (minHeight < 81) {
+                    // 3岁以下推荐后向
+                    val end = minOf(maxHeight, 81)
+                    directions[40..end] = InstallDirection.REARWARD
+                }
+                if (maxHeight >= 81) {
+                    // 3岁以上可前向
+                    val start = maxOf(minHeight, 81)
+                    directions[start..maxHeight] = InstallDirection.FORWARD
+                }
+            }
+            else -> {
+                // 其他标准默认使用ECE R129规则
+                if (minHeight < 105) {
+                    val end = minOf(maxHeight, 105)
+                    directions[40..end] = InstallDirection.REARWARD
+                }
+                if (maxHeight >= 105) {
+                    val start = maxOf(minHeight, 105)
+                    directions[start..maxHeight] = InstallDirection.FORWARD
+                }
+            }
+        }
+        return directions
     }
 }

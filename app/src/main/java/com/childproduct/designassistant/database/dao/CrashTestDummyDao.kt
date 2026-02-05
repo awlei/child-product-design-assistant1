@@ -46,4 +46,21 @@ interface CrashTestDummyDao {
 
     @Query("DELETE FROM crash_test_dummy")
     suspend fun deleteAll()
+
+    // ========== 新增：按标准类型查询的方法（解决标准混用问题） ==========
+
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = :standardType ORDER BY minHeightCm ASC")
+    suspend fun getByStandardType(standardType: String): List<CrashTestDummy>
+
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = :standardType ORDER BY minHeightCm ASC")
+    fun getByStandardTypeLiveData(standardType: String): LiveData<List<CrashTestDummy>>
+
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = :standardType AND :heightCm >= minHeightCm AND :heightCm <= maxHeightCm LIMIT 1")
+    suspend fun getByStandardTypeAndHeight(standardType: String, heightCm: Int): CrashTestDummy?
+
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = :standardType AND installDirection = :direction ORDER BY minHeightCm ASC")
+    suspend fun getByStandardTypeAndInstallDirection(standardType: String, direction: String): List<CrashTestDummy>
+
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = :standardType AND :heightCm >= minHeightCm AND :heightCm <= maxHeightCm")
+    suspend fun getByStandardTypeAndHeightRange(standardType: String, heightCm: Int): List<CrashTestDummy>
 }

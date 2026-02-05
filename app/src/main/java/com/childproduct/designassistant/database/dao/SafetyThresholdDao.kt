@@ -42,4 +42,21 @@ interface SafetyThresholdDao {
 
     @Query("DELETE FROM safety_threshold")
     suspend fun deleteAll()
+
+    // ========== 新增：按标准类型查询的方法（解决标准混用问题） ==========
+
+    @Query("SELECT * FROM safety_threshold WHERE standardType = :standardType ORDER BY testItem, parameterName")
+    suspend fun getByStandardType(standardType: String): List<SafetyThreshold>
+
+    @Query("SELECT * FROM safety_threshold WHERE standardType = :standardType ORDER BY testItem, parameterName")
+    fun getByStandardTypeLiveData(standardType: String): LiveData<List<SafetyThreshold>>
+
+    @Query("SELECT * FROM safety_threshold WHERE standardType = :standardType AND dummyId = :dummyId ORDER BY testItem")
+    suspend fun getByStandardTypeAndDummy(standardType: String, dummyId: String): List<SafetyThreshold>
+
+    @Query("SELECT * FROM safety_threshold WHERE standardType = :standardType AND applicableDummies LIKE '%' || :dummyCode || '%'")
+    suspend fun getByStandardTypeAndDummyCode(standardType: String, dummyCode: String): List<SafetyThreshold>
+
+    @Query("SELECT * FROM safety_threshold WHERE standardType = :standardType AND testItem = :testItem ORDER BY parameterName")
+    suspend fun getByStandardTypeAndTestItem(standardType: String, testItem: String): List<SafetyThreshold>
 }

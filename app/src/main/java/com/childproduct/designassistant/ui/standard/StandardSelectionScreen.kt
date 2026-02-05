@@ -22,22 +22,27 @@ import com.childproduct.designassistant.ui.theme.ChildProductDesignAssistantThem
 
 /**
  * 标准适配设计选择界面
- * 
+ *
  * 功能：
  * - 按产品分类展示（出行类、家居类）
  * - 折叠卡片式UI，默认收起
  * - 支持单选或多选标准
  * - 全选/取消全选快捷按钮
  * - 根据选择的标准调用对应数据库
+ * - 修复：传递selectedStandardType，确保标准类型传递到下游
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StandardSelectionScreen(
     viewModel: StandardSelectionViewModel = viewModel(),
-    onGenerateDesign: (selectedStandards: Map<String, List<String>>) -> Unit = {}
+    onGenerateDesign: (
+        selectedStandards: Map<String, List<String>>,
+        selectedStandardType: String?  // 新增：选中的标准类型
+    ) -> Unit = { _, _ -> }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedStandards by viewModel.selectedStandards.collectAsState()
+    val selectedStandardType by viewModel.selectedStandardType.collectAsState()  // 新增：收集选中的标准类型
 
     Scaffold(
         topBar = {
@@ -51,9 +56,9 @@ fun StandardSelectionScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { onGenerateDesign(selectedStandards) },
-                containerColor = if (selectedStandards.isNotEmpty()) 
-                    MaterialTheme.colorScheme.primary 
+                onClick = { onGenerateDesign(selectedStandards, selectedStandardType) },  // 修复：传递selectedStandardType
+                containerColor = if (selectedStandards.isNotEmpty())
+                    MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = if (selectedStandards.isNotEmpty())
                     Color.White

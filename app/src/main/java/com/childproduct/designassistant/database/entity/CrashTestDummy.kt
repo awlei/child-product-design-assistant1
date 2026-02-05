@@ -8,10 +8,14 @@ import com.childproduct.designassistant.model.InstallDirection
 /**
  * 假人类型实体
  * 基于UN R129 Annex 19标准（Rev.5，2022版）
+ * 修复：添加standardType字段以支持按标准类型过滤数据
  */
 @Entity(
     tableName = "crash_test_dummy",
-    indices = [Index(value = ["dummyCode"], unique = true)]
+    indices = [
+        Index(value = ["dummyCode"], unique = true),
+        Index(value = ["standardType"])  // 新增：支持按标准类型查询
+    ]
 )
 data class CrashTestDummy(
     @PrimaryKey val dummyId: String,          // 唯一ID: DUMMY_Q0, DUMMY_Q1...
@@ -28,6 +32,7 @@ data class CrashTestDummy(
     val headCircumferenceMm: Int?,            // 头围(mm)
     val shoulderWidthMm: Int?,                // 肩宽(mm)
     val sittingHeightMm: Int?,                // 坐高(mm)
+    val standardType: String = "ECE_R129",    // 新增：标准类型标识 "ECE_R129", "FMVSS_213", "GB_27887_2024"
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {

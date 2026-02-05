@@ -11,6 +11,7 @@ import com.childproduct.designassistant.model.InstallDirection
 /**
  * 测试配置实体
  * 基于ROADMATE 360格式和UN R129 Annex 7（Rev.5，2022版）
+ * 修复：添加standardType字段以支持按标准类型过滤数据
  */
 @Entity(
     tableName = "test_configuration",
@@ -24,7 +25,8 @@ import com.childproduct.designassistant.model.InstallDirection
     ],
     indices = [
         Index(value = ["dummyId", "pulseType", "impactDirection", "installDirection"], unique = true),
-        Index(value = ["standardReference"])
+        Index(value = ["standardReference"]),
+        Index(value = ["standardType"])  // 新增：支持按标准类型查询
     ]
 )
 data class TestConfiguration(
@@ -51,6 +53,7 @@ data class TestConfiguration(
     val testSpeedKmh: Double,                 // 测试速度(km/h): 50.0 (正面), 30.0 (后向)
     val maxPulseG: Double,                    // 最大脉冲(g)
     val stoppingDistanceMm: Int,              // 制动距离(mm)
+    val standardType: String = "ECE_R129",    // 新增：标准类型标识 "ECE_R129", "FMVSS_213", "GB_27887_2024"
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 ) {

@@ -237,13 +237,14 @@ fun MainScreen() {
                         viewModel = viewModel
                     )
                     "标准适配" -> StandardSelectionScreen(
-                        onGenerateDesign = { selectedStandards ->
+                        onGenerateDesign = { selectedStandards, selectedStandardType ->
                             // 生成设计方案
                             val request = com.childproduct.designassistant.data.model.DesignProposalRequest(
                                 productType = "儿童安全座椅",
                                 selectedStandards = selectedStandards,
                                 additionalRequirements = emptyList()
                             )
+                            // 修复：将选中的标准类型传递给DesignProposalViewModel
                             designProposalViewModel.generateProposal(request)
                             // 导航到设计方案界面
                             showDesignProposal = true

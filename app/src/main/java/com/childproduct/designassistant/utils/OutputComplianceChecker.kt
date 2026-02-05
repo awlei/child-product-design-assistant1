@@ -364,6 +364,209 @@ object OutputComplianceChecker {
             scheme.safetyNotes.forEach { note -> appendLine("- $note") }
         }
     }
+
+    // ========== 新增：标准混用检查方法（解决标准混用问题）==========
+
+    /**
+     * 校验输出内容是否与选中的标准一致
+     *
+     * @param content 输出内容
+     * @param selectedStandard 选中的标准类型："ECE_R129", "FMVSS_213", "GB_27887_2024"
+     * @return true表示合规，false表示不合规
+     */
+    fun checkStandardCompliance(content: String, selectedStandard: String): Boolean {
+        // 规则1：内容中是否包含选中标准的标识
+        val standardKeywords = when (selectedStandard) {
+            "ECE_R129" -> listOf("ECE R129", "i-Size", "UN R129")
+            "FMVSS_213" -> listOf("FMVSS 213", "FMVSS", "NHTSA")
+            "GB_27887_2024" -> listOf("GB 27887", "GB 27887-2024", "GB")
+            else -> emptyList()
+        }
+
+        val containsStandardTag = standardKeywords.any { content.contains(it, ignoreCase = true) }
+
+        // 规则2：内容中是否包含其他标准的标识（混用检测）
+        val otherStandards = when (selectedStandard) {
+            "ECE_R129" -> listOf("FMVSS", "NHTSA")
+            "FMVSS_213" -> listOf("ECE R129", "i-Size", "UN R129")
+            "GB_27887_2024" -> listOf("ECE R129", "i-Size", "FMVSS")
+            else -> emptyList()
+        }
+
+        val containsOtherStandard = otherStandards.any {
+            content.contains(it, ignoreCase = true)
+        }
+
+        // 规则3：检查假人类型是否匹配标准
+        val dummyMismatch = checkDummyMismatch(content, selectedStandard)
+
+        return containsStandardTag && !containsOtherStandard && !dummyMismatch
+    }
+
+    /**
+     * 检查假人类型是否与标准匹配
+     */
+    private fun checkDummyMismatch(content: String, standard: String): Boolean {
+        return when (standard) {
+            "ECE_R129" -> {
+                // ECE R129应该使用Q系列假人
+                content.contains("HIII", ignoreCase = true) ||
+                content.contains("Hybrid", ignoreCase = true) ||
+                content.contains("CRABI", ignoreCase = true)
+            }
+            "FMVSS_213" -> {
+                // FMVSS 213应该使用HIII系列假人（侧碰可使用Q3s）
+                content.contains("Q0", ignoreCase = true) ||
+                content.contains("Q1", ignoreCase = true) ||
+                content.contains("Q1.5", ignoreCase = true) ||
+                content.contains("Q6", ignoreCase = true) ||
+                content.contains("Q10", ignoreCase = true)
+            }
+            "GB_27887_2024" -> {
+                // GB 27887应该使用Q系列假人
+                content.contains("HIII", ignoreCase = true) ||
+                content.contains("Hybrid", ignoreCase = true) ||
+                content.contains("CRABI", ignoreCase = true)
+            }
+            else -> false
+        }
+    }
+
+    /**
+     * 强制校验输出合规性，若不合规则抛出异常
+     *
+     * @param content 输出内容
+     * @param selectedStandard 选中的标准类型
+     * @throws IllegalStateException 当内容与标准不匹配时抛出
+     */
+    fun enforceStandardCompliance(content: String, selectedStandard: String) {
+        if (!checkStandardCompliance(content, selectedStandard)) {
+            val standardName = when (selectedStandard) {
+                "ECE_R129" -> "ECE R129 (i-Size)"
+                "FMVSS_213" -> "FMVSS 213"
+                "GB_27887_2024" -> "GB 27887-2024"
+                else -> selectedStandard
+            }
+
+            val errorDetails = buildString {
+                appendLine("❌ 输出内容与选中标准不匹配！")
+                appendLine("选中的标准：$standardName")
+                appendLine("问题分析：")
+
+                // 检查是否缺少标准标识
+                val standardKeywords = when (selectedStandard) {
+                    "ECE_R129" -> listOf("ECE R129", "i-Size", "UN R129")
+                    "FMVSS_213" -> listOf("FMVSS 213", "FMVSS", "NHTSA")
+                    "GB_27887_2024" -> listOf("GB 27887", "GB 27887-2024", "GB")
+                    else -> emptyList()
+                }
+
+                val hasStandardTag = standardKeywords.any { content.contains(it, ignoreCase = true) }
+                if (!hasStandardTag) {
+                    appendLine("❓ 内容中缺少标准标识：${standardKeywords.joinToString(" / ")}")
+                }
+
+                // 检查是否混用其他标准
+                val otherStandards = when (selectedStandard) {
+                    "ECE_R129" -> listOf("FMVSS", "NHTSA")
+                    "FMVSS_213" -> listOf("ECE R129", "i-Size", "UN R129")
+                    "GB_27887_2024" -> listOf("ECE R129", "i-Size", "FMVSS")
+                    else -> emptyList()
+                }
+
+                val foundOtherStandards = otherStandards.filter {
+                    content.contains(it, ignoreCase = true)
+                }
+                if (foundOtherStandards.isNotEmpty()) {
+                    appendLine("❓ 内容中包含其他标准标识：${foundOtherStandards.joinToString(" / ")}")
+                }
+
+                // 检查假人类型是否匹配
+                if (checkDummyMismatch(content, selectedStandard)) {
+                    appendLine("❓ 假人类型与标准不匹配")
+                }
+            }
+
+            throw IllegalStateException(errorDetails.toString())
+        }
+    }
+
+    /**
+     * 生成标准合规性报告
+     *
+     * @param content 输出内容
+     * @param selectedStandard 选中的标准类型
+     * @return 合规性报告文本
+     */
+    fun generateComplianceReport(content: String, selectedStandard: String): String {
+        val standardName = when (selectedStandard) {
+            "ECE_R129" -> "ECE R129 (i-Size)"
+            "FMVSS_213" -> "FMVSS 213"
+            "GB_27887_2024" -> "GB 27887-2024"
+            else -> selectedStandard
+        }
+
+        val report = buildString {
+            appendLine("📋 标准合规性报告")
+            appendLine("=")
+            appendLine("选中标准：$standardName")
+            appendLine()
+
+            appendLine("✅ 合规检查：")
+            appendLine("- [${if (checkStandardCompliance(content, selectedStandard)) "✓" else "✗"}] 整体合规")
+
+            // 标准标识检查
+            val standardKeywords = when (selectedStandard) {
+                "ECE_R129" -> listOf("ECE R129", "i-Size", "UN R129")
+                "FMVSS_213" -> listOf("FMVSS 213", "FMVSS", "NHTSA")
+                "GB_27887_2024" -> listOf("GB 27887", "GB 27887-2024", "GB")
+                else -> emptyList()
+            }
+
+            val hasStandardTag = standardKeywords.any { content.contains(it, ignoreCase = true) }
+            appendLine("- [${if (hasStandardTag) "✓" else "✗"}] 包含标准标识")
+
+            // 混用检查
+            val otherStandards = when (selectedStandard) {
+                "ECE_R129" -> listOf("FMVSS", "NHTSA")
+                "FMVSS_213" -> listOf("ECE R129", "i-Size", "UN R129")
+                "GB_27887_2024" -> listOf("ECE R129", "i-Size", "FMVSS")
+                else -> emptyList()
+            }
+
+            val foundOtherStandards = otherStandards.filter {
+                content.contains(it, ignoreCase = true)
+            }
+            appendLine("- [${if (foundOtherStandards.isEmpty()) "✓" else "✗"}] 无其他标准混用")
+
+            // 假人类型检查
+            val hasDummyMismatch = checkDummyMismatch(content, selectedStandard)
+            appendLine("- [${if (!hasDummyMismatch) "✓" else "✗"}] 假人类型匹配")
+
+            appendLine()
+
+            if (!hasStandardTag) {
+                appendLine("⚠️ 建议：在输出中添加标准标识：${standardKeywords.joinToString(" / ")}")
+            }
+
+            if (foundOtherStandards.isNotEmpty()) {
+                appendLine("⚠️ 发现混用标准：${foundOtherStandards.joinToString(" / ")}")
+                appendLine("   建议：删除或替换为 $standardName")
+            }
+
+            if (hasDummyMismatch) {
+                appendLine("⚠️ 假人类型与标准不匹配")
+                appendLine("   建议：使用符合 $standardName 的假人类型")
+            }
+
+            if (checkStandardCompliance(content, selectedStandard)) {
+                appendLine()
+                appendLine("✅ 合规：输出内容完全符合 $standardName 标准")
+            }
+        }
+
+        return report
+    }
 }
 
 // ====================== 调用示例 ======================
