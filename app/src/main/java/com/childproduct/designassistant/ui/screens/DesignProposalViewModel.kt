@@ -73,14 +73,23 @@ class DesignProposalViewModel(
 
                 android.util.Log.d("DesignProposalVM", "收到标准类型: $standardType")
 
-                // 转换标准类型标识
+                // 转换标准类型标识（修复：使用精确匹配，避免误匹配）
                 val standardTypeCode = when {
-                    standardType.contains("ECE", ignoreCase = true) -> "ECE_R129"
-                    standardType.contains("FMVSS", ignoreCase = true) -> "FMVSS_213"
-                    standardType.contains("GB 27887", ignoreCase = true) -> "GB_27887_2024"
-                    standardType.contains("GB", ignoreCase = true) -> "GB_27887_2024"
+                    standardType.contains("ece_r129", ignoreCase = true) ||
+                    standardType.contains("ECE R129", ignoreCase = true) -> "ECE_R129"
+                    standardType.contains("fmvss_213", ignoreCase = true) ||
+                    standardType.contains("FMVSS 213", ignoreCase = true) -> "FMVSS_213"
+                    standardType.contains("gb_27887", ignoreCase = true) ||
+                    standardType.contains("GB 27887", ignoreCase = true) ||
+                    standardType.contains("GB 28007", ignoreCase = true) -> "GB_27887_2024"
+                    standardType.contains("as_nzs_1754", ignoreCase = true) ||
+                    standardType.contains("AS/NZS 1754", ignoreCase = true) -> "AS_NZS_1754"
+                    standardType.contains("jis_d1601", ignoreCase = true) ||
+                    standardType.contains("JIS D 1601", ignoreCase = true) -> "JIS_D1601"
                     else -> "ECE_R129" // 默认使用ECE R129
                 }
+
+                android.util.Log.d("DesignProposalVM", "转换后的标准代码: $standardTypeCode")
 
                 generator.generateProposal(request)
                     .onSuccess { proposal ->
@@ -92,13 +101,15 @@ class DesignProposalViewModel(
                         if (request.productType == "儿童安全座椅") {
                             val standardList = request.selectedStandards["儿童安全座椅"] ?: emptyList()
 
-                            // 修复：使用正确的标准ID映射
+                            android.util.Log.d("DesignProposalVM", "标准列表: $standardList")
+
+                            // 修复：优先使用standardList判断，只有当standardList为空时才使用standardTypeCode
                             val selection = ChildRestraintDesignService.StandardSelection(
-                                eceR129 = standardList.contains("ece_r129") || standardTypeCode == "ECE_R129",
-                                gb27887 = standardList.contains("gb_27887_2024") || standardTypeCode == "GB_27887_2024",
-                                fmvss213 = standardList.contains("fmvss_213") || standardTypeCode == "FMVSS_213",
-                                asNzs1754 = standardList.contains("as_nzs_1754"),
-                                jisD1601 = standardList.contains("jis_d1601")
+                                eceR129 = standardList.contains("ece_r129") || (standardList.isEmpty() && standardTypeCode == "ECE_R129"),
+                                gb27887 = standardList.contains("gb_27887_2024") || (standardList.isEmpty() && standardTypeCode == "GB_27887_2024"),
+                                fmvss213 = standardList.contains("fmvss_213") || (standardList.isEmpty() && standardTypeCode == "FMVSS_213"),
+                                asNzs1754 = standardList.contains("as_nzs_1754") || (standardList.isEmpty() && standardTypeCode == "AS_NZS_1754"),
+                                jisD1601 = standardList.contains("jis_d1601") || (standardList.isEmpty() && standardTypeCode == "JIS_D1601")
                             )
 
                             android.util.Log.d("DesignProposalVM", "标准列表: $standardList")
