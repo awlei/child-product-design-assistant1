@@ -22,6 +22,7 @@ import com.childproduct.designassistant.database.entity.*
  */
 @Database(
     entities = [
+        CrashTestDummy::class,
         FMVSSStandardEntity::class,
         FMVSSTestConfigEntity::class,
         FMVSSThresholdEntity::class,
