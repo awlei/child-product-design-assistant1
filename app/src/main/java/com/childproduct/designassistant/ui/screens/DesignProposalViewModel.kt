@@ -52,6 +52,10 @@ class DesignProposalViewModel(
     private val _selectedStandard = MutableStateFlow(initialSelectedStandard)
     val selectedStandard: StateFlow<String?> = _selectedStandard.asStateFlow()
 
+    // 新增：PDF导出状态（用于UI反馈）
+    private val _pdfExportState = MutableStateFlow<PdfExportState>(PdfExportState.Idle)
+    val pdfExportState: StateFlow<PdfExportState> = _pdfExportState.asStateFlow()
+
     /**
      * 生成设计方案（修复：使用选中的标准类型过滤数据）
      */
@@ -159,7 +163,51 @@ class DesignProposalViewModel(
         _currentProposal.value = null
         _uiState.value = DesignProposalUiState.Idle
         _markdownContent.value = ""
+        _pdfExportState.value = PdfExportState.Idle
     }
+
+    /**
+     * 导出PDF（协程方法，在IO线程执行）
+     */
+    fun exportToPdf(fileName: String = "儿童安全座椅设计方案") {
+        val content = _markdownContent.value
+        if (content.isBlank()) {
+            _pdfExportState.value = PdfExportState.Error("设计方案内容为空，无法导出PDF")
+            return
+        }
+
+        _pdfExportState.value = PdfExportState.Loading
+        viewModelScope.launch {
+            val result = PdfExporter.exportDesignProposal(getApplication(), content, fileName)
+            _pdfExportState.value = when {
+                result.isSuccess -> {
+                    val pdfFile = result.getOrNull()
+                    PdfExportState.Success(pdfFile)
+                }
+                result.isFailure -> {
+                    PdfExportState.Error(result.exceptionOrNull()?.message ?: "导出PDF失败")
+                }
+                else -> PdfExportState.Idle
+            }
+        }
+    }
+}
+
+/**
+ * PDF导出状态密封类
+ */
+sealed class PdfExportState {
+    /** 空闲状态 */
+    object Idle : PdfExportState()
+
+    /** 导出中 */
+    object Loading : PdfExportState()
+
+    /** 导出成功 */
+    data class Success(val pdfFile: File?) : PdfExportState()
+
+    /** 导出失败 */
+    data class Error(val message: String) : PdfExportState()
 }
 
 /**

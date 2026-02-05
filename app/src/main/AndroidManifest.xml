@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 存储权限（用于导出PDF） -->
+    <!-- 存储权限（用于导出PDF到应用专属目录，Android 10+不需要权限） -->
+    <!-- Android 9及以下需要权限，Android 10+使用应用专属目录无需权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -15,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        android:requestLegacyExternalStorage="false"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"

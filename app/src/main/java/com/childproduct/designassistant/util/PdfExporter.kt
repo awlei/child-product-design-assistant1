@@ -6,12 +6,16 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
+import android.os.Build
 import android.os.Environment
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -20,8 +24,9 @@ import java.util.Locale
 
 /**
  * PDF 导出工具类
- * 
+ *
  * 用于将设计方案导出为PDF文档
+ * 修复：使用应用专属目录，支持协程，添加错误处理
  */
 object PdfExporter {
 
@@ -36,74 +41,65 @@ object PdfExporter {
     private const val CONTENT_WIDTH = PAGE_WIDTH - MARGIN_LEFT - MARGIN_RIGHT
 
     /**
-     * 导出设计方案为PDF
-     * 
+     * 导出设计方案为PDF（协程函数，在IO线程执行）
+     *
      * @param context 应用上下文
      * @param markdownContent Markdown格式的内容
      * @param fileName 文件名（不含扩展名）
-     * @return 导出的PDF文件，失败返回null
+     * @return Result<File> 成功返回PDF文件，失败返回异常
      */
-    fun exportDesignProposal(
+    suspend fun exportDesignProposal(
         context: Context,
         markdownContent: String,
         fileName: String = "儿童安全座椅设计方案"
-    ): File? {
-        return try {
-            // 创建PDF文档
+    ): Result<File> = withContext(Dispatchers.IO) {
+        try {
+            // 1. 校验数据
+            if (markdownContent.isBlank()) {
+                return@withContext Result.failure(IllegalArgumentException("设计方案内容为空，无法生成PDF"))
+            }
+
+            // 2. 获取应用专属目录（Android 10+无需权限）
+            val exportDir = getPdfExportDirectory(context)
+
+            // 3. 创建PDF文档
             val pdfDocument = PdfDocument()
 
-            // 创建第一页
+            // 4. 过滤文件名非法字符
+            val safeFileName = fileName.replace(Regex("[\\\\/:*?\"<>|]"), "_")
+
+            // 5. 生成文件名（带时间戳）
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val pdfFileName = "${safeFileName}_$timestamp.pdf"
+            val pdfFile = File(exportDir, pdfFileName)
+
+            // 6. 创建第一页
             val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, 1).create()
             var page = pdfDocument.startPage(pageInfo)
             val canvas = page.canvas
             val paint = Paint()
 
-            // 绘制标题
+            // 7. 绘制标题
             drawTitle(canvas, paint, fileName)
-            
-            // 解析和绘制Markdown内容
+
+            // 8. 解析和绘制Markdown内容
             var yPosition = (MARGIN_TOP + 80).toFloat()
             yPosition = drawMarkdownContent(canvas, paint, markdownContent, yPosition)
 
-            // 如果内容超过一页，创建新页面
-            while (yPosition > PAGE_HEIGHT - MARGIN_BOTTOM) {
-                pdfDocument.finishPage(page)
-                val newPageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, pdfDocument.pages.size + 1).create()
-                val newPage = pdfDocument.startPage(newPageInfo)
-                val newCanvas = newPage.canvas
-                yPosition = drawMarkdownContent(newCanvas, paint, markdownContent, MARGIN_TOP.toFloat())
-                if (yPosition <= PAGE_HEIGHT - MARGIN_BOTTOM) {
-                    page = newPage
-                } else {
-                    pdfDocument.finishPage(newPage)
-                }
-            }
-
-            // 完成页面
+            // 9. 完成页面
             pdfDocument.finishPage(page)
 
-            // 保存到Downloads目录
-            val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            if (!downloadsDir.exists()) {
-                downloadsDir.mkdirs()
-            }
-
-            // 生成文件名（带时间戳）
-            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val pdfFileName = "${fileName}_$timestamp.pdf"
-            val pdfFile = File(downloadsDir, pdfFileName)
-
-            // 写入文件
+            // 10. 写入文件
             val outputStream = FileOutputStream(pdfFile)
             pdfDocument.writeTo(outputStream)
             outputStream.close()
             pdfDocument.close()
 
             Log.d(TAG, "PDF导出成功: ${pdfFile.absolutePath}")
-            pdfFile
+            Result.success(pdfFile)
         } catch (e: Exception) {
-            Log.e(TAG, "PDF导出失败", e)
-            null
+            Log.e(TAG, "PDF导出失败: ${e.message}", e)
+            Result.failure(e)
         }
     }
 
@@ -246,7 +242,14 @@ object PdfExporter {
     }
 
     /**
-     * 获取PDF导出目录
+     * 获取PDF导出目录（应用专属目录，Android 10+无需权限）
+     *
+     * 路径说明：
+     * - Android 10+：/Android/data/包名/files/Documents/DesignProposals/
+     * - Android 9及以下：/data/data/包名/files/Documents/DesignProposals/
+     *
+     * @param context 应用上下文
+     * @return PDF导出目录
      */
     fun getPdfExportDirectory(context: Context): File {
         return File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "DesignProposals").also {
