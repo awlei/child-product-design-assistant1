@@ -212,4 +212,48 @@ interface FMVSSDao {
      */
     @Query("DELETE FROM fmvss_product_tests WHERE productId = :productId")
     suspend fun deleteProductTest(productId: Long)
+    
+    // ========== FMVSS 213b特定查询方法 ==========
+    
+    /**
+     * 获取FMVSS 213b所有假人
+     */
+    @Query("SELECT * FROM fmvss_dummies WHERE applicableStandards LIKE '%FMVSS-213b%' ORDER BY weightKg")
+    suspend fun getFmvss213bDummies(): List<FMVSSDummyEntity>
+    
+    /**
+     * 获取FMVSS 213b特定测试场景的假人
+     */
+    @Query("SELECT * FROM fmvss_dummies WHERE applicableStandards LIKE '%FMVSS-213b%' AND applicableStandards LIKE :scenario ORDER BY weightKg")
+    suspend fun getFmvss213bDummiesByScenario(scenario: String): List<FMVSSDummyEntity>
+    
+    /**
+     * 获取FMVSS 213b假人的所有安全阈值
+     */
+    @Query("SELECT * FROM fmvss_thresholds WHERE standardId = 'FMVSS-213b-2026' AND dummyCode = :dummyCode ORDER BY criterion")
+    suspend fun getFmvss213bThresholdsByDummy(dummyCode: String): List<FMVSSThresholdEntity>
+    
+    /**
+     * 获取FMVSS 213b Type 2测试配置
+     */
+    @Query("SELECT * FROM fmvss_test_configurations WHERE configId LIKE '%TYPE2%' AND standardId = 'FMVSS-213b-2026'")
+    suspend fun getFmvss213bType2TestConfig(): FMVSSTestConfigEntity?
+    
+    /**
+     * 获取FMVSS 213b侧碰测试配置
+     */
+    @Query("SELECT * FROM fmvss_test_configurations WHERE impactType = '侧面碰撞' AND standardId = 'FMVSS-213b-2026'")
+    suspend fun getFmvss213bSideImpactConfig(): FMVSSTestConfigEntity?
+    
+    /**
+     * 获取FMVSS 213b正碰测试配置
+     */
+    @Query("SELECT * FROM fmvss_test_configurations WHERE impactType = '正面碰撞' AND standardId = 'FMVSS-213b-2026' ORDER BY configId")
+    suspend fun getFmvss213bFrontImpactConfigs(): List<FMVSSTestConfigEntity>
+    
+    /**
+     * 获取FMVSS 213b标准信息
+     */
+    @Query("SELECT * FROM fmvss_standards WHERE standardId = 'FMVSS-213b-2026'")
+    suspend fun getFmvss213bStandard(): FMVSSStandardEntity?
 }
