@@ -48,28 +48,28 @@ interface FMVSSDao {
     // ========== 假人相关 ==========
     
     /**
-     * 获取所有假人
+     * 获取所有FMVSS假人
      */
-    @Query("SELECT * FROM fmvss_dummies ORDER BY weightKg")
-    suspend fun getAllDummies(): List<FMVSSDummyEntity>
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = 'FMVSS_213' ORDER BY weightKg")
+    suspend fun getAllDummies(): List<CrashTestDummy>
     
     /**
      * 根据代码获取假人
      */
-    @Query("SELECT * FROM fmvss_dummies WHERE dummyCode = :dummyCode")
-    suspend fun getDummyByCode(dummyCode: String): FMVSSDummyEntity?
+    @Query("SELECT * FROM crash_test_dummy WHERE dummyCode = :dummyCode AND standardType = 'FMVSS_213'")
+    suspend fun getDummyByCode(dummyCode: String): CrashTestDummy?
     
     /**
      * 根据重量范围获取假人
      */
-    @Query("SELECT * FROM fmvss_dummies WHERE weightKg BETWEEN :minWeight AND :maxWeight")
-    suspend fun getDummiesByWeightRange(minWeight: Double, maxWeight: Double): List<FMVSSDummyEntity>
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = 'FMVSS_213' AND weightKg BETWEEN :minWeight AND :maxWeight")
+    suspend fun getDummiesByWeightRange(minWeight: Double, maxWeight: Double): List<CrashTestDummy>
     
     /**
-     * 插入或更新假人
+     * 插入或更新假人（注：假人数据应在EceR129Database中管理，此处保留接口但不推荐使用）
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertOrUpdateDummy(dummy: FMVSSDummyEntity)
+    suspend fun insertOrUpdateDummy(dummy: CrashTestDummy)
     
     // ========== 测试配置相关 ==========
     
@@ -216,16 +216,11 @@ interface FMVSSDao {
     // ========== FMVSS 213b特定查询方法 ==========
     
     /**
-     * 获取FMVSS 213b所有假人
+     * 获取FMVSS 213b适用假人（基于FMVSS 213标准的假人）
+     * 注：FMVSS 213b使用与FMVSS 213相同的假人系列
      */
-    @Query("SELECT * FROM fmvss_dummies WHERE applicableStandards LIKE '%FMVSS-213b%' ORDER BY weightKg")
-    suspend fun getFmvss213bDummies(): List<FMVSSDummyEntity>
-    
-    /**
-     * 获取FMVSS 213b特定测试场景的假人
-     */
-    @Query("SELECT * FROM fmvss_dummies WHERE applicableStandards LIKE '%FMVSS-213b%' AND applicableStandards LIKE :scenario ORDER BY weightKg")
-    suspend fun getFmvss213bDummiesByScenario(scenario: String): List<FMVSSDummyEntity>
+    @Query("SELECT * FROM crash_test_dummy WHERE standardType = 'FMVSS_213' ORDER BY weightKg")
+    suspend fun getFmvss213bDummies(): List<CrashTestDummy>
     
     /**
      * 获取FMVSS 213b假人的所有安全阈值
