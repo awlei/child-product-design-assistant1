@@ -3,6 +3,7 @@ package com.childproduct.designassistant.ui.standard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.childproduct.designassistant.data.model.DesignProposalRequest
+import com.childproduct.designassistant.constants.StandardConstants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +29,7 @@ class StandardSelectionViewModel : ViewModel() {
     private val _selectedStandards = MutableStateFlow<Map<String, List<String>>>(emptyMap())
     val selectedStandards: StateFlow<Map<String, List<String>>> = _selectedStandards.asStateFlow()
 
-    // 新增：选中的标准类型（用于传递给下游）
+    // 修复：选中的标准类型（使用StandardConstants常量）
     private val _selectedStandardType = MutableStateFlow<String?>(null)
     val selectedStandardType: StateFlow<String?> = _selectedStandardType.asStateFlow()
 
@@ -67,7 +68,7 @@ class StandardSelectionViewModel : ViewModel() {
     }
 
     /**
-     * 切换标准选中状态
+     * 修复：切换标准选中状态（添加日志和常量转换）
      */
     fun toggleStandard(productId: String, standardId: String) {
         val current = _selectedStandards.value
@@ -87,9 +88,18 @@ class StandardSelectionViewModel : ViewModel() {
 
         _selectedStandards.value = newMap
 
-        // 新增：自动更新选中的标准类型（取第一个选中的标准）
+        // 修复：使用StandardConstants转换标准ID，并添加日志
         val allSelectedStandards = newMap.values.flatten()
-        _selectedStandardType.value = allSelectedStandards.firstOrNull()
+        val firstStandard = allSelectedStandards.firstOrNull()
+
+        if (firstStandard != null) {
+            val standardConstant = StandardConstants.getStandardConstant(firstStandard)
+            _selectedStandardType.value = standardConstant
+            android.util.Log.d("StandardFlow", "状态更新：选中$firstStandard -> $standardConstant")
+        } else {
+            _selectedStandardType.value = null
+            android.util.Log.d("StandardFlow", "状态更新：清除所有选择")
+        }
     }
 
     /**

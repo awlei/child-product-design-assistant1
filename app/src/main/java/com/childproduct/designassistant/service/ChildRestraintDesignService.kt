@@ -1,14 +1,16 @@
 package com.childproduct.designassistant.service
 
 import com.childproduct.designassistant.data.*
+import com.childproduct.designassistant.constants.StandardConstants
 
 /**
  * 儿童安全座椅标准适配设计服务
- * 
+ *
  * 功能：
  * 1. 根据用户选择的标准调用相应的数据库
  * 2. 严格按照用户选择生成输出
  * 3. 支持多标准选择
+ * 修复：使用StandardConstants统一标准标识，添加全链路日志
  */
 class ChildRestraintDesignService {
 
@@ -23,14 +25,14 @@ class ChildRestraintDesignService {
         val jisD1601: Boolean = false     // JIS D 1601 (日本标准)
     ) {
         fun hasAnySelection(): Boolean = eceR129 || gb27887 || fmvss213 || asNzs1754 || jisD1601
-        
+
         fun getSelectedStandards(): List<String> {
             val list = mutableListOf<String>()
-            if (eceR129) list.add("ECE R129")
-            if (gb27887) list.add("GB 28007-2024")
-            if (fmvss213) list.add("FMVSS 213")
-            if (asNzs1754) list.add("AS/NZS 1754")
-            if (jisD1601) list.add("JIS D 1601")
+            if (eceR129) list.add(StandardConstants.getDisplayName(StandardConstants.ECE_R129))
+            if (gb27887) list.add(StandardConstants.getDisplayName(StandardConstants.GB_27887_2024))
+            if (fmvss213) list.add(StandardConstants.getDisplayName(StandardConstants.FMVSS_213))
+            if (asNzs1754) list.add(StandardConstants.getDisplayName(StandardConstants.AS_NZS_1754))
+            if (jisD1601) list.add(StandardConstants.getDisplayName(StandardConstants.JIS_D1601))
             return list
         }
     }
