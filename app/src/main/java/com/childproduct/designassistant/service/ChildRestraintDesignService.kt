@@ -99,7 +99,11 @@ class ChildRestraintDesignService {
         heightCm: Double = 0.0,
         weightKg: Double = 0.0
     ): DesignProposal {
+        android.util.Log.d("ChildRestraintDS", "generateDesignProposal调用")
+        android.util.Log.d("ChildRestraintDS", "selection参数: ECE=${selection.eceR129}, GB=${selection.gb27887}, FMVSS=${selection.fmvss213}, AS=${selection.asNzs1754}, JIS=${selection.jisD1601}")
+
         if (!selection.hasAnySelection()) {
+            android.util.Log.e("ChildRestraintDS", "未选择任何标准，返回空方案")
             return DesignProposal(
                 applicableStandards = emptyList(),
                 dummyData = DummyDataSection("未选择标准", "未选择标准", "未选择标准"),

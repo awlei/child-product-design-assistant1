@@ -69,15 +69,20 @@ class StandardSelectionViewModel : ViewModel() {
 
     /**
      * 修复：切换标准选中状态（添加日志和常量转换）
+     * 关键修复：确保_selectedStandards中的元素也被转换为常量
      */
     fun toggleStandard(productId: String, standardId: String) {
         val current = _selectedStandards.value
         val currentList = current[productId] ?: emptyList()
 
-        val newList = if (standardId in currentList) {
-            currentList - standardId
+        // 转换为常量格式
+        val standardConstant = StandardConstants.getStandardConstant(standardId)
+        val normalizedList = currentList.map { StandardConstants.getStandardConstant(it) }
+
+        val newList = if (standardConstant in normalizedList) {
+            normalizedList - standardConstant
         } else {
-            currentList + standardId
+            normalizedList + standardConstant
         }
 
         val newMap = if (newList.isEmpty()) {
@@ -93,9 +98,8 @@ class StandardSelectionViewModel : ViewModel() {
         val firstStandard = allSelectedStandards.firstOrNull()
 
         if (firstStandard != null) {
-            val standardConstant = StandardConstants.getStandardConstant(firstStandard)
-            _selectedStandardType.value = standardConstant
-            android.util.Log.d("StandardFlow", "状态更新：选中$firstStandard -> $standardConstant")
+            _selectedStandardType.value = firstStandard
+            android.util.Log.d("StandardFlow", "状态更新：选中标准列表=$newList, 首个标准=$firstStandard")
         } else {
             _selectedStandardType.value = null
             android.util.Log.d("StandardFlow", "状态更新：清除所有选择")

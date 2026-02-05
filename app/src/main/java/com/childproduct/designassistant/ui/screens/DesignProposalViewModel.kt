@@ -97,18 +97,25 @@ class DesignProposalViewModel(
                             val standardList = request.selectedStandards["儿童安全座椅"] ?: emptyList()
 
                             android.util.Log.d("StandardFlow", "标准列表：$standardList")
+                            android.util.Log.d("StandardFlow", "finalStandardType: $finalStandardType")
 
-                            // 修复：使用StandardConstants判断标准选择
+                            // 修复：使用StandardConstants常量进行匹配（避免大小写不一致导致匹配失败）
+                            // 注意：standardList中的元素已经被StandardSelectionViewModel转换为常量格式（如"ECE_R129"）
                             val selection = ChildRestraintDesignService.StandardSelection(
-                                eceR129 = standardList.contains("ece_r129") ||
+                                eceR129 = standardList.contains(StandardConstants.ECE_R129) ||
+                                        standardList.any { StandardConstants.getStandardConstant(it) == StandardConstants.ECE_R129 } ||
                                         (standardList.isEmpty() && finalStandardType == StandardConstants.ECE_R129),
-                                gb27887 = standardList.contains("gb_27887_2024") ||
+                                gb27887 = standardList.contains(StandardConstants.GB_27887_2024) ||
+                                        standardList.any { StandardConstants.getStandardConstant(it) == StandardConstants.GB_27887_2024 } ||
                                         (standardList.isEmpty() && finalStandardType == StandardConstants.GB_27887_2024),
-                                fmvss213 = standardList.contains("fmvss_213") ||
+                                fmvss213 = standardList.contains(StandardConstants.FMVSS_213) ||
+                                        standardList.any { StandardConstants.getStandardConstant(it) == StandardConstants.FMVSS_213 } ||
                                         (standardList.isEmpty() && finalStandardType == StandardConstants.FMVSS_213),
-                                asNzs1754 = standardList.contains("as_nzs_1754") ||
+                                asNzs1754 = standardList.contains(StandardConstants.AS_NZS_1754) ||
+                                        standardList.any { StandardConstants.getStandardConstant(it) == StandardConstants.AS_NZS_1754 } ||
                                         (standardList.isEmpty() && finalStandardType == StandardConstants.AS_NZS_1754),
-                                jisD1601 = standardList.contains("jis_d1601") ||
+                                jisD1601 = standardList.contains(StandardConstants.JIS_D1601) ||
+                                        standardList.any { StandardConstants.getStandardConstant(it) == StandardConstants.JIS_D1601 } ||
                                         (standardList.isEmpty() && finalStandardType == StandardConstants.JIS_D1601)
                             )
 
