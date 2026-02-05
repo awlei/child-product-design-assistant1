@@ -14,6 +14,7 @@ import com.childproduct.designassistant.database.entity.*
  * - 持久化FMVSS 213/213a标准数据
  * - 存储测试配置和安全阈值
  * - 记录产品测试结果和认证信息
+ * 物理隔离：仅存储FMVSS标准数据，不包含ECE数据
  *
  * 使用场景：
  * - FMVSS标准查询和分析
@@ -23,17 +24,18 @@ import com.childproduct.designassistant.database.entity.*
 @Database(
     entities = [
         FMVSSStandardEntity::class,
-        FMVSSDummyEntity::class,
+        FmvssCrashTestDummy::class,  // FMVSS专属假人实体（物理隔离）
         FMVSSTestConfigEntity::class,
         FMVSSThresholdEntity::class,
         FMVSSTestRecordEntity::class,
         FMVSSProductTestEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 abstract class FMVSSDatabase : RoomDatabase() {
     abstract fun fmvssDao(): FMVSSDao
+    abstract fun fmvssCrashTestDummyDao(): FmvssCrashTestDummyDao  // 新增：FMVSS专属假人DAO
 
     companion object {
         const val DATABASE_NAME = "fmvss_database.db"

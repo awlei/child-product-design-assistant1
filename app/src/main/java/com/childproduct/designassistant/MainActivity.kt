@@ -51,10 +51,49 @@ class MainActivity : ComponentActivity() {
             android.util.Log.e("MainActivity", "LLM配置初始化失败", e)
         }
 
+        // 重新初始化数据库（物理隔离ECE和FMVSS数据）
+        try {
+            reinitializeDatabase()
+            android.util.Log.d("MainActivity", "数据库重新初始化成功")
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "数据库重新初始化失败", e)
+        }
+
         setContent {
             ChildProductDesignAssistantTheme {
                 MainScreen()
             }
+        }
+    }
+
+    /**
+     * 重新初始化数据库
+     * 物理隔离ECE和FMVSS数据，解决标准混淆问题
+     */
+    private fun reinitializeDatabase() {
+        // 检查是否需要重新初始化（基于SharedPreference）
+        val prefs = getSharedPreferences("DatabaseConfig", MODE_PRIVATE)
+        val lastVersion = prefs.getInt("database_version", 0)
+        val currentVersion = 7  // EceR129Database版本7，FMVSSDatabase版本2
+
+        if (lastVersion < currentVersion) {
+            android.util.Log.d("MainActivity", "检测到数据库版本更新，开始重新初始化...")
+
+            // 获取数据库实例
+            val eceR129Database = com.childproduct.designassistant.database.EceR129Database.getDatabase(this)
+            val fmvssDatabase = com.childproduct.designassistant.database.FMVSSDatabase.getDatabase(this)
+
+            // 创建清理和重新初始化器
+            val reinitializer = com.childproduct.designassistant.database.DatabaseCleanAndReinitializer(this)
+
+            // 执行清理和重新初始化
+            reinitializer.execute(eceR129Database, fmvssDatabase)
+
+            // 更新版本号
+            prefs.edit().putInt("database_version", currentVersion).apply()
+            android.util.Log.d("MainActivity", "数据库重新初始化完成")
+        } else {
+            android.util.Log.d("MainActivity", "数据库已是最新版本，跳过重新初始化")
         }
     }
 }
