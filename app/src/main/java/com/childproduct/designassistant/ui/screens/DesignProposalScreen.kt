@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.childproduct.designassistant.data.model.DesignProposal
 import com.childproduct.designassistant.util.PdfExporter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * 设计方案展示界面
@@ -66,7 +68,7 @@ fun DesignProposalScreen(
         fileName: String,
         callback: (Boolean, String?) -> Unit
     ) {
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.Main) {
+        launch(Dispatchers.IO) {
             try {
                 val result = PdfExporter.exportDesignProposal(context, content, fileName)
                 if (result.isSuccess) {

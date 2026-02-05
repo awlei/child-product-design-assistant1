@@ -80,25 +80,25 @@ class Fmvss213bDataValidator(private val dao: FMVSSDao) {
      */
     private suspend fun validateDummies(): List<ValidationIssue> {
         val issues = mutableListOf<ValidationIssue>()
-        
+
         val dummies = dao.getFmvss213bDummies()
-        
-        // 检查必需的假人类型
+
+        // Check required dummy types
         val requiredDummies = listOf("HIII-3YO", "HIII-6YO", "HIII-10YO", "Q3S")
         val existingDummies = dummies.map { it.dummyCode }.toSet()
-        
+
         requiredDummies.forEach { dummyCode ->
             if (dummyCode !in existingDummies) {
                 issues.add(ValidationIssue(
                     type = ValidationIssueType.ERROR,
                     category = "假人数据",
                     message = "缺少必需的假人类型: $dummyCode",
-                    suggestion = "请添加$dummyCode假人数据"
+                    suggestion = "请添加${dummyCode}假人数据"
                 ))
             }
         }
-        
-        // 检查假人数据完整性
+
+        // Check dummy data integrity
         dummies.forEach { dummy ->
             if (dummy.weightKg <= 0) {
                 issues.add(ValidationIssue(
@@ -109,7 +109,7 @@ class Fmvss213bDataValidator(private val dao: FMVSSDao) {
                 ))
             }
         }
-        
+
         Log.d(TAG, "假人数据验证完成: 找到${dummies.size}个假人")
         return issues
     }
