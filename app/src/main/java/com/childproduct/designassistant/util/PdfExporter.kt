@@ -54,7 +54,7 @@ object PdfExporter {
 
             // 创建第一页
             val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, 1).create()
-            val page = pdfDocument.startPage(pageInfo)
+            var page = pdfDocument.startPage(pageInfo)
             val canvas = page.canvas
             val paint = Paint()
 
