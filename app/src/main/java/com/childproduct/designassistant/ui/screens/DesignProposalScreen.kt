@@ -28,6 +28,7 @@ import com.childproduct.designassistant.data.model.DesignProposal
 import com.childproduct.designassistant.util.PdfExporter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.rememberCoroutineScope
 
 /**
  * 设计方案展示界面
@@ -61,6 +62,9 @@ fun DesignProposalScreen(
         )
     }
 
+    // 协程作用域
+    val coroutineScope = rememberCoroutineScope()
+
     // 导出PDF函数
     fun exportToPdf(
         context: Context,
@@ -68,7 +72,7 @@ fun DesignProposalScreen(
         fileName: String,
         callback: (Boolean, String?) -> Unit
     ) {
-        launch(Dispatchers.IO) {
+        coroutineScope.launch(Dispatchers.IO) {
             try {
                 val result = PdfExporter.exportDesignProposal(context, content, fileName)
                 if (result.isSuccess) {
