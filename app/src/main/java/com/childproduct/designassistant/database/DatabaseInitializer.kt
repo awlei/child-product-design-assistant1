@@ -31,11 +31,29 @@ class DatabaseInitializer(private val context: Context) {
                 // 1. 清空ECE数据库的假人表（避免旧数据污染）
                 eceDb.crashTestDummyDao().deleteAll()
                 
-                // 2. 仅插入ECE R129标准的假人（standardType = "ECE_R129"）
+                // 2. 验证旧数据是否清空（新增校验）
+                val remainingDummies = eceDb.crashTestDummyDao().getAllDummiesList()
+                if (remainingDummies.isNotEmpty()) {
+                    android.util.Log.e("DatabaseInitializer", "ECE数据库旧数据未清空，数量：${remainingDummies.size}，开始强制清空")
+                    // 再次删除，确保清空
+                    eceDb.crashTestDummyDao().deleteAll()
+                    // 再次验证
+                    val verifyDummies = eceDb.crashTestDummyDao().getAllDummiesList()
+                    if (verifyDummies.isNotEmpty()) {
+                        android.util.Log.e("DatabaseInitializer", "ECE数据库旧数据清空失败，仍剩余：${verifyDummies.size}个")
+                    } else {
+                        android.util.Log.d("DatabaseInitializer", "ECE数据库旧数据清空验证成功")
+                    }
+                } else {
+                    android.util.Log.d("DatabaseInitializer", "ECE数据库旧数据清空成功")
+                }
+                
+                // 3. 仅插入ECE R129标准的假人（standardType = "ECE_R129"）
                 val eceDummies = getEceR129StandardDummies()
                 eceDb.crashTestDummyDao().insertAll(eceDummies)
+                android.util.Log.d("DatabaseInitializer", "ECE数据库初始化完成，插入${eceDummies.size}个ECE标准假人（Q0/Q0+/Q1/Q1.5/Q3/Q6/Q10）")
 
-                // 3. 初始化ECE专属数据（Envelope/阈值等）
+                // 4. 初始化ECE专属数据（Envelope/阈值等）
                 initEceEnvelopes(eceDb.eceEnvelopeDao())
                 initEceSafetyThresholds(eceDb.safetyThresholdDao())
                 initEceTestConfigurations(eceDb.testConfigurationDao())
@@ -45,7 +63,7 @@ class DatabaseInitializer(private val context: Context) {
                 initEceMaterialSpecifications(eceDb.materialSpecificationDao())
                 initEceHeightRangeMappings(eceDb.heightRangeMappingDao())
 
-                // 4. 记录初始化日志
+                // 5. 记录初始化日志
                 val initLog = StandardUpdateLog(
                     logId = "INIT_ECE_${System.currentTimeMillis()}",
                     regulationNumber = "UN R129",
@@ -85,16 +103,34 @@ class DatabaseInitializer(private val context: Context) {
                 // 1. 清空FMVSS数据库的假人表（避免旧数据污染）
                 fmvssDb.fmvssDao().deleteAllDummies()
                 
-                // 2. 仅插入FMVSS 213标准的假人（standardType = "FMVSS_213"）
+                // 2. 验证旧数据是否清空（新增校验）
+                val remainingDummies = fmvssDb.fmvssDao().getAllDummies()
+                if (remainingDummies.isNotEmpty()) {
+                    android.util.Log.e("DatabaseInitializer", "FMVSS数据库旧数据未清空，数量：${remainingDummies.size}，开始强制清空")
+                    // 再次删除，确保清空
+                    fmvssDb.fmvssDao().deleteAllDummies()
+                    // 再次验证
+                    val verifyDummies = fmvssDb.fmvssDao().getAllDummies()
+                    if (verifyDummies.isNotEmpty()) {
+                        android.util.Log.e("DatabaseInitializer", "FMVSS数据库旧数据清空失败，仍剩余：${verifyDummies.size}个")
+                    } else {
+                        android.util.Log.d("DatabaseInitializer", "FMVSS数据库旧数据清空验证成功")
+                    }
+                } else {
+                    android.util.Log.d("DatabaseInitializer", "FMVSS数据库旧数据清空成功")
+                }
+                
+                // 3. 仅插入FMVSS 213标准的假人（standardType = "FMVSS_213"）
                 val fmvssDummies = getFmvssStandardDummies()
                 fmvssDb.fmvssDao().insertDummies(fmvssDummies)
+                android.util.Log.d("DatabaseInitializer", "FMVSS数据库初始化完成，插入${fmvssDummies.size}个FMVSS标准假人（Q3s/HIII）")
 
-                // 3. 初始化FMVSS专属数据
+                // 4. 初始化FMVSS专属数据
                 initFmvssStandards(fmvssDb.fmvssDao())
                 initFmvssThresholds(fmvssDb.fmvssDao())
                 initFmvssTestConfigs(fmvssDb.fmvssDao())
 
-                // 4. 记录初始化日志
+                // 5. 记录初始化日志
                 // 注意：FMVSSDatabase可能没有StandardUpdateLog表，这里简化处理
                 val logMessage = "FMVSS数据库初始化完成，包含${fmvssDummies.size}个FMVSS标准假人（Q3s/HIII）"
                 android.util.Log.d("DatabaseInitializer", logMessage)
