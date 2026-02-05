@@ -28,7 +28,6 @@ import com.childproduct.designassistant.data.model.DesignProposal
 import com.childproduct.designassistant.util.PdfExporter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.rememberCoroutineScope
 
 /**
  * 设计方案展示界面
