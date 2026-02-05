@@ -46,16 +46,12 @@ data class FMVSSDummyEntity(
 data class FMVSSTestConfigEntity(
     @PrimaryKey
     val configId: String,
-    val testName: String,
     val standardId: String,
-    val impactType: String,
-    val velocityKmh: Double,
-    val velocityRange: String,
-    val accelerationProfile: String,
-    val dummyTypes: String, // JSON string
-    val injuryCriteria: String, // JSON string
-    val excursionLimits: String, // JSON string
-    val specialRequirements: String?, // JSON string
+    val dummyCode: String,
+    val testSpeedKmph: Int,
+    val testType: String,
+    val installDirection: String,
+    val description: String?,
     val lastUpdated: Long = System.currentTimeMillis()
 )
 
@@ -68,10 +64,11 @@ data class FMVSSThresholdEntity(
     val thresholdId: String,
     val standardId: String,
     val dummyCode: String,
-    val criterion: String,
-    val limitValue: Double,
-    val unit: String,
-    val testCondition: String,
+    val hicLimit: Int,
+    val chestAccelerationGLimit: Int,
+    val chestDeflectionLimitMm: Int?,
+    val headDisplacementLimitMm: Int?,
+    val neckTensionLimitN: Int?,
     val lastUpdated: Long = System.currentTimeMillis()
 )
 
@@ -80,18 +77,18 @@ data class FMVSSThresholdEntity(
  */
 @Entity(tableName = "fmvss_test_records")
 data class FMVSSTestRecordEntity(
-    @PrimaryKey(autoGenerate = true)
-    val recordId: Long = 0,
+    @PrimaryKey
     val testId: String,
     val configId: String,
-    val dummyCode: String,
-    val testDate: String,
-    val velocityActual: Double?,
-    val temperature: Double?,
-    val injuryResults: String, // JSON string
-    val excursionResults: String, // JSON string
-    val passed: Boolean,
-    val remarks: String?,
+    val testDate: Long,
+    val passed: Boolean = false,
+    val testResult: String,
+    val hicValue: Double?,
+    val chestAccelerationG: Double?,
+    val chestDeflectionMm: Double?,
+    val headDisplacementMm: Double?,
+    val neckTensionN: Double?,
+    val comments: String?,
     val lastUpdated: Long = System.currentTimeMillis()
 )
 
@@ -100,15 +97,16 @@ data class FMVSSTestRecordEntity(
  */
 @Entity(tableName = "fmvss_product_tests")
 data class FMVSSProductTestEntity(
-    @PrimaryKey(autoGenerate = true)
-    val productId: Long = 0,
-    val productName: String,
-    val productModel: String,
-    val manufacturer: String,
-    val testStandards: String, // JSON string
-    val testResults: String, // JSON string
-    val certificationDate: String?,
+    @PrimaryKey
+    val testId: String,
+    val productId: String,
+    val manufacturer: String?,
+    val testDate: Long,
+    val testType: String,
+    val testSpeedKmph: Int,
+    val testResult: String,
     val certificationNumber: String?,
-    val expiresDate: String?,
+    val testLab: String?,
+    val comments: String?,
     val lastUpdated: Long = System.currentTimeMillis()
 )

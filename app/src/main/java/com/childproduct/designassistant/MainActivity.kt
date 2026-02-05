@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
             val initializer = com.childproduct.designassistant.database.DatabaseInitializer(this)
             
             // 在协程中执行初始化（因为是suspend函数）
-            androidx.lifecycle.lifecycleScope.launch {
+            lifecycleScope.launch {
                 try {
                     // 初始化所有数据库（数据完全隔离）
                     initializer.initializeAllDatabases()

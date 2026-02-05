@@ -394,9 +394,14 @@ class DatabaseInitializer(private val context: Context) {
         val standard = com.childproduct.designassistant.database.entity.FMVSSStandardEntity(
             standardId = "FMVSS_213",
             standardName = "Federal Motor Vehicle Safety Standard 213",
-            version = "213a",
-            description = "儿童约束系统标准",
+            standardType = "安全标准",
+            applicableRegion = "美国",
+            applicableWeight = "新生儿至35kg儿童",
+            applicableAge = "0-12岁",
+            coreScope = "儿童约束系统",
             effectiveDate = "2025-02-01",
+            standardStatus = "现行有效",
+            dataSource = "FMVSS官方文档",
             lastUpdated = System.currentTimeMillis()
         )
         dao.insertStandard(standard)
@@ -406,26 +411,26 @@ class DatabaseInitializer(private val context: Context) {
         // 初始化FMVSS安全阈值
         val thresholdQ3s = com.childproduct.designassistant.database.entity.FMVSSThresholdEntity(
             thresholdId = "THRESH_Q3s",
+            standardId = "FMVSS_213",
             dummyCode = "Q3s",
             hicLimit = 1000,
             chestAccelerationGLimit = 60,
-            chestDeflectionMmLimit = 40,
-            headInjuryCriterionDescription = "头部损伤准则 ≤ 1000",
-            chestAccelerationDescription = "胸部加速度 ≤ 60g",
-            chestDeflectionDescription = "胸部偏转 ≤ 40mm",
+            chestDeflectionLimitMm = 40,
+            headDisplacementLimitMm = null,
+            neckTensionLimitN = null,
             lastUpdated = System.currentTimeMillis()
         )
         dao.insertThreshold(thresholdQ3s)
 
         val thresholdHIII = com.childproduct.designassistant.database.entity.FMVSSThresholdEntity(
             thresholdId = "THRESH_HIII",
+            standardId = "FMVSS_213",
             dummyCode = "HIII",
             hicLimit = 1000,
             chestAccelerationGLimit = 60,
-            chestDeflectionMmLimit = 40,
-            headInjuryCriterionDescription = "头部损伤准则 ≤ 1000",
-            chestAccelerationDescription = "胸部加速度 ≤ 60g",
-            chestDeflectionDescription = "胸部偏转 ≤ 40mm",
+            chestDeflectionLimitMm = 40,
+            headDisplacementLimitMm = null,
+            neckTensionLimitN = null,
             lastUpdated = System.currentTimeMillis()
         )
         dao.insertThreshold(thresholdHIII)
@@ -435,6 +440,7 @@ class DatabaseInitializer(private val context: Context) {
         // 初始化FMVSS测试配置
         val configQ3s = com.childproduct.designassistant.database.entity.FMVSSTestConfigEntity(
             configId = "CONFIG_Q3s",
+            standardId = "FMVSS_213",
             dummyCode = "Q3s",
             testSpeedKmph = 48,  // 30mph
             testType = "Side Impact",
@@ -446,6 +452,7 @@ class DatabaseInitializer(private val context: Context) {
 
         val configHIII = com.childproduct.designassistant.database.entity.FMVSSTestConfigEntity(
             configId = "CONFIG_HIII",
+            standardId = "FMVSS_213",
             dummyCode = "HIII",
             testSpeedKmph = 48,
             testType = "Frontal Impact",
