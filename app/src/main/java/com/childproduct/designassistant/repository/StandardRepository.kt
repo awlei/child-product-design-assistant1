@@ -471,9 +471,10 @@ class StandardRepository private constructor(
     /**
      * 根据标准ID获取儿童床年龄组
      * 注意：cribAgeGroupDao() 方法在 CribDatabase 中不存在，暂时返回空列表
+     * TODO: 需要实现实际的年龄组查询
      */
     fun getCribAgeGroups(standardId: String) = 
-        flowOf(emptyList()) // TODO: 需要实现实际的年龄组查询
+        flowOf<List<String>>(emptyList())  // 临时返回空列表，类型待定义
 
     /**
      * 获取标准下的儿童床安全要求
