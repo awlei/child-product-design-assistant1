@@ -170,7 +170,7 @@ enum class Standard(
                         name = "HIC36",
                         value = "≤1000",
                         unit = "",
-                        appliesToDummies = listOf("Q3s", "Q6", "Q10"),
+                        appliesToDummies = listOf("Q6", "Q10"),
                         clause = "ECE R129 §7.1.2"
                     )
                 ),
@@ -186,7 +186,7 @@ enum class Standard(
                         name = "3ms",
                         value = "≤60g",
                         unit = "g",
-                        appliesToDummies = listOf("Q3", "Q3s", "Q6", "Q10"),
+                        appliesToDummies = listOf("Q3", "Q6", "Q10"),
                         clause = "ECE R129 §7.1.3"
                     )
                 ),
@@ -202,7 +202,7 @@ enum class Standard(
                         name = "Peak",
                         value = "≤2000N",
                         unit = "N",
-                        appliesToDummies = listOf("Q3", "Q3s", "Q6", "Q10"),
+                        appliesToDummies = listOf("Q3", "Q6", "Q10"),
                         clause = "ECE R129 §7.1.4"
                     )
                 ),
@@ -218,7 +218,7 @@ enum class Standard(
                         name = "Peak",
                         value = "≤2500N",
                         unit = "N",
-                        appliesToDummies = listOf("Q3", "Q3s", "Q6", "Q10"),
+                        appliesToDummies = listOf("Q3", "Q6", "Q10"),
                         clause = "ECE R129 §7.1.4"
                     )
                 )
@@ -231,6 +231,13 @@ enum class Standard(
                         unit = "",
                         appliesToDummies = listOf("CRABI", "Hybrid III 3yr", "Hybrid III 6yr"),
                         clause = "FMVSS 213 S5.3.2"
+                    ),
+                    SafetyParameter(
+                        name = "HIC15",
+                        value = "≤570",
+                        unit = "",
+                        appliesToDummies = listOf("Q3s"),
+                        clause = "FMVSS 213a S5.1.2"
                     )
                 ),
                 chestAcceleration = listOf(
@@ -240,6 +247,13 @@ enum class Standard(
                         unit = "g",
                         appliesToDummies = listOf("CRABI", "Hybrid III 3yr", "Hybrid III 6yr"),
                         clause = "FMVSS 213 S5.3.2"
+                    ),
+                    SafetyParameter(
+                        name = "胸部压缩量",
+                        value = "≤23mm",
+                        unit = "mm",
+                        appliesToDummies = listOf("Q3s"),
+                        clause = "FMVSS 213a S5.1.3"
                     )
                 ),
                 neckTension = emptyList(),
@@ -296,7 +310,13 @@ enum class Standard(
                         description = "正面碰撞测试"
                     )
                 ),
-                sideImpact = emptyList(),
+                sideImpact = listOf(
+                    TestCondition(
+                        velocity = "32 km/h",
+                        deceleration = "N/A",
+                        description = "侧面碰撞测试（FMVSS 213a，使用Q3s假人）"
+                    )
+                ),
                 rearImpact = emptyList()
             )
             else -> TestRequirements(
