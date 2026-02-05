@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "fmvss_thresholds")
 data class FMVSSThresholdEntity(
     @PrimaryKey val thresholdId: String,      // THRESH_Q3s, THRESH_HIII_3Y
+    val standardId: String,                  // FMVSS_213, FMVSS_213a
     val dummyCode: String,                   // Q3s, HIII, 3y, 6y, 10y
     val hicLimit: Int,                       // HIC限值
     val chestAccelerationGLimit: Int,        // 胸部加速度限值(g)

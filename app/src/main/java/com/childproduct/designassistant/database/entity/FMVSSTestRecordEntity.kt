@@ -25,9 +25,10 @@ import androidx.room.Index
     ]
 )
 data class FMVSSTestRecordEntity(
-    @PrimaryKey val recordId: String,        // TEST_R001
+    @PrimaryKey val testId: String,          // TEST_R001
     val configId: String,                    // CONFIG_Q3s
     val testDate: Long,                      // 测试日期
+    val passed: Boolean = false,             // 是否通过
     val testResult: String,                  // PASS, FAIL
     val hicValue: Double?,                   // HIC值
     val chestAccelerationG: Double?,         // 胸部加速度(g)

@@ -12,12 +12,15 @@ import androidx.room.Index
     tableName = "fmvss_product_tests",
     indices = [
         Index(value = ["productId"]),
-        Index(value = ["testDate"])
+        Index(value = ["manufacturer"]),
+        Index(value = ["testDate"]),
+        Index(value = ["lastUpdated"])
     ]
 )
 data class FMVSSProductTestEntity(
     @PrimaryKey val testId: String,          // TEST_P001
     val productId: String,                  // 产品ID
+    val manufacturer: String?,              // 制造商
     val testDate: Long,                      // 测试日期
     val testType: String,                    // Frontal Impact, Side Impact
     val testSpeedKmph: Int,                  // 测试速度
