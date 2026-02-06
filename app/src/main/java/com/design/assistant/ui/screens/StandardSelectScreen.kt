@@ -13,7 +13,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.design.assistant.model.ProductType
 import com.design.assistant.model.StandardType
+import com.design.assistant.model.StandardInputParams
 import com.design.assistant.model.getDisplayName
+import com.design.assistant.model.getStandardInputDescription
+import com.design.assistant.model.getStandardInputUnit
 import com.design.assistant.ui.components.ProductTypeCard
 import com.design.assistant.ui.components.ProductAccordion
 import com.design.assistant.viewmodel.ProductStandardSelectViewModel
@@ -26,19 +29,39 @@ import com.design.assistant.viewmodel.ProductStandardSelectViewModel
 @Composable
 fun StandardSelectScreen(
     viewModel: ProductStandardSelectViewModel,
-    onGenerateClick: (com.design.assistant.model.ProductType, List<com.design.assistant.model.StandardType>, Int, Int) -> Unit,
+    onGenerateClick: (ProductType, List<StandardType>, StandardInputParams) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // 儿童身高和体重输入
-    var childHeight by remember { mutableStateOf("") }
-    var childWeight by remember { mutableStateOf("") }
+    // 根据选择的标准动态显示输入字段
+    // ECE R129: 身高范围（最小身高、最大身高，单位cm）
+    var minHeightCm by remember { mutableStateOf("") }
+    var maxHeightCm by remember { mutableStateOf("") }
+    
+    // FMVSS 213: 体重范围（最小体重、最大体重，单位磅）
+    var minWeightLb by remember { mutableStateOf("") }
+    var maxWeightLb by remember { mutableStateOf("") }
+    
+    // GPS028: 身高和体重（cm和kg）
+    var heightCm by remember { mutableStateOf("") }
+    var weightKg by remember { mutableStateOf("") }
+    
+    // CMVSS 213: 体重范围（最小体重、最大体重，单位kg）
+    var minWeightKg by remember { mutableStateOf("") }
+    var maxWeightKg by remember { mutableStateOf("") }
 
-    // 根据产品类型和标准获取身高体重范围
-    val heightWeightRange = remember(uiState.selectedProductType, uiState.selectedStandards) {
-        getHeightWeightRange(uiState.selectedProductType, uiState.selectedStandards)
+    // 获取当前选择的主要标准（用于决定输入类型）
+    val primaryStandard = uiState.selectedStandards.firstOrNull()
+    
+    // 判断输入类型
+    val inputType = when (primaryStandard) {
+        StandardType.ECE_R129 -> "ECE_R129"
+        StandardType.FMVSS213 -> "FMVSS213"
+        StandardType.GPS028 -> "GPS028"
+        StandardType.CMVSS213 -> "CMVSS213"
+        else -> "GENERIC"
     }
 
     Scaffold(
@@ -88,23 +111,36 @@ fun StandardSelectScreen(
                     Button(
                         onClick = {
                             uiState.selectedProductType?.let { productType ->
+                                val inputParams = when (inputType) {
+                                    "ECE_R129" -> StandardInputParams.EceR129Params(
+                                        minHeightCm = minHeightCm.toIntOrNull() ?: 0,
+                                        maxHeightCm = maxHeightCm.toIntOrNull() ?: 0
+                                    )
+                                    "FMVSS213" -> StandardInputParams.Fmvss213Params(
+                                        minWeightLb = minWeightLb.toIntOrNull() ?: 0,
+                                        maxWeightLb = maxWeightLb.toIntOrNull() ?: 0
+                                    )
+                                    "GPS028" -> StandardInputParams.Gps028Params(
+                                        heightCm = heightCm.toIntOrNull() ?: 0,
+                                        weightKg = weightKg.toIntOrNull() ?: 0
+                                    )
+                                    "CMVSS213" -> StandardInputParams.Cmvss213Params(
+                                        minWeightKg = minWeightKg.toIntOrNull() ?: 0,
+                                        maxWeightKg = maxWeightKg.toIntOrNull() ?: 0
+                                    )
+                                    else -> StandardInputParams.GenericParams(
+                                        heightCm = heightCm.toIntOrNull() ?: 0,
+                                        weightKg = weightKg.toIntOrNull() ?: 0
+                                    )
+                                }
                                 onGenerateClick(
                                     productType,
                                     uiState.selectedStandards,
-                                    childHeight.toIntOrNull() ?: 0,
-                                    childWeight.toIntOrNull() ?: 0
+                                    inputParams
                                 )
                             }
                         },
-                        enabled = viewModel.canProceed() &&
-                                 childHeight.isNotBlank() &&
-                                 childWeight.isNotBlank() &&
-                                 childHeight.toIntOrNull()?.let { height ->
-                                     height in heightWeightRange.minHeight..heightWeightRange.maxHeight
-                                 } == true &&
-                                 childWeight.toIntOrNull()?.let { weight ->
-                                     weight in heightWeightRange.minWeight..heightWeightRange.maxWeight
-                                 } == true,
+                        enabled = viewModel.canProceed() && validateInputs(inputType),
                         modifier = Modifier.weight(2f)
                     ) {
                         Text("生成设计方案")
@@ -157,218 +193,384 @@ fun StandardSelectScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 儿童身高体重输入
-                SectionTitle(title = "3. 输入儿童参数")
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        // 标准范围提示
-                        Surface(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = MaterialTheme.shapes.small
-                        ) {
-                            Text(
-                                text = "📋 ${heightWeightRange.description}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(12.dp)
-                            )
-                        }
-
-                        // 身高输入
-                        OutlinedTextField(
-                            value = childHeight,
-                            onValueChange = {
-                                // 只允许输入数字
-                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
-                                    childHeight = it
-                                }
-                            },
-                            label = { Text("儿童身高 (cm)") },
-                            placeholder = { Text("${heightWeightRange.minHeight}-${heightWeightRange.maxHeight}") },
-                            singleLine = true,
-                            isError = childHeight.isNotEmpty() &&
-                                       (childHeight.toIntOrNull()?.let { it !in heightWeightRange.minHeight..heightWeightRange.maxHeight } ?: true),
-                            supportingText = {
-                                if (childHeight.isNotEmpty()) {
-                                    val height = childHeight.toIntOrNull()
-                                    when {
-                                        height == null || height < heightWeightRange.minHeight || height > heightWeightRange.maxHeight -> {
-                                            Text("请输入${heightWeightRange.minHeight}-${heightWeightRange.maxHeight}之间的数字", color = MaterialTheme.colorScheme.error)
-                                        }
-                                        else -> {
-                                            Text("✓ 当前身高: ${height}cm (在标准范围内)")
-                                        }
-                                    }
-                                } else {
-                                    Text("范围: ${heightWeightRange.minHeight}-${heightWeightRange.maxHeight}cm")
-                                }
-                            },
-                            leadingIcon = {
-                                Text("📏")
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        // 体重输入
-                        OutlinedTextField(
-                            value = childWeight,
-                            onValueChange = {
-                                // 只允许输入数字
-                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
-                                    childWeight = it
-                                }
-                            },
-                            label = { Text("儿童体重 (kg)") },
-                            placeholder = { Text("${heightWeightRange.minWeight}-${heightWeightRange.maxWeight}") },
-                            singleLine = true,
-                            isError = childWeight.isNotEmpty() &&
-                                       (childWeight.toIntOrNull()?.let { it !in heightWeightRange.minWeight..heightWeightRange.maxWeight } ?: true),
-                            supportingText = {
-                                if (childWeight.isNotEmpty()) {
-                                    val weight = childWeight.toIntOrNull()
-                                    when {
-                                        weight == null || weight < heightWeightRange.minWeight || weight > heightWeightRange.maxWeight -> {
-                                            Text("请输入${heightWeightRange.minWeight}-${heightWeightRange.maxWeight}之间的数字", color = MaterialTheme.colorScheme.error)
-                                        }
-                                        else -> {
-                                            Text("✓ 当前体重: ${weight}kg (在标准范围内)")
-                                        }
-                                    }
-                                } else {
-                                    Text("范围: ${heightWeightRange.minWeight}-${heightWeightRange.maxWeight}kg")
-                                }
-                            },
-                            leadingIcon = {
-                                Text("⚖️")
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        // 参数提示
-                        if (childHeight.isNotBlank() && childWeight.isNotBlank()) {
-                            val height = childHeight.toIntOrNull() ?: 0
-                            val weight = childWeight.toIntOrNull() ?: 0
-
-                            // 根据产品类型和身高体重判断年龄段
-                            val ageHint = when (uiState.selectedProductType) {
-                                com.design.assistant.model.ProductType.CHILD_SEAT -> {
-                                    when {
-                                        height in 40..65 && weight in 0..9 -> "新生儿/婴儿 (0-9个月)"
-                                        height in 66..85 && weight in 9..13 -> "幼儿 I组 (9-18个月)"
-                                        height in 86..105 && weight in 9..18 -> "幼儿 II组 (1.5-4岁)"
-                                        height in 100..125 && weight in 15..25 -> "儿童 III组 (3-6岁)"
-                                        height in 125..150 && weight in 22..36 -> "大龄儿童 IV组 (6-12岁)"
-                                        else -> "不在标准组别范围内"
-                                    }
-                                }
-                                com.design.assistant.model.ProductType.STROLLER -> {
-                                    when {
-                                        height in 0..65 -> "新生儿阶段"
-                                        height in 66..95 -> "婴儿阶段 (可坐立)"
-                                        height in 96..125 -> "幼儿阶段"
-                                        else -> "超出适用范围"
-                                    }
-                                }
-                                com.design.assistant.model.ProductType.HIGH_CHAIR -> {
-                                    when {
-                                        height in 60..80 -> "小童 (约6-12个月)"
-                                        height in 81..95 -> "幼儿 (约1-3岁)"
-                                        height in 96..110 -> "大童 (约3-6岁)"
-                                        else -> "超出适用范围"
-                                    }
-                                }
-                                com.design.assistant.model.ProductType.CRIB -> {
-                                    when {
-                                        height in 50..85 -> "婴儿期"
-                                        height in 86..110 -> "幼儿期"
-                                        height in 111..130 -> "儿童期"
-                                        else -> "超出适用范围"
-                                    }
-                                }
-                                else -> "未知年龄段"
-                            }
-
-                            val isInValidRange = height in heightWeightRange.minHeight..heightWeightRange.maxHeight &&
-                                               weight in heightWeightRange.minWeight..heightWeightRange.maxWeight
-
-                            Surface(
-                                color = if (isInValidRange)
-                                    MaterialTheme.colorScheme.primaryContainer
-                                else
-                                    MaterialTheme.colorScheme.errorContainer,
-                                shape = MaterialTheme.shapes.small
-                            ) {
-                                Text(
-                                    text = if (isInValidRange)
-                                        "👶 预估年龄段: $ageHint"
-                                    else
-                                        "⚠️ 参数超出标准范围: $ageHint",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.padding(8.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 已选择的标准摘要
+                // 根据选择的标准动态显示输入字段
                 if (uiState.selectedStandards.isNotEmpty()) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                text = "已选择 ${uiState.selectedStandards.size} 个标准",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
+                    SectionTitle(title = "3. 输入儿童参数")
 
+                    DynamicInputSection(
+                        inputType = inputType,
+                        minHeightCm = minHeightCm,
+                        maxHeightCm = maxHeightCm,
+                        minWeightLb = minWeightLb,
+                        maxWeightLb = maxWeightLb,
+                        heightCm = heightCm,
+                        weightKg = weightKg,
+                        minWeightKg = minWeightKg,
+                        maxWeightKg = maxWeightKg,
+                        onMinHeightCmChange = { minHeightCm = it },
+                        onMaxHeightCmChange = { maxHeightCm = it },
+                        onMinWeightLbChange = { minWeightLb = it },
+                        onMaxWeightLbChange = { maxWeightLb = it },
+                        onHeightCmChange = { heightCm = it },
+                        onWeightKgChange = { weightKg = it },
+                        onMinWeightKgChange = { minWeightKg = it },
+                        onMaxWeightKgChange = { maxWeightKg = it },
+                        selectedStandards = uiState.selectedStandards
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 验证输入是否有效
+ */
+private fun validateInputs(
+    inputType: String,
+    minHeightCm: String = "",
+    maxHeightCm: String = "",
+    minWeightLb: String = "",
+    maxWeightLb: String = "",
+    heightCm: String = "",
+    weightKg: String = "",
+    minWeightKg: String = "",
+    maxWeightKg: String = ""
+): Boolean {
+    return when (inputType) {
+        "ECE_R129" -> minHeightCm.isNotBlank() && maxHeightCm.isNotBlank() &&
+                      minHeightCm.toIntOrNull() ?: 0 > 0 &&
+                      maxHeightCm.toIntOrNull() ?: 0 > 0 &&
+                      (minHeightCm.toIntOrNull() ?: 0) <= (maxHeightCm.toIntOrNull() ?: Int.MAX_VALUE)
+        "FMVSS213" -> minWeightLb.isNotBlank() && maxWeightLb.isNotBlank() &&
+                      minWeightLb.toIntOrNull() ?: 0 > 0 &&
+                      maxWeightLb.toIntOrNull() ?: 0 > 0 &&
+                      (minWeightLb.toIntOrNull() ?: 0) <= (maxWeightLb.toIntOrNull() ?: Int.MAX_VALUE)
+        "GPS028" -> heightCm.isNotBlank() && weightKg.isNotBlank() &&
+                    heightCm.toIntOrNull() ?: 0 > 0 &&
+                    weightKg.toIntOrNull() ?: 0 > 0
+        "CMVSS213" -> minWeightKg.isNotBlank() && maxWeightKg.isNotBlank() &&
+                      minWeightKg.toIntOrNull() ?: 0 > 0 &&
+                      maxWeightKg.toIntOrNull() ?: 0 > 0 &&
+                      (minWeightKg.toIntOrNull() ?: 0) <= (maxWeightKg.toIntOrNull() ?: Int.MAX_VALUE)
+        else -> true
+    }
+}
+
+/**
+ * 动态输入区域
+ * 根据标准类型显示不同的输入字段
+ */
+@Composable
+private fun DynamicInputSection(
+    inputType: String,
+    minHeightCm: String,
+    maxHeightCm: String,
+    minWeightLb: String,
+    maxWeightLb: String,
+    heightCm: String,
+    weightKg: String,
+    minWeightKg: String,
+    maxWeightKg: String,
+    onMinHeightCmChange: (String) -> Unit,
+    onMaxHeightCmChange: (String) -> Unit,
+    onMinWeightLbChange: (String) -> Unit,
+    onMaxWeightLbChange: (String) -> Unit,
+    onHeightCmChange: (String) -> Unit,
+    onWeightKgChange: (String) -> Unit,
+    onMinWeightKgChange: (String) -> Unit,
+    onMaxWeightKgChange: (String) -> Unit,
+    selectedStandards: List<StandardType>
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 标准信息提示
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = MaterialTheme.shapes.small
+            ) {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "📋 已选择标准：${selectedStandards.joinToString(", ") { it.getDisplayName() }}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "输入要求：${getInputDescription(inputType)}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+
+            // 根据输入类型显示不同的字段
+            when (inputType) {
+                "ECE_R129" -> {
+                    // ECE R129: 输入身高范围（最小身高、最大身高，单位cm）
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = minHeightCm,
+                            onValueChange = { 
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    onMinHeightCmChange(it)
+                                }
+                            },
+                            label = { Text("最小身高 (cm)") },
+                            placeholder = { Text("87") },
+                            singleLine = true,
+                            isError = minHeightCm.isNotEmpty() && (minHeightCm.toIntOrNull() ?: 0) <= 0,
+                            supportingText = {
+                                if (minHeightCm.isNotEmpty()) {
+                                    Text("建议范围：40-150cm")
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        OutlinedTextField(
+                            value = maxHeightCm,
+                            onValueChange = { 
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    onMaxHeightCmChange(it)
+                                }
+                            },
+                            label = { Text("最大身高 (cm)") },
+                            placeholder = { Text("105") },
+                            singleLine = true,
+                            isError = maxHeightCm.isNotEmpty() && (maxHeightCm.toIntOrNull() ?: 0) <= 0,
+                            supportingText = {
+                                if (maxHeightCm.isNotEmpty()) {
+                                    Text("建议范围：40-150cm")
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    
+                    // 输入验证提示
+                    if (minHeightCm.isNotEmpty() && maxHeightCm.isNotEmpty()) {
+                        val min = minHeightCm.toIntOrNull() ?: 0
+                        val max = maxHeightCm.toIntOrNull() ?: 0
+                        if (min > max) {
                             Text(
-                                text = uiState.selectedStandards.joinToString("、") { standard: StandardType -> standard.getDisplayName() },
-                                style = MaterialTheme.typography.bodyMedium
+                                text = "⚠️ 最小身高不能大于最大身高",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
                 }
-            } else {
-                // 提示选择产品类型
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                
+                "FMVSS213" -> {
+                    // FMVSS 213: 输入体重范围（最小体重、最大体重，单位磅）
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = minWeightLb,
+                            onValueChange = { 
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    onMinWeightLbChange(it)
+                                }
+                            },
+                            label = { Text("最小体重 (磅)") },
+                            placeholder = { Text("20") },
+                            singleLine = true,
+                            isError = minWeightLb.isNotEmpty() && (minWeightLb.toIntOrNull() ?: 0) <= 0,
+                            supportingText = {
+                                if (minWeightLb.isNotEmpty()) {
+                                    Text("建议范围：5-100磅")
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        OutlinedTextField(
+                            value = maxWeightLb,
+                            onValueChange = { 
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    onMaxWeightLbChange(it)
+                                }
+                            },
+                            label = { Text("最大体重 (磅)") },
+                            placeholder = { Text("65") },
+                            singleLine = true,
+                            isError = maxWeightLb.isNotEmpty() && (maxWeightLb.toIntOrNull() ?: 0) <= 0,
+                            supportingText = {
+                                if (maxWeightLb.isNotEmpty()) {
+                                    Text("建议范围：5-100磅")
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    
+                    // 输入验证提示
+                    if (minWeightLb.isNotEmpty() && maxWeightLb.isNotEmpty()) {
+                        val min = minWeightLb.toIntOrNull() ?: 0
+                        val max = maxWeightLb.toIntOrNull() ?: 0
+                        if (min > max) {
+                            Text(
+                                text = "⚠️ 最小体重不能大于最大体重",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                    
+                    // 单位转换提示
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = MaterialTheme.shapes.small
                     ) {
                         Text(
-                            text = "请先选择产品类型",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "💡 单位换算：1磅(lb) ≈ 0.45千克(kg) | 1千克(kg) ≈ 2.2磅(lb)",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(8.dp)
                         )
                     }
+                }
+                
+                "GPS028" -> {
+                    // GPS028 (GB 27887): 输入身高和体重
+                    OutlinedTextField(
+                        value = heightCm,
+                        onValueChange = { 
+                            if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                onHeightCmChange(it)
+                            }
+                        },
+                        label = { Text("儿童身高 (cm)") },
+                        placeholder = { Text("95") },
+                        singleLine = true,
+                        isError = heightCm.isNotEmpty() && (heightCm.toIntOrNull() ?: 0) <= 0,
+                        supportingText = {
+                            if (heightCm.isNotEmpty()) {
+                                Text("建议范围：40-150cm")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    
+                    OutlinedTextField(
+                        value = weightKg,
+                        onValueChange = { 
+                            if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                onWeightKgChange(it)
+                            }
+                        },
+                        label = { Text("儿童体重 (kg)") },
+                        placeholder = { Text("15") },
+                        singleLine = true,
+                        isError = weightKg.isNotEmpty() && (weightKg.toIntOrNull() ?: 0) <= 0,
+                        supportingText = {
+                            if (weightKg.isNotEmpty()) {
+                                Text("建议范围：2-36kg")
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                
+                "CMVSS213" -> {
+                    // CMVSS 213 (加拿大): 输入体重范围（最小体重、最大体重，单位kg）
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        OutlinedTextField(
+                            value = minWeightKg,
+                            onValueChange = { 
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    onMinWeightKgChange(it)
+                                }
+                            },
+                            label = { Text("最小体重 (kg)") },
+                            placeholder = { Text("9") },
+                            singleLine = true,
+                            isError = minWeightKg.isNotEmpty() && (minWeightKg.toIntOrNull() ?: 0) <= 0,
+                            supportingText = {
+                                if (minWeightKg.isNotEmpty()) {
+                                    Text("建议范围：2-30kg")
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                        
+                        OutlinedTextField(
+                            value = maxWeightKg,
+                            onValueChange = { 
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    onMaxWeightKgChange(it)
+                                }
+                            },
+                            label = { Text("最大体重 (kg)") },
+                            placeholder = { Text("30") },
+                            singleLine = true,
+                            isError = maxWeightKg.isNotEmpty() && (maxWeightKg.toIntOrNull() ?: 0) <= 0,
+                            supportingText = {
+                                if (maxWeightKg.isNotEmpty()) {
+                                    Text("建议范围：2-30kg")
+                                }
+                            },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    
+                    // 输入验证提示
+                    if (minWeightKg.isNotEmpty() && maxWeightKg.isNotEmpty()) {
+                        val min = minWeightKg.toIntOrNull() ?: 0
+                        val max = maxWeightKg.toIntOrNull() ?: 0
+                        if (min > max) {
+                            Text(
+                                text = "⚠️ 最小体重不能大于最大体重",
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                }
+                
+                else -> {
+                    // 通用输入：身高和体重
+                    OutlinedTextField(
+                        value = heightCm,
+                        onValueChange = { 
+                            if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                onHeightCmChange(it)
+                            }
+                        },
+                        label = { Text("儿童身高 (cm，可选)") },
+                        placeholder = { Text("95") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    
+                    OutlinedTextField(
+                        value = weightKg,
+                        onValueChange = { 
+                            if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                onWeightKgChange(it)
+                            }
+                        },
+                        label = { Text("儿童体重 (kg，可选)") },
+                        placeholder = { Text("15") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }
@@ -376,157 +578,17 @@ fun StandardSelectScreen(
 }
 
 /**
- * 根据产品类型和标准获取身高体重范围
+ * 获取输入描述
  */
-fun getHeightWeightRange(
-    productType: com.design.assistant.model.ProductType?,
-    standards: List<com.design.assistant.model.StandardType>
-): HeightWeightRange {
-    if (productType == null) {
-        return HeightWeightRange(
-            minHeight = 1,
-            maxHeight = 150,
-            minWeight = 1,
-            maxWeight = 50,
-            description = "请先选择产品类型"
-        )
-    }
-
-    return when (productType) {
-        com.design.assistant.model.ProductType.CHILD_SEAT -> {
-            // 儿童安全座椅：根据不同标准
-            val hasGPS028 = standards.contains(com.design.assistant.model.StandardType.GPS028)
-            val hasECE_R129 = standards.contains(com.design.assistant.model.StandardType.ECE_R129)
-            val hasCMVSS213 = standards.contains(com.design.assistant.model.StandardType.CMVSS213)
-            val hasFMVSS213 = standards.contains(com.design.assistant.model.StandardType.FMVSS213)
-
-            when {
-                hasGPS028 || hasECE_R129 -> HeightWeightRange(
-                    minHeight = 40,
-                    maxHeight = 150,
-                    minWeight = 0,
-                    maxWeight = 36,
-                    description = "GB 27887/ECE R129标准：40-150cm，0-36kg"
-                )
-                hasCMVSS213 || hasFMVSS213 -> HeightWeightRange(
-                    minHeight = 50,
-                    maxHeight = 145,
-                    minWeight = 2,
-                    maxWeight = 36,
-                    description = "北美标准：50-145cm，2-36kg"
-                )
-                else -> HeightWeightRange(
-                    minHeight = 40,
-                    maxHeight = 150,
-                    minWeight = 0,
-                    maxWeight = 36,
-                    description = "通用范围：40-150cm，0-36kg"
-                )
-            }
-        }
-        com.design.assistant.model.ProductType.STROLLER -> {
-            // 婴儿推车
-            val hasEN1888 = standards.contains(com.design.assistant.model.StandardType.EN1888)
-            val hasASTM_F833 = standards.contains(com.design.assistant.model.StandardType.ASTM_F833)
-            val hasCSA_B311 = standards.contains(com.design.assistant.model.StandardType.CSA_B311)
-
-            when {
-                hasEN1888 -> HeightWeightRange(
-                    minHeight = 0,
-                    maxHeight = 105,
-                    minWeight = 0,
-                    maxWeight = 22,
-                    description = "EN 1888标准：0-105cm，0-22kg"
-                )
-                hasASTM_F833 || hasCSA_B311 -> HeightWeightRange(
-                    minHeight = 0,
-                    maxHeight = 125,
-                    minWeight = 0,
-                    maxWeight = 22,
-                    description = "北美标准：0-125cm，0-22kg"
-                )
-                else -> HeightWeightRange(
-                    minHeight = 0,
-                    maxHeight = 125,
-                    minWeight = 0,
-                    maxWeight = 22,
-                    description = "通用范围：0-125cm，0-22kg"
-                )
-            }
-        }
-        com.design.assistant.model.ProductType.HIGH_CHAIR -> {
-            // 儿童高脚椅
-            val hasEN14988 = standards.contains(com.design.assistant.model.StandardType.EN14988)
-            val hasASTM_F404 = standards.contains(com.design.assistant.model.StandardType.ASTM_F404)
-            val hasCSA_B229 = standards.contains(com.design.assistant.model.StandardType.CSA_B229)
-
-            when {
-                hasEN14988 -> HeightWeightRange(
-                    minHeight = 60,
-                    maxHeight = 105,
-                    minWeight = 8,
-                    maxWeight = 25,
-                    description = "EN 14988标准：60-105cm，8-25kg"
-                )
-                hasASTM_F404 || hasCSA_B229 -> HeightWeightRange(
-                    minHeight = 60,
-                    maxHeight = 110,
-                    minWeight = 8,
-                    maxWeight = 25,
-                    description = "北美标准：60-110cm，8-25kg"
-                )
-                else -> HeightWeightRange(
-                    minHeight = 60,
-                    maxHeight = 110,
-                    minWeight = 8,
-                    maxWeight = 25,
-                    description = "通用范围：60-110cm，8-25kg"
-                )
-            }
-        }
-        com.design.assistant.model.ProductType.CRIB -> {
-            // 儿童床
-            val hasEN716 = standards.contains(com.design.assistant.model.StandardType.EN716)
-            val hasASTM_F1169 = standards.contains(com.design.assistant.model.StandardType.ASTM_F1169)
-            val hasCSA_B113 = standards.contains(com.design.assistant.model.StandardType.CSA_B113)
-
-            when {
-                hasEN716 -> HeightWeightRange(
-                    minHeight = 50,
-                    maxHeight = 125,
-                    minWeight = 5,
-                    maxWeight = 30,
-                    description = "EN 716标准：50-125cm，5-30kg"
-                )
-                hasASTM_F1169 || hasCSA_B113 -> HeightWeightRange(
-                    minHeight = 50,
-                    maxHeight = 130,
-                    minWeight = 5,
-                    maxWeight = 35,
-                    description = "北美标准：50-130cm，5-35kg"
-                )
-                else -> HeightWeightRange(
-                    minHeight = 50,
-                    maxHeight = 130,
-                    minWeight = 5,
-                    maxWeight = 35,
-                    description = "通用范围：50-130cm，5-35kg"
-                )
-            }
-        }
+private fun getInputDescription(inputType: String): String {
+    return when (inputType) {
+        "ECE_R129" -> "ECE R129标准需要输入儿童身高范围（单位：厘米cm）"
+        "FMVSS213" -> "FMVSS 213标准需要输入儿童体重范围（单位：磅lb）"
+        "GPS028" -> "GB 27887-2011标准需要输入儿童身高和体重"
+        "CMVSS213" -> "CMVSS 213标准需要输入儿童体重范围（单位：千克kg）"
+        else -> "请输入儿童身高和体重（可选）"
     }
 }
-
-/**
- * 身高体重范围数据类
- */
-data class HeightWeightRange(
-    val minHeight: Int,
-    val maxHeight: Int,
-    val minWeight: Int,
-    val maxWeight: Int,
-    val description: String
-)
 
 /**
  * 区块标题

@@ -22,6 +22,7 @@ import com.design.assistant.database.databases.ChildSeatStandardDatabase
 import com.design.assistant.database.databases.GPS028Database
 import com.design.assistant.database.databases.ProductStandardDatabase
 import com.design.assistant.model.DesignResult
+import com.design.assistant.model.StandardInputParams
 import com.design.assistant.repository.ChildSeatStandardRepository
 import com.design.assistant.repository.GPS028Repository
 import com.design.assistant.repository.ProductStandardRepository
@@ -111,7 +112,35 @@ fun DesignAssistantNavHost() {
         composable("select") {
             StandardSelectScreen(
                 viewModel = productStandardSelectViewModel,
-                onGenerateClick = { productType, standards, height, weight ->
+                onGenerateClick = { productType, standards, inputParams ->
+                    // 根据不同的输入参数类型提取身高和体重
+                    val (height, weight) = when (inputParams) {
+                        is StandardInputParams.EceR129Params -> {
+                            // ECE R129: 取身高范围的平均值
+                            val avgHeight = (inputParams.minHeightCm + inputParams.maxHeightCm) / 2
+                            avgHeight to 0 // 体重留空或使用默认值
+                        }
+                        is StandardInputParams.Fmvss213Params -> {
+                            // FMVSS 213: 将磅转换为kg，取体重范围的平均值
+                            val avgWeightLb = (inputParams.minWeightLb + inputParams.maxWeightLb) / 2.0
+                            val avgWeightKg = (avgWeightLb * 0.453592).toInt()
+                            0 to avgWeightKg // 身高留空或使用默认值
+                        }
+                        is StandardInputParams.Gps028Params -> {
+                            // GPS028: 直接使用身高和体重
+                            inputParams.heightCm to inputParams.weightKg
+                        }
+                        is StandardInputParams.Cmvss213Params -> {
+                            // CMVSS 213: 取体重范围的平均值
+                            val avgWeightKg = (inputParams.minWeightKg + inputParams.maxWeightKg) / 2
+                            0 to avgWeightKg // 身高留空或使用默认值
+                        }
+                        is StandardInputParams.GenericParams -> {
+                            // 通用: 直接使用身高和体重
+                            inputParams.heightCm to inputParams.weightKg
+                        }
+                    }
+                    
                     designGenerateViewModel.generateDesign(
                         productType,
                         standards,
