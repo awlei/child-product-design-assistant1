@@ -140,7 +140,17 @@ fun StandardSelectScreen(
                                 )
                             }
                         },
-                        enabled = viewModel.canProceed() && validateInputs(inputType),
+                        enabled = viewModel.canProceed() && validateInputs(
+                            inputType = inputType,
+                            minHeightCm = minHeightCm,
+                            maxHeightCm = maxHeightCm,
+                            minWeightLb = minWeightLb,
+                            maxWeightLb = maxWeightLb,
+                            heightCm = heightCm,
+                            weightKg = weightKg,
+                            minWeightKg = minWeightKg,
+                            maxWeightKg = maxWeightKg
+                        ),
                         modifier = Modifier.weight(2f)
                     ) {
                         Text("生成设计方案")
