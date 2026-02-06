@@ -10,6 +10,7 @@
         android:maxSdkVersion="32" />
 
     <application
+        android:name=".DesignAssistantApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,18 +20,14 @@
         android:requestLegacyExternalStorage="false"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.design.assistant.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ChildProductDesignAssistant">
+            android:theme="@style/Theme.DesignAssistant">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.DesignActivity"
-            android:exported="false"
-            android:label="创意生成" />
     </application>
 
 </manifest>
