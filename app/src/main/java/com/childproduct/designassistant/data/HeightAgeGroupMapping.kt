@@ -114,11 +114,11 @@ class HeightAgeGroupMapper {
     fun matchHeightRange(heightRange: String, productType: ProductType): HeightSegmentMatch {
         val (minHeight, maxHeight) = parseHeightRange(heightRange)
 
-        return when (productType) {
-            ProductType.CHILD_SAFETY_SEAT, ProductType.SAFETY_SEAT -> matchSafetySeatHeight(minHeight, maxHeight)
-            ProductType.CHILD_STROLLER, ProductType.STROLLER -> matchStrollerHeight(minHeight, maxHeight)
-            ProductType.CHILD_HIGH_CHAIR, ProductType.HIGH_CHAIR -> matchHighChairHeight(minHeight, maxHeight)
-            ProductType.CHILD_HOUSEHOLD_GOODS, ProductType.CRIB -> matchHouseholdGoodsHeight(minHeight, maxHeight)
+        return when (productType.standard) {
+            ProductType.CHILD_SEAT -> matchSafetySeatHeight(minHeight, maxHeight)
+            ProductType.BABY_STROLLER -> matchStrollerHeight(minHeight, maxHeight)
+            ProductType.HIGH_CHAIR -> matchHighChairHeight(minHeight, maxHeight)
+            ProductType.CHILD_BED -> matchHouseholdGoodsHeight(minHeight, maxHeight)
         }
     }
 

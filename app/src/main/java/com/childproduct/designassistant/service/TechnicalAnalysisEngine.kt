@@ -544,8 +544,8 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
         matchedStandards: List<StandardMatch>,
         heightSegmentMatch: com.childproduct.designassistant.data.HeightSegmentMatch?
     ): String {
-        return when (productType) {
-            ProductType.SAFETY_SEAT, ProductType.CHILD_SAFETY_SEAT -> {
+        return when (productType.standard) {
+            ProductType.CHILD_SEAT -> {
                 val standardCode = matchedStandards.firstOrNull()?.standard?.code ?: "ECE R129"
                 if (heightSegmentMatch?.isFullRange == true) {
                     "ECE R129全分组安全适配主题（40-150cm，Group 0+/1/2/3）"
@@ -553,16 +553,13 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
                     "ECE R129标准适配主题（$standardCode）"
                 }
             }
-            ProductType.STROLLER, ProductType.CHILD_STROLLER -> {
+            ProductType.BABY_STROLLER -> {
                 "EN 1888便携避震合规主题"
             }
-            ProductType.HIGH_CHAIR, ProductType.CHILD_HIGH_CHAIR -> {
+            ProductType.HIGH_CHAIR -> {
                 "ISO 8124-3进食安全适配主题"
             }
-            ProductType.CRIB -> {
-                "GB 6675安全标准适配主题"
-            }
-            ProductType.CHILD_HOUSEHOLD_GOODS -> {
+            ProductType.CHILD_BED -> {
                 "GB 6675儿童用品安全标准适配主题"
             }
         }
@@ -582,12 +579,11 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
     }
 
     private fun mapProductTypeToStandardCategory(productType: ProductType): ModelStandardCategory {
-        return when (productType) {
-            ProductType.SAFETY_SEAT, ProductType.CHILD_SAFETY_SEAT -> ModelStandardCategory.SAFETY_SEAT
-            ProductType.STROLLER, ProductType.CHILD_STROLLER -> ModelStandardCategory.CARRIER
-            ProductType.CRIB -> ModelStandardCategory.SAFETY_SEAT
-            ProductType.HIGH_CHAIR, ProductType.CHILD_HIGH_CHAIR -> ModelStandardCategory.SAFETY_SEAT
-            ProductType.CHILD_HOUSEHOLD_GOODS -> ModelStandardCategory.SAFETY_SEAT
+        return when (productType.standard) {
+            ProductType.CHILD_SEAT -> ModelStandardCategory.SAFETY_SEAT
+            ProductType.BABY_STROLLER -> ModelStandardCategory.CARRIER
+            ProductType.HIGH_CHAIR -> ModelStandardCategory.SAFETY_SEAT
+            ProductType.CHILD_BED -> ModelStandardCategory.SAFETY_SEAT
         }
     }
 

@@ -40,4 +40,13 @@ enum class ProductType(val typeName: String, val category: ProductCategory) {
             CHILD_HIGH_CHAIR -> HIGH_CHAIR
             else -> this
         }
+
+    /** 获取主要标准（用于显示和引用） */
+    val mainStandards: String
+        get() = when (standard) {
+            CHILD_SEAT -> "ECE R129 / GB 27887-2024"
+            BABY_STROLLER -> "EN 1888 / GB 14748"
+            HIGH_CHAIR -> "EN 14988 / GB 29281"
+            CHILD_BED -> "EN 716 / GB 28007"
+        }
 }

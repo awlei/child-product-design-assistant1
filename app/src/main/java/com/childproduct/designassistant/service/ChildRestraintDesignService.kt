@@ -431,6 +431,8 @@ class ChildRestraintDesignService {
                     appendLine("▫️ 头枕高度：535-585mm（基准点：坐骨结节（H点），公差：±5mm）")
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ 头枕高度：480-530mm（基准点：坐骨结节（H点），公差：±5mm）")
+                } else {
+                    appendLine("▫️ 头枕高度：符合相应标准要求")
                 }
             }
             
@@ -439,6 +441,8 @@ class ChildRestraintDesignService {
                     appendLine("▫️ 座宽：有效座宽：350mm，总座宽（含侧防）：420mm")
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ 座宽：有效座宽：380mm，总座宽（含侧防）：440mm")
+                } else {
+                    appendLine("▫️ 座宽：符合相应标准要求")
                 }
             }
             
@@ -449,6 +453,8 @@ class ChildRestraintDesignService {
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ ISOFIX Envelop（盒子）尺寸：FMVSS 213 Size Class B2")
                     appendLine("▫️ Envelop详细尺寸：纵向长度720mm(±10mm)，横向宽度450mm(±5mm)，固定点间距280-330mm")
+                } else {
+                    appendLine("▫️ ISOFIX Envelop（盒子）尺寸：符合相应标准要求")
                 }
             }
             
@@ -459,6 +465,8 @@ class ChildRestraintDesignService {
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ 侧防面积要求：≥0.80m²（覆盖T12胸部至P8头部侧方区域）")
                     appendLine("▫️ 侧防测试标准：FMVSS 213a")
+                } else {
+                    appendLine("▫️ 侧防面积要求：符合相应标准要求")
                 }
             }
             appendLine()
@@ -471,6 +479,8 @@ class ChildRestraintDesignService {
                     appendLine("▫️ 正面碰撞：碰撞速度50km/h(±1km/h)，碰撞台加速度15g(持续3ms)，HIC≤1000（ECE R129 §7.1.2）")
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ 正面碰撞：碰撞速度48km/h(30mph ±1mph)，碰撞台加速度15g(持续3ms)，HIC≤1000（FMVSS 213 §S7）")
+                } else {
+                    appendLine("▫️ 正面碰撞：符合相应标准要求")
                 }
             }
             
@@ -479,6 +489,8 @@ class ChildRestraintDesignService {
                     appendLine("▫️ 侧撞胸部压缩：侧撞速度60km/h(移动壁障)，胸部压缩量≤44mm，压缩速度≤2.5m/s（ECE R129 §7.1.3）")
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ 侧撞胸部压缩：侧撞速度32km/h(20mph)，胸部压缩量≤52mm，压缩速度≤2.5m/s（FMVSS 213a）")
+                } else {
+                    appendLine("▫️ 侧撞胸部压缩：符合相应标准要求")
                 }
             }
             
@@ -487,6 +499,8 @@ class ChildRestraintDesignService {
                     appendLine("▫️ 安全带织带强度：纵向≥26.7kN，横向≥17.8kN（测试方法：ISO 6683:2017）")
                 } else if (it.contains("FMVSS")) {
                     appendLine("▫️ 安全带织带强度：纵向≥11kN，横向≥15kN（测试方法：FMVSS 213 §S5）")
+                } else {
+                    appendLine("▫️ 安全带织带强度：符合相应标准要求")
                 }
             }
             appendLine()
@@ -505,6 +519,11 @@ class ChildRestraintDesignService {
                     appendLine("   测试设备：HYGE电动碰撞台（符合FMVSS 213 §S7）")
                     appendLine("   测试条件：假人后向/前向，约束系统：ISOFIX+Top Tether，碰撞速度48km/h")
                     appendLine("   ✅ 合格判据：头部HIC≤1000，胸部加速度≤60g（3ms滑动平均）")
+                } else {
+                    appendLine("动态碰撞：正碰")
+                    appendLine("   测试设备：符合相应标准要求的碰撞台")
+                    appendLine("   测试条件：按标准要求执行")
+                    appendLine("   ✅ 合格判据：符合相应标准要求")
                 }
             }
             
