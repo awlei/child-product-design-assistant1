@@ -24,8 +24,6 @@ data class GPS028Params(
     val heightRange: String = "87-105cm",     // 适用身高范围
     val weightRange: String = "13-18kg",      // 适用体重范围
     val sittingHeight: Double = 52.0,         // 坐高（cm）
-    val shoulderWidth: Double = 28.0,         // 肩宽（cm）
-    val headCircumference: Double = 49.0,     // 头围（cm）
 
     // 头部参数
     val headWidth: Double,                    // 头宽（mm）
@@ -146,7 +144,7 @@ data class GPS028Params(
             appendLine("▫️ 百分位/年龄：$percentile百分位${age}儿童")
             appendLine("▫️ 身高范围：$heightRange（用户输入${height.toInt()}cm处于该范围中值，适配性最优）")
             appendLine("▫️ 体重范围：$weightRange")
-            appendLine("▫️ 人体测量参数：坐高${sittingHeight}cm，肩宽${shoulderWidth}cm，头围${headCircumference}cm")
+            appendLine("▫️ 人体测量参数：坐高${sittingHeight}cm，肩宽${(shoulderWidth / 10.0).toInt()}cm，头围${(headCircumference / 10.0).toInt()}cm")
             appendLine("▫️ 安装方向：$installationDirection（$coreRequirement）")
             appendLine()
             appendLine("📏 设计参数（GPS028-$standardVersion数据库 + 标准强制要求）")
