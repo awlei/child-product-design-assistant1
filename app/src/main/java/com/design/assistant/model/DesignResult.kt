@@ -40,32 +40,32 @@ data class DesignResult(
      */
     fun generateReport(): String {
         return buildString {
-            // 标题
-            appendLine("📦 ${productType.getDisplayName()}设计方案（严格遵守${standards.firstOrNull()?.getDisplayName() ?: "自定义标准"}）")
-
-            // 标准信息
-            appendLine("【适用标准】")
-            standards.forEach { standard ->
-                appendLine("${standard.getDisplayName()}")
-            }
-            appendLine("标准版本：2024版 | 实施要求：${if (standards.any { it.getRegion() == "中国" }) "中国强制实施" else "国际标准推荐"}")
-            appendLine("🔍 核心要求：动态碰撞三向覆盖，侧防系统强制，ISOFIX接口兼容ISO 14530-3")
-            appendLine()
-
-            // GPS028参数
+            // GPS028参数（如果是儿童安全座椅）
             if (gps028Params != null) {
                 appendLine(gps028Params.generateDesignReport())
+            } else {
+                // 其他产品类型的简化输出
+                appendLine("📦 ${productType.getDisplayName()}设计方案")
+                appendLine()
+                appendLine("├─ 【适用标准】")
+                standards.forEachIndexed { index, standard ->
+                    if (index > 0) append(" + ")
+                    appendLine(standard.getDisplayName())
+                }
                 appendLine()
             }
 
             // 兼容性分析
             if (compatibility != null) {
+                appendLine()
                 appendLine("【兼容性分析】")
                 appendLine("兼容性评分：${compatibility.score}/100")
                 appendLine("兼容性等级：${compatibility.level.name}")
-                appendLine("主要兼容问题：")
-                compatibility.issues.forEach { issue ->
-                    appendLine("  - $issue")
+                if (compatibility.issues.isNotEmpty()) {
+                    appendLine("主要兼容问题：")
+                    compatibility.issues.forEach { issue ->
+                        appendLine("  - $issue")
+                    }
                 }
                 appendLine()
             }
