@@ -25,6 +25,7 @@ object StandardConstants {
     const val FMVSS_213 = "FMVSS_213"        // 美国 2022版
     const val AS_NZS_1754 = "AS_NZS_1754"    // 澳洲 2020版
     const val CMVSS_213 = "CMVSS_213"        // 加拿大 第5版
+    const val JIS_D1601 = "JIS_D1601"        // 日本标准
 
     // ============= 婴儿推车（出行类） =============
     const val EN_1888 = "EN_1888"            // 欧盟 2022版
@@ -74,6 +75,11 @@ object StandardConstants {
         "cmvss_213" to CMVSS_213,
         "CMVSS 213" to CMVSS_213,
         "CMVSS-213" to CMVSS_213,
+
+        // JIS D1601相关
+        "jis_d1601" to JIS_D1601,
+        "JIS D1601" to JIS_D1601,
+        "JIS-D1601" to JIS_D1601,
 
         // AS/NZS 1754相关
         "as_nzs_1754" to AS_NZS_1754,
@@ -167,6 +173,7 @@ object StandardConstants {
             FMVSS_213 -> "FMVSS 213 (美国2022版，联邦强制)"
             AS_NZS_1754 -> "AS/NZS 1754:2020 (澳洲强制)"
             CMVSS_213 -> "CMVSS 213 (加拿大第5版，强制)"
+            JIS_D1601 -> "JIS D1601 (日本标准)"
             // 婴儿推车
             EN_1888 -> "EN 1888:2022 (欧盟强制)"
             GB_14748 -> "GB 14748-2020 (中国强制)"
@@ -191,8 +198,8 @@ object StandardConstants {
      * 产品类型 → 对应支持的标准列表（自动关联，工程师无需手动匹配）
      */
     fun getStandardsByProduct(productType: ProductType): List<String> {
-        return when (productType) {
-            ProductType.CHILD_SEAT -> listOf(ECE_R129, GB_27887_2024, FMVSS_213, AS_NZS_1754, CMVSS_213)
+        return when (productType.standard) {
+            ProductType.CHILD_SEAT -> listOf(ECE_R129, GB_27887_2024, FMVSS_213, AS_NZS_1754, CMVSS_213, JIS_D1601)
             ProductType.BABY_STROLLER -> listOf(EN_1888, GB_14748, ASTM_F833, CAN_CSA_D425, AS_NZS_2088)
             ProductType.HIGH_CHAIR -> listOf(EN_14988, GB_29281, CAN_CSA_Z217_1, ASTM_F404)
             ProductType.CHILD_BED -> listOf(EN_716, GB_28007, CAN_CSA_D1169, ASTM_F1169)
@@ -204,7 +211,7 @@ object StandardConstants {
      */
     fun getAllStandards(): List<String> {
         return listOf(
-            ECE_R129, GB_27887_2024, FMVSS_213, AS_NZS_1754, CMVSS_213,
+            ECE_R129, GB_27887_2024, FMVSS_213, AS_NZS_1754, CMVSS_213, JIS_D1601,
             EN_1888, GB_14748, ASTM_F833, CAN_CSA_D425, AS_NZS_2088,
             EN_14988, GB_29281, CAN_CSA_Z217_1, ASTM_F404,
             EN_716, GB_28007, CAN_CSA_D1169, ASTM_F1169
