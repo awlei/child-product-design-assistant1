@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.design.assistant.model.ProductType
 import com.design.assistant.model.StandardType
+import com.design.assistant.model.getDisplayName
 import com.design.assistant.ui.theme.Primary
 
 /**

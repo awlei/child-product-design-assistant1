@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.design.assistant.model.DesignResult
 import com.design.assistant.model.ProductType
 import com.design.assistant.model.StandardType
+import com.design.assistant.model.getDisplayName
 import com.design.assistant.ui.components.*
 
 /**

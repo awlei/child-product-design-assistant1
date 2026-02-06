@@ -14,6 +14,9 @@ import androidx.compose.ui.unit.dp
 import com.design.assistant.model.GPS028Group
 import com.design.assistant.model.ProductType
 import com.design.assistant.model.StandardType
+import com.design.assistant.model.getDisplayName
+import com.design.assistant.ui.components.ProductTypeCard
+import com.design.assistant.ui.components.ProductAccordion
 import com.design.assistant.viewmodel.ProductStandardSelectViewModel
 
 /**
@@ -133,8 +136,8 @@ fun StandardSelectScreen(
                     standards = uiState.availableStandards,
                     expanded = expanded,
                     selectedStandards = uiState.selectedStandards,
-                    onExpandedChange = { expanded = it },
-                    onStandardClick = { standard ->
+                    onExpandedChange = { isExpanded: Boolean -> expanded = isExpanded },
+                    onStandardClick = { standard: StandardType ->
                         viewModel.toggleStandard(standard)
                     },
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -234,7 +237,7 @@ fun StandardSelectScreen(
                             )
 
                             Text(
-                                text = uiState.selectedStandards.joinToString("、") { it.getDisplayName() },
+                                text = uiState.selectedStandards.joinToString("、") { standard: StandardType -> standard.getDisplayName() },
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
