@@ -694,6 +694,7 @@ class StandardParameterPreviewService {
             ProductType.BABY_STROLLER -> getStrollerParameters(minHeight, maxHeight)
             ProductType.HIGH_CHAIR -> getHighChairParameters(minHeight, maxHeight)
             ProductType.CHILD_BED -> getStrollerParameters(minHeight, maxHeight)  // 临时使用stroller参数
+            else -> emptyList()
         }
     }
 

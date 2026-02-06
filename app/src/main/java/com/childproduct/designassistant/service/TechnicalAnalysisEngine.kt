@@ -562,6 +562,7 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
             ProductType.CHILD_BED -> {
                 "GB 6675儿童用品安全标准适配主题"
             }
+            else -> "通用儿童产品安全标准适配主题"
         }
     }
 
@@ -584,6 +585,7 @@ ${group.envelopeClass?.let { "i-Size分类: $it" } ?: ""}
             ProductType.BABY_STROLLER -> ModelStandardCategory.CARRIER
             ProductType.HIGH_CHAIR -> ModelStandardCategory.SAFETY_SEAT
             ProductType.CHILD_BED -> ModelStandardCategory.SAFETY_SEAT
+            else -> ModelStandardCategory.SAFETY_SEAT
         }
     }
 

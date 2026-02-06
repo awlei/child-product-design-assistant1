@@ -119,6 +119,13 @@ class HeightAgeGroupMapper {
             ProductType.BABY_STROLLER -> matchStrollerHeight(minHeight, maxHeight)
             ProductType.HIGH_CHAIR -> matchHighChairHeight(minHeight, maxHeight)
             ProductType.CHILD_BED -> matchHouseholdGoodsHeight(minHeight, maxHeight)
+            else -> HeightSegmentMatch(
+                heightRange = heightRange,
+                heightSegment = "未知",
+                ageRange = "未知年龄段",
+                isMatch = false,
+                confidence = 0.0
+            )
         }
     }
 

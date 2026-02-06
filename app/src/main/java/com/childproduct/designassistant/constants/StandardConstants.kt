@@ -203,6 +203,7 @@ object StandardConstants {
             ProductType.BABY_STROLLER -> listOf(EN_1888, GB_14748, ASTM_F833, CAN_CSA_D425, AS_NZS_2088)
             ProductType.HIGH_CHAIR -> listOf(EN_14988, GB_29281, CAN_CSA_Z217_1, ASTM_F404)
             ProductType.CHILD_BED -> listOf(EN_716, GB_28007, CAN_CSA_D1169, ASTM_F1169)
+            else -> emptyList()
         }
     }
 

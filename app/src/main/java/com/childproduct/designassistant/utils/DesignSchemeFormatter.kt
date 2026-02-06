@@ -140,6 +140,7 @@ object DesignSchemeFormatter {
             ProductType.BABY_STROLLER -> "支持一键折叠，收纳便捷"
             ProductType.HIGH_CHAIR -> "支持快速拆装，便于清洁"
             ProductType.CHILD_BED -> "结构简单，易于组装"
+            else -> "易于安装和使用"
         }
     }
 
@@ -152,6 +153,7 @@ object DesignSchemeFormatter {
             ProductType.BABY_STROLLER -> "配备悬挂避震系统，乘坐平稳舒适"
             ProductType.HIGH_CHAIR -> "座椅角度多档可调，适应不同坐姿需求"
             ProductType.CHILD_BED -> "人体工学设计，使用舒适"
+            else -> "使用舒适，符合人体工学"
         }
     }
 
@@ -164,6 +166,7 @@ object DesignSchemeFormatter {
             ProductType.BABY_STROLLER -> "选用无毒环保材料，符合欧盟安全标准"
             ProductType.HIGH_CHAIR -> "食品级材质，可直接接触食品"
             ProductType.CHILD_BED -> "环保材质，可回收利用"
+            else -> "选用环保材料，符合安全标准"
         }
     }
 
@@ -176,6 +179,7 @@ object DesignSchemeFormatter {
             ProductType.BABY_STROLLER -> "符合EN 1888婴儿推车安全标准"
             ProductType.HIGH_CHAIR -> "符合GB 22793-2008儿童高椅安全标准"
             ProductType.CHILD_BED -> "符合ISO 8124儿童用品安全要求"
+            else -> "符合相应安全标准要求"
         }
     }
 

@@ -48,5 +48,6 @@ enum class ProductType(val typeName: String, val category: ProductCategory) {
             BABY_STROLLER -> "EN 1888 / GB 14748"
             HIGH_CHAIR -> "EN 14988 / GB 29281"
             CHILD_BED -> "EN 716 / GB 28007"
+            else -> "未知标准"
         }
 }
