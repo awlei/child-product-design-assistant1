@@ -112,7 +112,7 @@ data class GPS028Params(
     // 侧防系统参数
     val minSideProtectionArea: Double = 0.85, // 最小侧防面积（m²）
     val sideProtectionStandard: String = "EN 14154-3:2022",  // 侧防测试标准
-    val sideProtectionCoverage: String = "T12胸部至P8头部侧方区域"  // 侧防覆盖区域
+    val sideProtectionCoverage: String = "T12胸部至P8头部侧方区域",  // 侧防覆盖区域
 
     // 测试要求
     val frontalCrashSpeed: Double = 50.0,     // 正面碰撞速度（km/h）
