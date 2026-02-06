@@ -11,7 +11,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.design.assistant.model.GPS028Group
 import com.design.assistant.model.ProductType
 import com.design.assistant.model.StandardType
 import com.design.assistant.model.getDisplayName
@@ -27,15 +26,15 @@ import com.design.assistant.viewmodel.ProductStandardSelectViewModel
 @Composable
 fun StandardSelectScreen(
     viewModel: ProductStandardSelectViewModel,
-    onGenerateClick: (com.design.assistant.model.ProductType, List<com.design.assistant.model.StandardType>, GPS028Group, Int) -> Unit,
+    onGenerateClick: (com.design.assistant.model.ProductType, List<com.design.assistant.model.StandardType>, Int, Int) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // 用于儿童安全座椅的组别和百分位选择
-    var selectedGroup by remember { mutableStateOf(GPS028Group.GROUP_I) }
-    var selectedPercentile by remember { mutableStateOf(50) }
+    // 儿童身高和体重输入
+    var childHeight by remember { mutableStateOf("") }
+    var childWeight by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -87,12 +86,12 @@ fun StandardSelectScreen(
                                 onGenerateClick(
                                     productType,
                                     uiState.selectedStandards,
-                                    selectedGroup,
-                                    selectedPercentile
+                                    childHeight.toIntOrNull() ?: 0,
+                                    childWeight.toIntOrNull() ?: 0
                                 )
                             }
                         },
-                        enabled = viewModel.canProceed(),
+                        enabled = viewModel.canProceed() && childHeight.isNotBlank() && childWeight.isNotBlank(),
                         modifier = Modifier.weight(2f)
                     ) {
                         Text("生成设计方案")
@@ -145,76 +144,114 @@ fun StandardSelectScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 儿童安全座椅特定参数（组别和百分位）
-                if (uiState.selectedProductType == com.design.assistant.model.ProductType.CHILD_SEAT) {
-                    SectionTitle(title = "3. 选择假人参数")
+                // 儿童身高体重输入
+                SectionTitle(title = "3. 输入儿童参数")
 
-                    // 组别选择
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text(
-                                text = "选择组别",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                GPS028Group.values().forEach { group ->
-                                    FilterChip(
-                                        selected = selectedGroup == group,
-                                        onClick = { selectedGroup = group },
-                                        label = { Text(group.displayName) },
-                                        modifier = Modifier.weight(1f)
-                                    )
+                        // 身高输入
+                        OutlinedTextField(
+                            value = childHeight,
+                            onValueChange = {
+                                // 只允许输入数字
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    childHeight = it
                                 }
+                            },
+                            label = { Text("儿童身高 (cm)") },
+                            placeholder = { Text("1-150") },
+                            singleLine = true,
+                            isError = childHeight.isNotEmpty() &&
+                                       (childHeight.toIntOrNull()?.let { it !in 1..150 } ?: true),
+                            supportingText = {
+                                if (childHeight.isNotEmpty()) {
+                                    val height = childHeight.toIntOrNull()
+                                    when {
+                                        height == null || height < 1 || height > 150 -> {
+                                            Text("请输入1-150之间的数字", color = MaterialTheme.colorScheme.error)
+                                        }
+                                        else -> {
+                                            Text("当前身高: ${height}cm")
+                                        }
+                                    }
+                                }
+                            },
+                            leadingIcon = {
+                                Text("📏")
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // 体重输入
+                        OutlinedTextField(
+                            value = childWeight,
+                            onValueChange = {
+                                // 只允许输入数字
+                                if (it.isEmpty() || it.all { char -> char.isDigit() }) {
+                                    childWeight = it
+                                }
+                            },
+                            label = { Text("儿童体重 (kg)") },
+                            placeholder = { Text("1-50") },
+                            singleLine = true,
+                            isError = childWeight.isNotEmpty() &&
+                                       (childWeight.toIntOrNull()?.let { it !in 1..50 } ?: true),
+                            supportingText = {
+                                if (childWeight.isNotEmpty()) {
+                                    val weight = childWeight.toIntOrNull()
+                                    when {
+                                        weight == null || weight < 1 || weight > 50 -> {
+                                            Text("请输入1-50之间的数字", color = MaterialTheme.colorScheme.error)
+                                        }
+                                        else -> {
+                                            Text("当前体重: ${weight}kg")
+                                        }
+                                    }
+                                }
+                            },
+                            leadingIcon = {
+                                Text("⚖️")
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // 参数提示
+                        if (childHeight.isNotBlank() && childWeight.isNotBlank()) {
+                            val height = childHeight.toIntOrNull() ?: 0
+                            val weight = childWeight.toIntOrNull() ?: 0
+
+                            // 根据身高体重判断年龄段
+                            val ageHint = when {
+                                height in 1..65 && weight in 1..9 -> "新生儿/婴儿 (0-9个月)"
+                                height in 66..85 && weight in 10..13 -> "幼儿 (9-18个月)"
+                                height in 86..105 && weight in 14..18 -> "幼儿 (1.5-3岁)"
+                                height in 106..125 && weight in 19..25 -> "儿童 (3-6岁)"
+                                height in 126..150 && weight in 26..50 -> "学龄儿童 (6-12岁)"
+                                else -> "未知年龄段"
+                            }
+
+                            Surface(
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                shape = MaterialTheme.shapes.small
+                            ) {
+                                Text(
+                                    text = "👶 预估年龄段: $ageHint",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(8.dp)
+                                )
                             }
                         }
                     }
-
-                    // 百分位选择
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text(
-                                text = "选择百分位",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                listOf(50, 75, 95).forEach { percentile ->
-                                    FilterChip(
-                                        selected = selectedPercentile == percentile,
-                                        onClick = { selectedPercentile = percentile },
-                                        label = { Text("${percentile}%") },
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
+
+                Spacer(modifier = Modifier.height(8.dp))
 
                 // 已选择的标准摘要
                 if (uiState.selectedStandards.isNotEmpty()) {

@@ -22,7 +22,6 @@ import com.design.assistant.database.databases.ChildSeatStandardDatabase
 import com.design.assistant.database.databases.GPS028Database
 import com.design.assistant.database.databases.ProductStandardDatabase
 import com.design.assistant.model.DesignResult
-import com.design.assistant.model.GPS028Group
 import com.design.assistant.repository.ChildSeatStandardRepository
 import com.design.assistant.repository.GPS028Repository
 import com.design.assistant.repository.ProductStandardRepository
@@ -112,12 +111,12 @@ fun DesignAssistantNavHost() {
         composable("select") {
             StandardSelectScreen(
                 viewModel = productStandardSelectViewModel,
-                onGenerateClick = { productType, standards, group, percentile ->
+                onGenerateClick = { productType, standards, height, weight ->
                     designGenerateViewModel.generateDesign(
                         productType,
                         standards,
-                        group,
-                        percentile
+                        height,
+                        weight
                     )
                     currentScreen = "result"
                     navController.navigate("result")

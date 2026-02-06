@@ -16,6 +16,10 @@ data class DesignResult(
     val standards: List<StandardType>,        // 适用的标准列表
     val generatedAt: Long = System.currentTimeMillis(),  // 生成时间戳
 
+    // 儿童参数
+    val childHeight: Int = 0,                 // 儿童身高（1-150cm）
+    val childWeight: Int = 0,                 // 儿童体重（1-50kg）
+
     // GPS028参数（如果是儿童安全座椅）
     val gps028Params: GPS028Params? = null,
 
@@ -40,6 +44,9 @@ data class DesignResult(
             appendLine()
             appendLine("【生成时间】${Date(generatedAt)}")
             appendLine("【产品类型】${productType.getDisplayName()}")
+            appendLine("【儿童参数】")
+            appendLine("  - 身高: ${childHeight}cm")
+            appendLine("  - 体重: ${childWeight}kg")
             appendLine("【适用标准】")
             standards.forEach { standard ->
                 appendLine("  - ${standard.getDisplayName()} (${standard.getRegion()})")

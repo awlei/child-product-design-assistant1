@@ -56,8 +56,8 @@ class DesignGenerateViewModel(
     fun generateDesign(
         productType: ProductType,
         standards: List<StandardType>,
-        selectedGroup: GPS028Group = GPS028Group.GROUP_I,
-        selectedPercentile: Int = 50
+        childHeight: Int,
+        childWeight: Int
     ) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
@@ -66,11 +66,11 @@ class DesignGenerateViewModel(
                 // 生成设计结果
                 val designResult = when (productType) {
                     ProductType.CHILD_SEAT -> generateChildSeatDesign(
-                        standards, selectedGroup, selectedPercentile
+                        standards, childHeight, childWeight
                     )
-                    ProductType.STROLLER -> generateStrollerDesign(standards)
-                    ProductType.HIGH_CHAIR -> generateHighChairDesign(standards)
-                    ProductType.CRIB -> generateCribDesign(standards)
+                    ProductType.STROLLER -> generateStrollerDesign(standards, childHeight, childWeight)
+                    ProductType.HIGH_CHAIR -> generateHighChairDesign(standards, childHeight, childWeight)
+                    ProductType.CRIB -> generateCribDesign(standards, childHeight, childWeight)
                 }
 
                 _uiState.value = _uiState.value.copy(
@@ -92,9 +92,12 @@ class DesignGenerateViewModel(
      */
     private suspend fun generateChildSeatDesign(
         standards: List<StandardType>,
-        selectedGroup: GPS028Group,
-        selectedPercentile: Int
+        childHeight: Int,
+        childWeight: Int
     ): DesignResult {
+        // 根据身高体重推断GPS028组别和百分位
+        val (selectedGroup, selectedPercentile) = inferGPS028GroupAndPercentile(childHeight, childWeight)
+
         // 获取GPS028参数
         val gps028Params = gps028Repository.getByGroupAndPercentile(
             selectedGroup.name,
@@ -130,7 +133,7 @@ class DesignGenerateViewModel(
         val compatibility = analyzeCompatibility(standards)
 
         // 生成设计建议
-        val recommendations = generateChildSeatRecommendations(standards, gps028Params)
+        val recommendations = generateChildSeatRecommendations(standards, gps028Params, childHeight, childWeight)
 
         // 生成冲突提示
         val conflicts = detectStandardConflicts(standards)
@@ -139,6 +142,8 @@ class DesignGenerateViewModel(
             id = UUID.randomUUID().toString(),
             productType = ProductType.CHILD_SEAT,
             standards = standards,
+            childHeight = childHeight,
+            childWeight = childWeight,
             gps028Params = gps028Params,
             compatibility = compatibility,
             designRecommendations = recommendations,
@@ -147,17 +152,36 @@ class DesignGenerateViewModel(
     }
 
     /**
+     * 根据身高体重推断GPS028组别和百分位
+     */
+    private fun inferGPS028GroupAndPercentile(height: Int, weight: Int): Pair<GPS028Group, Int> {
+        return when {
+            // 0-10kg, 40-65cm -> Group 0/0+ (出生到约10个月，假人Q1)
+            weight <= 10 && height <= 65 -> Pair(GPS028Group.GROUP_0, 50)
+            // 9-18kg, 65-85cm -> Group I (约9-18个月，假人Q3)
+            weight in 9..18 && height in 66..85 -> Pair(GPS028Group.GROUP_I, 50)
+            // 15-25kg, 86-105cm -> Group II (约1.5-4岁，假人Q6)
+            weight in 15..25 && height in 86..105 -> Pair(GPS028Group.GROUP_II, 50)
+            // 22-36kg, 106-150cm -> Group III (约4-12岁，假人Q10)
+            weight >= 22 && height >= 106 -> Pair(GPS028Group.GROUP_III, 50)
+            else -> Pair(GPS028Group.GROUP_I, 50) // 默认值
+        }
+    }
+
+    /**
      * 生成婴儿推车设计方案
      */
-    private suspend fun generateStrollerDesign(standards: List<StandardType>): DesignResult {
+    private suspend fun generateStrollerDesign(standards: List<StandardType>, childHeight: Int, childWeight: Int): DesignResult {
         val compatibility = analyzeCompatibility(standards)
-        val recommendations = generateStrollerRecommendations(standards)
+        val recommendations = generateStrollerRecommendations(standards, childHeight, childWeight)
         val conflicts = detectStandardConflicts(standards)
 
         return DesignResult(
             id = UUID.randomUUID().toString(),
             productType = ProductType.STROLLER,
             standards = standards,
+            childHeight = childHeight,
+            childWeight = childWeight,
             compatibility = compatibility,
             designRecommendations = recommendations,
             conflicts = conflicts
@@ -167,15 +191,17 @@ class DesignGenerateViewModel(
     /**
      * 生成高脚椅设计方案
      */
-    private suspend fun generateHighChairDesign(standards: List<StandardType>): DesignResult {
+    private suspend fun generateHighChairDesign(standards: List<StandardType>, childHeight: Int, childWeight: Int): DesignResult {
         val compatibility = analyzeCompatibility(standards)
-        val recommendations = generateHighChairRecommendations(standards)
+        val recommendations = generateHighChairRecommendations(standards, childHeight, childWeight)
         val conflicts = detectStandardConflicts(standards)
 
         return DesignResult(
             id = UUID.randomUUID().toString(),
             productType = ProductType.HIGH_CHAIR,
             standards = standards,
+            childHeight = childHeight,
+            childWeight = childWeight,
             compatibility = compatibility,
             designRecommendations = recommendations,
             conflicts = conflicts
@@ -185,15 +211,17 @@ class DesignGenerateViewModel(
     /**
      * 生成儿童床设计方案
      */
-    private suspend fun generateCribDesign(standards: List<StandardType>): DesignResult {
+    private suspend fun generateCribDesign(standards: List<StandardType>, childHeight: Int, childWeight: Int): DesignResult {
         val compatibility = analyzeCompatibility(standards)
-        val recommendations = generateCribRecommendations(standards)
+        val recommendations = generateCribRecommendations(standards, childHeight, childWeight)
         val conflicts = detectStandardConflicts(standards)
 
         return DesignResult(
             id = UUID.randomUUID().toString(),
             productType = ProductType.CRIB,
             standards = standards,
+            childHeight = childHeight,
+            childWeight = childWeight,
             compatibility = compatibility,
             designRecommendations = recommendations,
             conflicts = conflicts
@@ -243,16 +271,27 @@ class DesignGenerateViewModel(
      */
     private fun generateChildSeatRecommendations(
         standards: List<StandardType>,
-        gps028Params: GPS028Params
+        gps028Params: GPS028Params,
+        childHeight: Int,
+        childWeight: Int
     ): List<DesignRecommendation> {
         val recommendations = mutableListOf<DesignRecommendation>()
+
+        // 根据身高体重生成个性化建议
+        val ageHint = when {
+            childHeight in 1..65 && childWeight in 1..9 -> "新生儿/婴儿 (0-9个月)"
+            childHeight in 66..85 && childWeight in 10..13 -> "幼儿 (9-18个月)"
+            childHeight in 86..105 && childWeight in 14..18 -> "幼儿 (1.5-3岁)"
+            childHeight in 106..125 && childWeight in 19..25 -> "儿童 (3-6岁)"
+            else -> "学龄儿童 (6-12岁)"
+        }
 
         // 头部保护建议
         recommendations.add(
             DesignRecommendation(
                 category = "头部保护",
                 title = "头部支撑高度",
-                description = "根据GPS028参数，最小头部支撑高度应为${gps028Params.minHeadSupportHeight}mm，确保在碰撞时头部得到充分保护。",
+                description = "根据GPS028参数，最小头部支撑高度应为${gps028Params.minHeadSupportHeight}mm，确保在碰撞时头部得到充分保护。当前儿童身高${childHeight}cm，建议调整头枕高度以适应儿童体型。",
                 priority = RecommendationPriority.CRITICAL,
                 applicableStandards = standards
             )
@@ -263,7 +302,7 @@ class DesignGenerateViewModel(
             DesignRecommendation(
                 category = "侧翼设计",
                 title = "侧翼深度和宽度",
-                description = "侧翼最小深度为${gps028Params.minSideWingDepth}mm，最小宽度为${gps028Params.minSideWingWidth}mm，以减少侧面碰撞伤害。",
+                description = "侧翼最小深度为${gps028Params.minSideWingDepth}mm，最小宽度为${gps028Params.minSideWingWidth}mm，以减少侧面碰撞伤害。当前儿童体重${childWeight}kg，建议确保侧翼能充分包裹儿童身体。",
                 priority = RecommendationPriority.HIGH,
                 applicableStandards = standards
             )
@@ -274,8 +313,19 @@ class DesignGenerateViewModel(
             DesignRecommendation(
                 category = "安全带系统",
                 title = "安全带间距",
-                description = "安全带最小间距为${gps028Params.minHarnessWidth}mm，胯部扣最小距离为${gps028Params.minCrotchBuckleDistance}mm。",
+                description = "安全带最小间距为${gps028Params.minHarnessWidth}mm，胯部扣最小距离为${gps028Params.minCrotchBuckleDistance}mm。当前儿童身高${childHeight}cm，建议根据体型调整安全带位置。",
                 priority = RecommendationPriority.CRITICAL,
+                applicableStandards = standards
+            )
+        )
+
+        // 个性化建议
+        recommendations.add(
+            DesignRecommendation(
+                category = "个性化建议",
+                title = "体型适配建议",
+                description = "当前儿童身高${childHeight}cm、体重${childWeight}kg，预估年龄段为${ageHint}。建议根据儿童生长情况，设计可调节的头枕高度（${childHeight - 5}cm至${childHeight + 10}cm范围）和安全带系统。",
+                priority = RecommendationPriority.HIGH,
                 applicableStandards = standards
             )
         )
@@ -299,14 +349,31 @@ class DesignGenerateViewModel(
     /**
      * 生成婴儿推车设计建议
      */
-    private fun generateStrollerRecommendations(standards: List<StandardType>): List<DesignRecommendation> {
+    private fun generateStrollerRecommendations(standards: List<StandardType>, childHeight: Int, childWeight: Int): List<DesignRecommendation> {
         val recommendations = mutableListOf<DesignRecommendation>()
+
+        // 个性化建议
+        val ageHint = when {
+            childHeight in 1..85 && childWeight in 1..15 -> "婴儿 (0-18个月)"
+            childHeight in 86..125 && childWeight in 16..25 -> "幼儿 (1.5-6岁)"
+            else -> "儿童 (6岁以上)"
+        }
+
+        recommendations.add(
+            DesignRecommendation(
+                category = "个性化建议",
+                title = "体型适配建议",
+                description = "当前儿童身高${childHeight}cm、体重${childWeight}kg，预估年龄段为${ageHint}。建议设计可调节的座椅靠背角度和脚托高度，以适应儿童成长。",
+                priority = RecommendationPriority.HIGH,
+                applicableStandards = standards
+            )
+        )
 
         recommendations.add(
             DesignRecommendation(
                 category = "结构设计",
                 title = "车轮尺寸",
-                description = "最小轮径应满足各标准要求，欧洲EN1888为${StandardConstants.StrollerStandards.EN1888_MIN_WHEEL_DIA}mm。",
+                description = "最小轮径应满足各标准要求，欧洲EN1888为${StandardConstants.StrollerStandards.EN1888_MIN_WHEEL_DIA}mm。当前儿童体重${childWeight}kg，建议选择适当轮径以确保平稳性。",
                 priority = RecommendationPriority.HIGH,
                 applicableStandards = standards
             )
@@ -316,7 +383,7 @@ class DesignGenerateViewModel(
             DesignRecommendation(
                 category = "安全设计",
                 title = "刹车系统",
-                description = "刹车系统应提供至少${StandardConstants.StrollerStandards.EN1888_MIN_BRAKE_FORCE}N的制动力。",
+                description = "刹车系统应提供至少${StandardConstants.StrollerStandards.EN1888_MIN_BRAKE_FORCE}N的制动力。确保在载重${childWeight}kg时仍能有效制动。",
                 priority = RecommendationPriority.CRITICAL,
                 applicableStandards = standards
             )
@@ -328,8 +395,25 @@ class DesignGenerateViewModel(
     /**
      * 生成高脚椅设计建议
      */
-    private fun generateHighChairRecommendations(standards: List<StandardType>): List<DesignRecommendation> {
+    private fun generateHighChairRecommendations(standards: List<StandardType>, childHeight: Int, childWeight: Int): List<DesignRecommendation> {
         val recommendations = mutableListOf<DesignRecommendation>()
+
+        // 个性化建议
+        val ageHint = when {
+            childHeight in 60..85 && childWeight in 8..15 -> "幼儿 (6-18个月)"
+            childHeight in 86..105 && childWeight in 16..25 -> "幼儿 (1.5-4岁)"
+            else -> "儿童 (4岁以上)"
+        }
+
+        recommendations.add(
+            DesignRecommendation(
+                category = "个性化建议",
+                title = "体型适配建议",
+                description = "当前儿童身高${childHeight}cm、体重${childWeight}kg，预估年龄段为${ageHint}。建议设计可调节的座椅高度和脚踏板，以适应儿童成长。",
+                priority = RecommendationPriority.HIGH,
+                applicableStandards = standards
+            )
+        )
 
         recommendations.add(
             DesignRecommendation(
@@ -357,14 +441,31 @@ class DesignGenerateViewModel(
     /**
      * 生成儿童床设计建议
      */
-    private fun generateCribRecommendations(standards: List<StandardType>): List<DesignRecommendation> {
+    private fun generateCribRecommendations(standards: List<StandardType>, childHeight: Int, childWeight: Int): List<DesignRecommendation> {
         val recommendations = mutableListOf<DesignRecommendation>()
+
+        // 个性化建议
+        val ageHint = when {
+            childHeight in 1..85 && childWeight in 1..15 -> "婴儿 (0-24个月)"
+            childHeight in 86..125 && childWeight in 16..25 -> "幼儿 (2-6岁)"
+            else -> "儿童 (6岁以上)"
+        }
+
+        recommendations.add(
+            DesignRecommendation(
+                category = "个性化建议",
+                title = "体型适配建议",
+                description = "当前儿童身高${childHeight}cm、体重${childWeight}kg，预估年龄段为${ageHint}。建议设计可调节的床底高度，以便随着儿童成长调整。",
+                priority = RecommendationPriority.HIGH,
+                applicableStandards = standards
+            )
+        )
 
         recommendations.add(
             DesignRecommendation(
                 category = "护栏设计",
                 title = "栏杆间距",
-                description = "最大栏杆间距为${StandardConstants.CribStandards.EN716_MAX_BAR_SPACING}mm，防止儿童头部卡住。",
+                description = "最大栏杆间距为${StandardConstants.CribStandards.EN716_MAX_BAR_SPACING}mm，防止儿童头部卡住。当前儿童身高${childHeight}cm，建议护栏高度至少为${childHeight * 1.2}cm。",
                 priority = RecommendationPriority.CRITICAL,
                 applicableStandards = standards
             )
@@ -374,7 +475,7 @@ class DesignGenerateViewModel(
             DesignRecommendation(
                 category = "床垫设计",
                 title = "床垫厚度",
-                description = "最小床垫厚度为${StandardConstants.CribStandards.EN716_MIN_MATTRESS_THICKNESS}mm。",
+                description = "最小床垫厚度为${StandardConstants.CribStandards.EN716_MIN_MATTRESS_THICKNESS}mm。当前儿童体重${childWeight}kg，确保床垫支撑力足够。",
                 priority = RecommendationPriority.HIGH,
                 applicableStandards = standards
             )
