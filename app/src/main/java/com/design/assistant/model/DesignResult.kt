@@ -17,7 +17,6 @@ data class DesignResult(
     val generatedAt: Long = System.currentTimeMillis(),  // 生成时间戳
 
     // GPS028参数（如果是儿童安全座椅）
-    @Contextual
     val gps028Params: GPS028Params? = null,
 
     // 兼容性分析

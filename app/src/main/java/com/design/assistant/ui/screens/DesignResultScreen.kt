@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.design.assistant.model.DesignResult
+import com.design.assistant.model.ProductType
+import com.design.assistant.model.StandardType
+import com.design.assistant.ui.components.*
 
 /**
  * 设计结果展示页面

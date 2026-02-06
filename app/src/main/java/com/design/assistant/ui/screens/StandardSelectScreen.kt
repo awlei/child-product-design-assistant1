@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.design.assistant.model.GPS028Group
+import com.design.assistant.model.ProductType
+import com.design.assistant.model.StandardType
 import com.design.assistant.viewmodel.ProductStandardSelectViewModel
 
 /**
