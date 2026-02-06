@@ -186,8 +186,6 @@ data class GPS028Params(
 }
 
 /**
- * 二维坐标点
-/**
  * 坐标点数据类
  */
 @Serializable
