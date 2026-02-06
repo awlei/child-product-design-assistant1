@@ -1,9 +1,12 @@
 package com.design.assistant.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * 产品类型枚举
  * 支持的儿童产品类型
  */
+@Serializable
 enum class ProductType {
     CHILD_SEAT,           // 儿童安全座椅
     STROLLER,             // 婴儿推车

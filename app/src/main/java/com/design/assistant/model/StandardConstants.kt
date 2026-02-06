@@ -9,11 +9,11 @@ object StandardConstants {
     // ========== GPS028 (GB 27887-2011) 常量 ==========
     object GPS028 {
         // 头部伤害指标HIC限值
-        const val MAX_HIC_0_GROUP = 570          // 0组假人HIC限值
-        const val MAX_HIC_0_PLUS_GROUP = 570     // 0+组假人HIC限值
-        const val MAX_HIC_I_GROUP = 650          // I组假人HIC限值
-        const val MAX_HIC_II_GROUP = 650         // II组假人HIC限值
-        const val MAX_HIC_III_GROUP = 650        // III组假人HIC限值
+        const val MAX_HIC_0_GROUP = 570.0          // 0组假人HIC限值
+        const val MAX_HIC_0_PLUS_GROUP = 570.0     // 0+组假人HIC限值
+        const val MAX_HIC_I_GROUP = 650.0          // I组假人HIC限值
+        const val MAX_HIC_II_GROUP = 650.0         // II组假人HIC限值
+        const val MAX_HIC_III_GROUP = 650.0        // III组假人HIC限值
 
         // 胸部加速度限值（g）
         const val MAX_CHEST_ACCEL_0_GROUP = 55.0
@@ -49,11 +49,11 @@ object StandardConstants {
     // ========== ECE R129 (i-Size) 常量 ==========
     object ECE_R129 {
         // 头部伤害指标HIC限值
-        const val MAX_HIC_Q1 = 570
-        const val MAX_HIC_Q1_5 = 570
-        const val MAX_HIC_Q3 = 650
-        const val MAX_HIC_Q6 = 650
-        const val MAX_HIC_Q10 = 650
+        const val MAX_HIC_Q1 = 570.0
+        const val MAX_HIC_Q1_5 = 570.0
+        const val MAX_HIC_Q3 = 650.0
+        const val MAX_HIC_Q6 = 650.0
+        const val MAX_HIC_Q10 = 650.0
 
         // 胸部加速度限值（g）
         const val MAX_CHEST_ACCEL = 55.0
@@ -77,9 +77,9 @@ object StandardConstants {
     // ========== CMVSS213 (加拿大) 常量 ==========
     object CMVSS213 {
         // 头部伤害指标HIC限值
-        const val MAX_HIC_INFANT = 570
-        const val MAX_HIC_TODDLER = 650
-        const val MAX_HIC_CHILD = 650
+        const val MAX_HIC_INFANT = 570.0
+        const val MAX_HIC_TODDLER = 650.0
+        const val MAX_HIC_CHILD = 650.0
 
         // 胸部加速度限值（g）
         const val MAX_CHEST_ACCEL = 55.0
@@ -96,9 +96,9 @@ object StandardConstants {
     // ========== FMVSS213 (美国) 常量 ==========
     object FMVSS213 {
         // 头部伤害指标HIC限值
-        const val MAX_HIC_INFANT = 570
-        const val MAX_HIC_TODDLER = 650
-        const val MAX_HIC_CHILD = 1000
+        const val MAX_HIC_INFANT = 570.0
+        const val MAX_HIC_TODDLER = 650.0
+        const val MAX_HIC_CHILD = 1000.0
 
         // 胸部加速度限值（g）
         const val MAX_CHEST_ACCEL = 60.0
@@ -115,10 +115,10 @@ object StandardConstants {
     // ========== AS/NZS1754 (澳大利亚/新西兰) 常量 ==========
     object AS_NZS1754 {
         // 头部伤害指标HIC限值
-        const val MAX_HIC_0_0 = 570
-        const val MAX_HIC_I = 650
-        const val MAX_HIC_II = 650
-        const val MAX_HIC_III = 650
+        const val MAX_HIC_0_0 = 570.0
+        const val MAX_HIC_I = 650.0
+        const val MAX_HIC_II = 650.0
+        const val MAX_HIC_III = 650.0
 
         // 胸部加速度限值（g）
         const val MAX_CHEST_ACCEL = 55.0

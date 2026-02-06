@@ -1,5 +1,6 @@
 package com.design.assistant.model
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -16,6 +17,7 @@ data class DesignResult(
     val generatedAt: Long = System.currentTimeMillis(),  // 生成时间戳
 
     // GPS028参数（如果是儿童安全座椅）
+    @Contextual
     val gps028Params: GPS028Params? = null,
 
     // 兼容性分析
@@ -27,8 +29,8 @@ data class DesignResult(
     // 标准冲突提示
     val conflicts: List<StandardConflict> = emptyList(),
 
-    // 额外参数（根据产品类型动态添加）
-    val additionalParams: Map<String, Any> = emptyMap()
+    // 额外参数（根据产品类型动态添加，使用String作为值类型以支持序列化）
+    val additionalParams: Map<String, String> = emptyMap()
 ) {
     /**
      * 生成设计报告文本

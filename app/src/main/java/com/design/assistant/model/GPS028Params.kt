@@ -1,9 +1,12 @@
 package com.design.assistant.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * GPS028设计参数数据类
  * 用于生成符合GB 27887-2011标准的专业设计参数
  */
+@Serializable
 data class GPS028Params(
     // 基础信息
     val groupName: String,                    // 组别（0、0+、I、II、III）

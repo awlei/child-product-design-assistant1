@@ -1,9 +1,12 @@
 package com.design.assistant.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * 标准类型枚举
  * 支持的国际标准
  */
+@Serializable
 enum class StandardType {
     // 中国标准
     GPS028,                 // GB 27887-2011 儿童安全座椅标准（GPS028参数）

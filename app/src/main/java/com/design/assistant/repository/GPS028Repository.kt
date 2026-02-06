@@ -4,6 +4,7 @@ import com.design.assistant.database.databases.GPS028Database
 import com.design.assistant.database.entities.GPS028Entity
 import com.design.assistant.model.GPS028Group
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * GPS028 Repository

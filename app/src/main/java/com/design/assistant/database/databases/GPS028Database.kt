@@ -61,6 +61,16 @@ abstract class GPS028Database : RoomDatabase() {
                 // 注意：这里需要在主线程中执行，实际使用时应该在后台线程初始化
             }
         }
+
+        /**
+         * 数据库迁移（如需要升级版本时使用）
+         */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // 如需要迁移，在这里添加SQL语句
+                // 例如：database.execSQL("ALTER TABLE gps028_params ADD COLUMN newColumn TEXT")
+            }
+        }
     }
 
     /**
@@ -90,18 +100,6 @@ abstract class GPS028Database : RoomDatabase() {
                 val params = StandardConstants.getGPS028PercentileParams(percentile, group)
                 val entity = GPS028Entity.fromGPS028Params(params)
                 dao.insert(entity)
-            }
-        }
-    }
-
-    /**
-     * 数据库迁移（如需要升级版本时使用）
-     */
-    companion object {
-        val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                // 如需要迁移，在这里添加SQL语句
-                // 例如：database.execSQL("ALTER TABLE gps028_params ADD COLUMN newColumn TEXT")
             }
         }
     }
