@@ -28,11 +28,11 @@ class ChildRestraintDesignService {
 
         fun getSelectedStandards(): List<String> {
             val list = mutableListOf<String>()
-            if (eceR129) list.add(StandardConstants.getDisplayName(StandardConstants.ECE_R129))
-            if (gb27887) list.add(StandardConstants.getDisplayName(StandardConstants.GB_27887_2024))
-            if (fmvss213) list.add(StandardConstants.getDisplayName(StandardConstants.FMVSS_213))
-            if (asNzs1754) list.add(StandardConstants.getDisplayName(StandardConstants.AS_NZS_1754))
-            if (jisD1601) list.add(StandardConstants.getDisplayName(StandardConstants.JIS_D1601))
+            if (eceR129) list.add(StandardConstants.getStandardName(StandardConstants.ECE_R129))
+            if (gb27887) list.add(StandardConstants.getStandardName(StandardConstants.GB_27887_2024))
+            if (fmvss213) list.add(StandardConstants.getStandardName(StandardConstants.FMVSS_213))
+            if (asNzs1754) list.add(StandardConstants.getStandardName(StandardConstants.AS_NZS_1754))
+            if (jisD1601) list.add(StandardConstants.getStandardName(StandardConstants.JIS_D1601))
             return list
         }
     }

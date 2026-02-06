@@ -18,4 +18,13 @@
     <color name="on_background">#FF000000</color>
     <color name="on_surface">#FF000000</color>
     <color name="on_error">#FFFFFFFF</color>
+
+    <!-- 专业设计颜色 -->
+    <color name="blue_1677FF">#1677FF</color>
+    <color name="gray_666666">#666666</color>
+    <color name="gray_999999">#999999</color>
+    <color name="gray_F5F5F5">#F5F5F5</color>
+    <color name="green_008000">#008000</color>
+    <color name="red_FF4444">#FF4444</color>
+    <color name="blue_F0F8FF">#F0F8FF</color>
 </resources>

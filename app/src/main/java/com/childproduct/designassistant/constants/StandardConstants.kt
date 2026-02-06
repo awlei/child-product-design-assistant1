@@ -1,12 +1,16 @@
 package com.childproduct.designassistant.constants
 
+import com.childproduct.designassistant.model.ProductType
+
 /**
- * 标准常量定义（统一标识，避免匹配失败）
+ * 全局标准常量：代码定义+显示名称+产品-标准映射
+ * 面向专业工程师：含标准编号/地区/实施属性，新增标准仅修改此类
  * 
  * 修复说明：
  * - 统一使用下划线命名（无空格/大小写差异）
  * - 提供标准ID到常量的映射
  * - 确保全链路使用统一标识
+ * - 包含四大品类（安全座椅/婴儿推车/高脚椅/儿童床）的全球标准
  * 
  * 使用原则：
  * - 所有代码中必须使用这些常量，禁止硬编码字符串
@@ -15,52 +19,31 @@ package com.childproduct.designassistant.constants
  */
 object StandardConstants {
 
-    // ========== 标准类型标识（统一格式） ==========
+    // ============= 儿童安全座椅（出行类） =============
+    const val ECE_R129 = "ECE_R129"          // 欧盟i-Size 2021
+    const val GB_27887_2024 = "GB_27887_2024"// 中国新标 2025强制
+    const val FMVSS_213 = "FMVSS_213"        // 美国 2022版
+    const val AS_NZS_1754 = "AS_NZS_1754"    // 澳洲 2020版
+    const val CMVSS_213 = "CMVSS_213"        // 加拿大 第5版
 
-    /**
-     * ECE R129标准（欧盟i-Size）
-     */
-    const val ECE_R129 = "ECE_R129"
+    // ============= 婴儿推车（出行类） =============
+    const val EN_1888 = "EN_1888"            // 欧盟 2022版
+    const val GB_14748 = "GB_14748"          // 中国 2020版
+    const val ASTM_F833 = "ASTM_F833"        // 美国 2023版
+    const val CAN_CSA_D425 = "CAN_CSA_D425"  // 加拿大 2021版
+    const val AS_NZS_2088 = "AS_NZS_2088"    // 澳洲 2020版
 
-    /**
-     * FMVSS 213标准（美国）
-     */
-    const val FMVSS_213 = "FMVSS_213"
+    // ============= 儿童高脚椅（家居类） =============
+    const val EN_14988 = "EN_14988"          // 欧盟 2021版
+    const val GB_29281 = "GB_29281"          // 中国 2012版
+    const val CAN_CSA_Z217_1 = "CAN_CSA_Z217_1"// 加拿大 2022版
+    const val ASTM_F404 = "ASTM_F404"        // 美国 2023版
 
-    /**
-     * GB 27887-2024标准（中国新标）
-     */
-    const val GB_27887_2024 = "GB_27887_2024"
-
-    /**
-     * EN 14988标准（欧盟高脚椅）
-     */
-    const val EN_14988 = "EN_14988"
-
-    /**
-     * GB 29281标准（中国高脚椅）
-     */
-    const val GB_29281 = "GB_29281"
-
-    /**
-     * EN 716标准（欧盟儿童床）
-     */
-    const val EN_716 = "EN_716"
-
-    /**
-     * GB 28007标准（中国儿童床）
-     */
-    const val GB_28007 = "GB_28007"
-
-    /**
-     * AS/NZS 1754标准（澳洲）
-     */
-    const val AS_NZS_1754 = "AS_NZS_1754"
-
-    /**
-     * JIS D 1601标准（日本）
-     */
-    const val JIS_D1601 = "JIS_D1601"
+    // ============= 儿童床（家居类） =============
+    const val EN_716 = "EN_716"              // 欧盟 2021版
+    const val GB_28007 = "GB_28007"          // 中国 2011版
+    const val CAN_CSA_D1169 = "CAN_CSA_D1169"// 加拿大 2020版
+    const val ASTM_F1169 = "ASTM_F1169"      // 美国 2022版
 
     // ========== 标准ID映射（UI标识 → 常量） ==========
 
@@ -87,6 +70,41 @@ object StandardConstants {
         "GB-27887-2024" to GB_27887_2024,
         "gb_27887" to GB_27887_2024,
 
+        // CMVSS 213相关
+        "cmvss_213" to CMVSS_213,
+        "CMVSS 213" to CMVSS_213,
+        "CMVSS-213" to CMVSS_213,
+
+        // AS/NZS 1754相关
+        "as_nzs_1754" to AS_NZS_1754,
+        "AS/NZS 1754" to AS_NZS_1754,
+        "AS_NZS_1754" to AS_NZS_1754,
+
+        // EN 1888相关
+        "en_1888" to EN_1888,
+        "EN 1888" to EN_1888,
+        "EN-1888" to EN_1888,
+
+        // GB 14748相关
+        "gb_14748" to GB_14748,
+        "GB 14748" to GB_14748,
+        "GB-14748" to GB_14748,
+
+        // ASTM F833相关
+        "astm_f833" to ASTM_F833,
+        "ASTM F833" to ASTM_F833,
+        "ASTM-F833" to ASTM_F833,
+
+        // CAN/CSA D425相关
+        "can_csa_d425" to CAN_CSA_D425,
+        "CAN/CSA D425" to CAN_CSA_D425,
+        "CAN_CSA_D425" to CAN_CSA_D425,
+
+        // AS/NZS 2088相关
+        "as_nzs_2088" to AS_NZS_2088,
+        "AS/NZS 2088" to AS_NZS_2088,
+        "AS_NZS_2088" to AS_NZS_2088,
+
         // EN 14988相关
         "en_14988" to EN_14988,
         "EN 14988" to EN_14988,
@@ -96,6 +114,16 @@ object StandardConstants {
         "gb_29281" to GB_29281,
         "GB 29281" to GB_29281,
         "GB-29281" to GB_29281,
+
+        // CAN/CSA Z217.1相关
+        "can_csa_z217_1" to CAN_CSA_Z217_1,
+        "CAN/CSA Z217.1" to CAN_CSA_Z217_1,
+        "CAN_CSA_Z217_1" to CAN_CSA_Z217_1,
+
+        // ASTM F404相关
+        "astm_f404" to ASTM_F404,
+        "ASTM F404" to ASTM_F404,
+        "ASTM-F404" to ASTM_F404,
 
         // EN 716相关
         "en_716" to EN_716,
@@ -107,15 +135,15 @@ object StandardConstants {
         "GB 28007" to GB_28007,
         "GB-28007" to GB_28007,
 
-        // AS/NZS 1754相关
-        "as_nzs_1754" to AS_NZS_1754,
-        "AS/NZS 1754" to AS_NZS_1754,
-        "AS_NZS_1754" to AS_NZS_1754,
+        // CAN/CSA D1169相关
+        "can_csa_d1169" to CAN_CSA_D1169,
+        "CAN/CSA D1169" to CAN_CSA_D1169,
+        "CAN_CSA_D1169" to CAN_CSA_D1169,
 
-        // JIS D 1601相关
-        "jis_d1601" to JIS_D1601,
-        "JIS D 1601" to JIS_D1601,
-        "JIS-D1601" to JIS_D1601
+        // ASTM F1169相关
+        "astm_f1169" to ASTM_F1169,
+        "ASTM F1169" to ASTM_F1169,
+        "ASTM-F1169" to ASTM_F1169
     )
 
     /**
@@ -129,31 +157,70 @@ object StandardConstants {
     }
 
     /**
-     * 检查是否为有效的标准类型
-     * 
-     * @param standardType 标准类型
-     * @return 是否有效
+     * 标准代码 → 专业显示名称（含版本/地区）
      */
-    fun isValidStandardType(standardType: String): Boolean {
-        val normalizedType = getStandardConstant(standardType)
-        return normalizedType in listOf(
-            ECE_R129,
-            FMVSS_213,
-            GB_27887_2024,
-            EN_14988,
-            GB_29281,
-            EN_716,
-            GB_28007,
-            AS_NZS_1754,
-            JIS_D1601
+    fun getStandardName(standardCode: String): String {
+        return when (standardCode) {
+            // 儿童安全座椅
+            ECE_R129 -> "ECE R129:2021 (欧盟i-Size)"
+            GB_27887_2024 -> "GB 27887-2024 (中国新标，2025强制)"
+            FMVSS_213 -> "FMVSS 213 (美国2022版，联邦强制)"
+            AS_NZS_1754 -> "AS/NZS 1754:2020 (澳洲强制)"
+            CMVSS_213 -> "CMVSS 213 (加拿大第5版，强制)"
+            // 婴儿推车
+            EN_1888 -> "EN 1888:2022 (欧盟强制)"
+            GB_14748 -> "GB 14748-2020 (中国强制)"
+            ASTM_F833 -> "ASTM F833-23 (美国材料协会)"
+            CAN_CSA_D425 -> "CAN/CSA D425-21 (加拿大强制)"
+            AS_NZS_2088 -> "AS/NZS 2088:2020 (澳洲强制)"
+            // 高脚椅
+            EN_14988 -> "EN 14988:2021 (欧盟强制)"
+            GB_29281 -> "GB 29281-2012 (中国强制)"
+            CAN_CSA_Z217_1 -> "CAN/CSA Z217.1-22 (加拿大强制)"
+            ASTM_F404 -> "ASTM F404-23 (美国材料协会)"
+            // 儿童床
+            EN_716 -> "EN 716:2021 (欧盟强制)"
+            GB_28007 -> "GB 28007-2011 (中国强制)"
+            CAN_CSA_D1169 -> "CAN/CSA D1169-20 (加拿大强制)"
+            ASTM_F1169 -> "ASTM F1169-22 (美国材料协会)"
+            else -> "未知标准"
+        }
+    }
+
+    /**
+     * 产品类型 → 对应支持的标准列表（自动关联，工程师无需手动匹配）
+     */
+    fun getStandardsByProduct(productType: ProductType): List<String> {
+        return when (productType) {
+            ProductType.CHILD_SEAT -> listOf(ECE_R129, GB_27887_2024, FMVSS_213, AS_NZS_1754, CMVSS_213)
+            ProductType.BABY_STROLLER -> listOf(EN_1888, GB_14748, ASTM_F833, CAN_CSA_D425, AS_NZS_2088)
+            ProductType.HIGH_CHAIR -> listOf(EN_14988, GB_29281, CAN_CSA_Z217_1, ASTM_F404)
+            ProductType.CHILD_BED -> listOf(EN_716, GB_28007, CAN_CSA_D1169, ASTM_F1169)
+        }
+    }
+
+    /**
+     * 获取所有有效标准列表
+     */
+    fun getAllStandards(): List<String> {
+        return listOf(
+            ECE_R129, GB_27887_2024, FMVSS_213, AS_NZS_1754, CMVSS_213,
+            EN_1888, GB_14748, ASTM_F833, CAN_CSA_D425, AS_NZS_2088,
+            EN_14988, GB_29281, CAN_CSA_Z217_1, ASTM_F404,
+            EN_716, GB_28007, CAN_CSA_D1169, ASTM_F1169
         )
     }
 
     /**
+     * 检查是否为有效的标准类型
+     */
+    fun isValidStandardType(standardType: String): Boolean {
+        val normalizedType = getStandardConstant(standardType)
+        return normalizedType in getAllStandards()
+    }
+
+    /**
      * 检查是否为ECE标准
-     * 
-     * @param standardType 标准类型
-     * @return 是否为ECE标准
      */
     fun isEceStandard(standardType: String): Boolean {
         val normalizedType = getStandardConstant(standardType)
@@ -162,9 +229,6 @@ object StandardConstants {
 
     /**
      * 检查是否为FMVSS标准
-     * 
-     * @param standardType 标准类型
-     * @return 是否为FMVSS标准
      */
     fun isFmvssStandard(standardType: String): Boolean {
         val normalizedType = getStandardConstant(standardType)
@@ -172,101 +236,14 @@ object StandardConstants {
     }
 
     /**
-     * 获取标准名称（用于显示）
-     * 
-     * @param standardType 标准类型
-     * @return 标准名称
-     */
-    fun getStandardName(standardType: String): String {
-        val normalizedType = getStandardConstant(standardType)
-        return when (normalizedType) {
-            ECE_R129 -> "ECE R129 (欧盟i-Size)"
-            FMVSS_213 -> "FMVSS 213 (美国)"
-            GB_27887_2024 -> "GB 27887-2024 (中国)"
-            EN_14988 -> "EN 14988 (欧盟高脚椅)"
-            GB_29281 -> "GB 29281 (中国高脚椅)"
-            EN_716 -> "EN 716 (欧盟儿童床)"
-            GB_28007 -> "GB 28007 (中国儿童床)"
-            AS_NZS_1754 -> "AS/NZS 1754 (澳洲)"
-            JIS_D1601 -> "JIS D 1601 (日本)"
-            else -> standardType
-        }
-    }
-
-    /**
      * 获取标准数据库引用
-     * 
-     * @param standardType 标准类型
-     * @return 数据库引用名称
      */
-    fun getDatabaseRef(standardType: String): String {
-        val normalizedType = getStandardConstant(standardType)
-        return when (normalizedType) {
-            ECE_R129, GB_27887_2024 -> "EceR129Database"
-            FMVSS_213 -> "FMVSSDatabase"
-            EN_14988, GB_29281 -> "HighChairDatabase"
-            EN_716, GB_28007 -> "CribDatabase"
-            else -> "UnknownDatabase"
-        }
-    }
-
-    /**
-     * 获取所有支持的儿童安全座椅标准
-     * 
-     * @return 标准列表
-     */
-    fun getChildSafetySeatStandards(): List<String> {
-        return listOf(ECE_R129, FMVSS_213, GB_27887_2024)
-    }
-
-    /**
-     * 获取所有支持的标准
-     * 
-     * @return 标准列表
-     */
-    fun getAllStandards(): List<String> {
-        return listOf(
-            ECE_R129,
-            FMVSS_213,
-            GB_27887_2024,
-            EN_14988,
-            GB_29281,
-            EN_716,
-            GB_28007,
-            AS_NZS_1754,
-            JIS_D1601
-        )
-    }
-
-    /**
-     * 获取标准描述
-     * 
-     * @param standardType 标准类型
-     * @return 标准描述
-     */
-    fun getStandardDescription(standardType: String): String {
-        val normalizedType = getStandardConstant(standardType)
-        return when (normalizedType) {
-            ECE_R129 -> "联合国欧洲经济委员会儿童约束系统法规，基于身高分类，使用Q系列假人"
-            FMVSS_213 -> "美国联邦机动车儿童约束系统安全标准，使用HIII和Q3s假人"
-            GB_27887_2024 -> "中国机动车儿童乘员用约束系统国家标准，等效采用ECE R129"
-            EN_14988 -> "欧盟儿童高脚椅安全要求标准"
-            GB_29281 -> "中国儿童高脚椅安全要求标准"
-            EN_716 -> "欧盟儿童家具-床安全要求标准"
-            GB_28007 -> "中国儿童家具通用技术条件标准"
-            AS_NZS_1754 -> "澳大利亚/新西兰儿童约束系统标准"
-            JIS_D1601 -> "日本儿童约束系统安全标准"
-            else -> "未知标准"
-        }
-    }
-
-    /**
-     * 获取标准显示名称（用于UI展示）
-     * 
-     * @param standardType 标准类型
-     * @return 显示名称
-     */
-    fun getDisplayName(standardType: String): String {
-        return getStandardName(standardType)
+    fun getDbNameByStandard(standardCode: String): String {
+        return getStandardName(standardCode).split("(")[0].trim() + "_db"
     }
 }
+
+/**
+ * 标准代码转专业名称扩展方法，仓库层用
+ */
+fun String.toProStdName(): String = StandardConstants.getStandardName(this)
