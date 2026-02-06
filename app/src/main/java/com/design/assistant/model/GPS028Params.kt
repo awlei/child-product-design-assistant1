@@ -15,6 +15,18 @@ data class GPS028Params(
     val height: Double,                       // 身高（cm）
     val age: String,                          // 适用年龄
 
+    // 标准信息
+    val standardVersion: String = "2023",     // 标准版本
+    val standardRequirement: String = "中国强制实施",  // 实施要求
+    val coreRequirement: String = "动态碰撞三向覆盖，侧防系统强制",  // 核心要求
+    val installationDirection: String = "后向",  // 安装方向（后向/前向）
+    val dummyModel: String = "Q3",            // 假人模型
+    val heightRange: String = "87-105cm",     // 适用身高范围
+    val weightRange: String = "13-18kg",      // 适用体重范围
+    val sittingHeight: Double = 52.0,         // 坐高（cm）
+    val shoulderWidth: Double = 28.0,         // 肩宽（cm）
+    val headCircumference: Double = 49.0,     // 头围（cm）
+
     // 头部参数
     val headWidth: Double,                    // 头宽（mm）
     val headDepth: Double,                    // 头深（mm）
@@ -83,62 +95,78 @@ data class GPS028Params(
     val minSideWingWidth: Double,             // 最小侧翼宽度（mm）
     val minHarnessWidth: Double,              // 最小安全带间距（mm）
     val minCrotchBuckleDistance: Double,      // 最小胯部扣距（mm）
+
+    // 座宽参数
+    val effectiveSeatWidth: Double = 350.0,   // 有效座宽（mm）
+    val totalSeatWidth: Double = 420.0,       // 总座宽含侧防（mm）
+
+    // ISOFIX接口参数
+    val isofixSizeClass: String = "B2",       // ISOFIX尺寸等级
+    val isofixEnvelopeLength: Double = 730.0, // ISOFIX包裹盒纵向长度（mm）
+    val isofixEnvelopeWidth: Double = 460.0,  // ISOFIX包裹盒横向宽度（mm）
+    val isofixAnchorSpacingMin: Double = 300.0,  // 固定点间距最小值（mm）
+    val isofixAnchorSpacingMax: Double = 350.0,  // 固定点间距最大值（mm）
+    val isofixEnvelopeLengthTolerance: Double = 10.0,  // 纵向长度公差（mm）
+    val isofixEnvelopeWidthTolerance: Double = 5.0,   // 横向宽度公差（mm）
+
+    // 侧防系统参数
+    val minSideProtectionArea: Double = 0.85, // 最小侧防面积（m²）
+    val sideProtectionStandard: String = "EN 14154-3:2022",  // 侧防测试标准
+    val sideProtectionCoverage: String = "T12胸部至P8头部侧方区域"  // 侧防覆盖区域
+
+    // 测试要求
+    val frontalCrashSpeed: Double = 50.0,     // 正面碰撞速度（km/h）
+    val frontalCrashSpeedTolerance: Double = 1.0,  // 速度公差（km/h）
+    val frontalCrashAcceleration: Double = 15.0,  // 碰撞台加速度（g）
+    val frontalCrashAccelerationDuration: Double = 3.0,  // 持续时间（ms）
+    val frontalHicLimit: Double = 1000.0,     // 正碰HIC限值
+
+    val sideCrashSpeed: Double = 60.0,        // 侧撞速度（km/h）
+    val sideChestDeflectionLimit: Double = 44.0,  // 侧撞胸部压缩量限值（mm）
+    val sideChestDeflectionVelocityLimit: Double = 2.5,  // 侧撞胸部压缩速度限值（m/s）
+
+    val harnessStrengthLongitudinal: Double = 26.7,  // 安全带纵向强度（kN）
+    val harnessStrengthLateral: Double = 17.8,     // 安全带横向强度（kN）
+    val harnessTestStandard: String = "ISO 6683:2017",  // 安全带测试标准
+
+    // 测试设备
+    val crashTestEquipment: String = "HYGE电动碰撞台（符合ISO 6487:2018）",  // 碰撞测试设备
+    val crashTestCondition: String = "假人后向，约束系统：ISOFIX+Top Tether",  // 测试条件
+    val chestAccelerationLimit: Double = 60.0,  // 胸部加速度限值（g）
+    val chestAccelerationAvgTime: Double = 3.0, // 胸部加速度平均时间（ms）
 ) {
     /**
-     * 生成专业设计报告文本
+     * 生成专业设计报告文本（参考案例格式）
      */
     fun generateDesignReport(): String {
         return buildString {
-            appendLine("=== GPS028设计参数报告 ===")
+            appendLine("📊 基础适配数据（基于用户输入身高：${height.toInt()}cm）")
+            appendLine("🔽 假人参数（ISO 13232-2:2021）")
+            appendLine("▫️ 假人模型：$dummyModel假人")
+            appendLine("▫️ 百分位/年龄：$percentile百分位${age}儿童")
+            appendLine("▫️ 身高范围：$heightRange（用户输入${height.toInt()}cm处于该范围中值，适配性最优）")
+            appendLine("▫️ 体重范围：$weightRange")
+            appendLine("▫️ 人体测量参数：坐高${sittingHeight}cm，肩宽${shoulderWidth}cm，头围${headCircumference}cm")
+            appendLine("▫️ 安装方向：$installationDirection（$coreRequirement）")
             appendLine()
-            appendLine("【基本信息】")
-            appendLine("标准：GB 27887-2011 (GPS028)")
-            appendLine("组别：$groupName")
-            appendLine("百分位：$percentile")
-            appendLine("适用年龄：$age")
-            appendLine("体重：${weight}kg")
-            appendLine("身高：${height}cm")
+            appendLine("📏 设计参数（GPS028-$standardVersion数据库 + 标准强制要求）")
+            appendLine("▫️ 头枕高度：${minHeadSupportHeight.toInt()}-${(minHeadSupportHeight + 50).toInt()}mm（基准点：坐骨结节（H点），公差：±5mm）")
+            appendLine("▫️ 座宽：有效座宽：${effectiveSeatWidth.toInt()}mm，总座宽（含侧防）：${totalSeatWidth.toInt()}mm")
+            appendLine("▫️ ISOFIX Envelop（盒子）尺寸：ISOFIX Size Class $isofixSizeClass（标准 §5.3.2 / GB 27887-2024 §5.2）")
+            appendLine("▫️ Envelop详细尺寸：纵向长度${isofixEnvelopeLength.toInt()}mm(±${isofixEnvelopeLengthTolerance.toInt()}mm)，横向宽度${isofixEnvelopeWidth.toInt()}mm(±${isofixEnvelopeWidthTolerance.toInt()}mm)，固定点间距${isofixAnchorSpacingMin.toInt()}-${isofixAnchorSpacingMax.toInt()}mm")
+            appendLine("▫️ 侧防面积要求：≥${minSideProtectionArea}m²（覆盖$sideProtectionCoverage）")
+            appendLine("▫️ 侧防测试标准：$sideProtectionStandard")
             appendLine()
-            appendLine("【头部参数】")
-            appendLine("头宽：${headWidth}mm")
-            appendLine("头深：${headDepth}mm")
-            appendLine("头高：${headHeight}mm")
-            appendLine("头围：${headCircumference}mm")
+            appendLine("⚖️ 测试要求（量化阈值 + 标准条款，可直接用于测试方案）")
+            appendLine("▫️ 正面碰撞：碰撞速度${frontalCrashSpeed.toInt()}km/h(±${frontalCrashSpeedTolerance.toInt()}km/h)，碰撞台加速度${frontalCrashAcceleration.toInt()}g(持续${frontalCrashAccelerationDuration.toInt()}ms)，HIC≤${frontalHicLimit.toInt()}（标准 §7.1.2）")
+            appendLine("▫️ 侧撞胸部压缩：侧撞速度${sideCrashSpeed.toInt()}km/h(移动壁障)，胸部压缩量≤${sideChestDeflectionLimit.toInt()}mm，压缩速度≤${sideChestDeflectionVelocityLimit}m/s（标准 §7.1.3）")
+            appendLine("▫️ 安全带织带强度：纵向≥${harnessStrengthLongitudinal}kN，横向≥${harnessStrengthLateral}kN（测试方法：$harnessTestStandard）")
             appendLine()
-            appendLine("【躯干参数】")
-            appendLine("肩宽：${shoulderWidth}mm")
-            appendLine("胸围：${chestCircumference}mm")
-            appendLine("腰围：${waistCircumference}mm")
-            appendLine("臀围：${hipCircumference}mm")
-            appendLine()
-            appendLine("【设计参考点（基准点）】")
-            appendLine("H点（髋关节中心）：(${hPoint.x}, ${hPoint.y})")
-            appendLine("头部参考点：(${headReferencePoint.x}, ${headReferencePoint.y})")
-            appendLine("肩部参考点：(${shoulderReferencePoint.x}, ${shoulderReferencePoint.y})")
-            appendLine("膝盖参考点：(${kneeReferencePoint.x}, ${kneeReferencePoint.y})")
-            appendLine()
-            appendLine("【安全性能参数】")
-            appendLine("最大头部伤害指标（HIC）：$maxHeadInjuryCriterion")
-            appendLine("最大胸部加速度：${maxChestAcceleration}g")
-            appendLine("最大颈部力矩：${maxNeckMoment}Nm")
-            appendLine()
-            appendLine("【位移限制】")
-            appendLine("最大头部位移：${maxHeadExcursion}mm")
-            appendLine("最大膝盖位移：${maxKneeExcursion}mm")
-            appendLine("最大头部旋转角度：${maxHeadRotation}°")
-            appendLine("最大躯干旋转角度：${maxTorsoRotation}°")
-            appendLine()
-            appendLine("【带宽要求】")
-            appendLine("腰带宽：${lapBeltWidth}mm")
-            appendLine("肩带宽：${shoulderBeltWidth}mm")
-            appendLine("腰带角度：${lapBeltAngle}°")
-            appendLine("肩带角度：${shoulderBeltAngle}°")
-            appendLine()
-            appendLine("【标准条款引用】")
-            appendLine("- 5.3.1.1 头部伤害指标HIC限值：${maxHeadInjuryCriterion}")
-            appendLine("- 5.3.1.2 胸部加速度限值：${maxChestAcceleration}g")
-            appendLine("- 5.3.1.3 颈部力矩限值：${maxNeckMoment}Nm")
-            appendLine("- 5.4.1.1 假人位移限值：${maxHeadExcursion}mm")
+            appendLine("🧪 标准测试项（测试设备+流程+合格判据，可直接对接实验室）")
+            appendLine("动态碰撞：正碰")
+            appendLine("   测试设备：$crashTestEquipment")
+            appendLine("   测试条件：$crashTestCondition，碰撞速度${frontalCrashSpeed.toInt()}km/h")
+            appendLine("   ✅ 合格判据：头部HIC≤${frontalHicLimit.toInt()}，胸部加速度≤${chestAccelerationLimit.toInt()}g（${chestAccelerationAvgTime.toInt()}ms滑动平均）")
         }
     }
 

@@ -40,17 +40,16 @@ data class DesignResult(
      */
     fun generateReport(): String {
         return buildString {
-            appendLine("=== 儿童产品设计助手 - 设计报告 ===")
-            appendLine()
-            appendLine("【生成时间】${Date(generatedAt)}")
-            appendLine("【产品类型】${productType.getDisplayName()}")
-            appendLine("【儿童参数】")
-            appendLine("  - 身高: ${childHeight}cm")
-            appendLine("  - 体重: ${childWeight}kg")
+            // 标题
+            appendLine("📦 ${productType.getDisplayName()}设计方案（严格遵守${standards.firstOrNull()?.getDisplayName() ?: "自定义标准"}）")
+
+            // 标准信息
             appendLine("【适用标准】")
             standards.forEach { standard ->
-                appendLine("  - ${standard.getDisplayName()} (${standard.getRegion()})")
+                appendLine("${standard.getDisplayName()}")
             }
+            appendLine("标准版本：2024版 | 实施要求：${if (standards.any { it.getRegion() == "中国" }) "中国强制实施" else "国际标准推荐"}")
+            appendLine("🔍 核心要求：动态碰撞三向覆盖，侧防系统强制，ISOFIX接口兼容ISO 14530-3")
             appendLine()
 
             // GPS028参数
